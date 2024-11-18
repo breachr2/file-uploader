@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
+  <title>Upload File</title>
 </head>
 <body>
   <%- include("./partials/navbar") %>
-  <% if (locals.user) { %>
-    <h1>Welcome back <%= user.username %></h1>
-    <p>Session : <%= sessionId %></p>
-  <% } else { %>
-    <h1>You are not logged in</h1>
-  <% } %>
+  <form action="/files/upload-file" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <button type="submit">Submit</button>
+  </form>
 </body>
 </html>
