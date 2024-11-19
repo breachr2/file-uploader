@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View All Folder</title>
+</head>
+<body>
+  <%- include("./partials/navbar") %>
+
+  <h1>View all Folders</h1>
+  <% if (locals.folders) { %>
+    <% folders.forEach((folder) => {%>
+      <div>
+        <h1><%= folder.name %></h1>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <p>You have no folders, log in to create.</p>
+  <% } %>
+</body>
+</html>

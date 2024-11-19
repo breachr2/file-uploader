@@ -7,6 +7,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const authRouter = require("./routes/authRoutes")
 const fileRouter = require("./routes/fileRoutes")
+const folderRouter = require("./routes/folderRoutes")
 require("./middleware/passport");
 
 const app = express();
@@ -21,13 +22,17 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter)
 app.use("/files", fileRouter)
+app.use("/folders", folderRouter)
 
 app.get("/", async (req, res) => {
-  const session = await prisma.session.findUnique({
-    where: { sid: req.session.id },
-  });
+  // const session = await prisma.session.findUnique({
+  //   where: { sid: req?.session?.id },
+  // });
 
-  res.render("index", { user: req.user, sessionId: session.sid });
+  console.log(req.user)
+  console.log(req.session)
+
+  res.render("index", { user: req.user, sessionId: null});
 });
 
 app.listen(PORT);
