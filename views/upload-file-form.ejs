@@ -9,6 +9,13 @@
   <%- include("./partials/navbar") %>
   <form action="/files/upload-file" method="POST" enctype="multipart/form-data">
     <input type="file" name="file">
+    <label for="folder-select">Choose a Folder</label>
+    <select name="folderId" id="folder-select">
+      <option value="">-- Select a Folder --</option>
+      <% folders.forEach((folder ) => { %>
+        <option value="<%= folder.id %>"><%= folder.name %></option>
+      <% }) %>
+    </select>
     <button type="submit">Submit</button>
   </form>
 </body>

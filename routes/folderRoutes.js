@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const prisma = require("../config/prisma")
+const prisma = require("../config/prisma");
 const isAuth = require("../middleware/authMiddleware");
 
 const folderRouter = Router();
@@ -28,5 +28,17 @@ folderRouter.post("/create-folder", isAuth, async (req, res) => {
   }
 
   res.redirect("/folders");
+});
+
+folderRouter.post("/:folderId", isAuth, async (req, res) => {
+  const folderId = Number(req.params.folderId);
+  const folder = await prisma.folder.findUnique({ where: { id: folderId } });
+
+  // Check if the folder belongs to the current user
+  if (folder.userId === req.user.id) {
+    await prisma.folder.delete({ where: { id: folderId } });
+    return res.redirect("/folders");
+  }
+  res.status(401).send("You do not have permissions to delete this folder.");
 });
 module.exports = folderRouter;

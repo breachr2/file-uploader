@@ -1,18 +1,51 @@
 const { Router } = require("express");
 const multer = require("multer");
+const prisma = require("../config/prisma");
+const isAuth = require("../middleware/authMiddleware");
 const upload = multer({ dest: "uploads/" });
 
 const fileRouter = Router();
 
-fileRouter.get("/upload-file", (req, res) => {
-  res.render("upload-file-form");
+fileRouter.get("/", async (req, res) => {
+  const userId = req.user?.id;
+  try {
+    const files = await prisma.file.findMany({ where: { userId: userId } });
+    res.render("files", { files });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
-fileRouter.post("/upload-file", upload.single("file"), (req, res) => {
-  console.log(req.file);
-  console.log(req.body);
-  res.redirect("/");
+fileRouter.get("/upload-file", async (req, res) => {
+  const userId = req.user?.id || null;
+  const folders = await prisma.folder.findMany({ where: { userId: userId } });
+  res.render("upload-file-form", { folders });
 });
+
+fileRouter.post(
+  "/upload-file",
+  isAuth,
+  upload.single("file"),
+  async (req, res) => {
+    const userId = req.user.id;
+    const { filename, size } = req.file;
+    const folderId = Number(req.body.folderId);
+
+    try {
+      await prisma.file.create({
+        data: {
+          name: filename,
+          size: size,
+          userId: userId,
+          folderId: folderId,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    res.redirect("/");
+  }
+);
 
 module.exports = fileRouter;
 
