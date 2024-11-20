@@ -1,9 +1,8 @@
 const { Router } = require("express");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const { PrismaClient } = require("@prisma/client");
+const prisma = require("../config/prisma")
 
-const prisma = new PrismaClient();
 const authRouter = Router();
 
 authRouter.get("/log-in", (req, res) => {

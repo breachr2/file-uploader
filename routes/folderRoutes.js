@@ -1,8 +1,8 @@
 const { Router } = require("express");
-const { PrismaClient } = require("@prisma/client");
-const folderRouter = Router();
+const prisma = require("../config/prisma")
 const isAuth = require("../middleware/authMiddleware");
-const prisma = new PrismaClient();
+
+const folderRouter = Router();
 
 folderRouter.get("/", async (req, res) => {
   const userId = req.user?.id || null;
