@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Files</title>
-</head>
-<body>
-  <%- include("./partials/navbar") %>
-  <h1>All Files</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Files</title>
+  </head>
+  <body>
+    <%- include("./partials/navbar") %>
+    <h1>All Files</h1>
 
-  <% if (locals.files) {%>
-    <% files.forEach((file) => { %>
-      <div>
-        <p>File: <%= file.id %></p>
-        <img src="/uploads/<%= file.name%>" alt="Some image">
-      </div>
-    <% }) %>
-  <% } %>
-</body>
+    <% if (locals.files) {%> <% files.forEach((file) => { %>
+    <div>
+      <p>File Id: <%= file.id %></p>
+      <% if (file.Folder) { %>
+        <p>This file belongs to folder : "<%= file.Folder.name %>"</p>
+      <% } %>
+      <img src="/uploads/<%= file.name%>" alt="Some image" style="height: 250px; width: 250px;"/>
+    </div>
+    <% }) %> <% } %>
+  </body>
 </html>

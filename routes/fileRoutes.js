@@ -9,7 +9,11 @@ const fileRouter = Router();
 fileRouter.get("/", async (req, res) => {
   const userId = req.user?.id;
   try {
-    const files = await prisma.file.findMany({ where: { userId: userId } });
+    const files = await prisma.file.findMany({
+      where: { userId: userId },
+      include: { Folder: true },
+    });
+    console.log(files);
     res.render("files", { files });
   } catch (err) {
     console.log(err);
@@ -29,19 +33,25 @@ fileRouter.post(
   async (req, res) => {
     const userId = req.user.id;
     const { filename, size } = req.file;
-    const folderId = Number(req.body.folderId);
 
-    try {
+    // If user selects a folder when creating file
+    if (req.body.folderId !== "") {
       await prisma.file.create({
         data: {
           name: filename,
           size: size,
           userId: userId,
-          folderId: folderId,
+          folderId: Number(req.body.folderId),
         },
       });
-    } catch (err) {
-      console.log(err);
+    } else {
+      await prisma.file.create({
+        data: {
+          name: filename,
+          size: size,
+          userId: userId,
+        },
+      });
     }
     res.redirect("/");
   }
