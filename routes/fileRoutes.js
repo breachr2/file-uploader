@@ -8,16 +8,16 @@ const fileRouter = Router();
 
 fileRouter.get("/", async (req, res) => {
   const userId = req.user?.id;
-  try {
-    const files = await prisma.file.findMany({
-      where: { userId: userId },
-      include: { Folder: true },
-    });
-    console.log(files);
-    res.render("files", { files });
-  } catch (err) {
-    console.log(err);
+
+  if (!userId) {
+    return res.render("files")
   }
+
+  const files = await prisma.file.findMany({
+    where: { userId: userId },
+    include: { Folder: true },
+  });
+  res.render("files", { files });
 });
 
 fileRouter.get("/upload-file", async (req, res) => {

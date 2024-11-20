@@ -33,7 +33,7 @@ app.get("/", async (req, res) => {
     });
   }
 
-  res.render("index", { user: req.user, sessionId: session.sid });
+  res.render("index", { user: req.user, sessionId: session?.sid });
 });
 
 app.listen(PORT);

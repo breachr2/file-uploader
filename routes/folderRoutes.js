@@ -13,7 +13,7 @@ folderRouter.get("/", async (req, res) => {
   res.render("folders");
 });
 
-folderRouter.get("/create-folder", (req, res) => {
+folderRouter.get("/create-folder", isAuth, (req, res) => {
   res.render("create-folder-form");
 });
 
@@ -30,15 +30,38 @@ folderRouter.post("/create-folder", isAuth, async (req, res) => {
   res.redirect("/folders");
 });
 
-folderRouter.post("/:folderId", isAuth, async (req, res) => {
+folderRouter.get("/:folderId", isAuth, async (req, res) => {
   const folderId = Number(req.params.folderId);
   const folder = await prisma.folder.findUnique({ where: { id: folderId } });
 
-  // Check if the folder belongs to the current user
-  if (folder.userId === req.user.id) {
-    await prisma.folder.delete({ where: { id: folderId } });
-    return res.redirect("/folders");
-  }
-  res.status(401).send("You do not have permissions to delete this folder.");
+  res.render("update-folder-form", { folder });
 });
+
+folderRouter.post("/:folderId", isAuth, async (req, res) => {
+  const folderId = Number(req.params.folderId);
+  await prisma.folder.update({
+    where: { id: folderId },
+    data: {
+      name: req.body.name,
+    },
+  });
+  res.redirect("/folders");
+});
+
+folderRouter.post("/:folderId/delete", isAuth, async (req, res) => {
+  const folderId = Number(req.params.folderId);
+  const folder = await prisma.folder.findUnique({ where: { id: folderId } });
+
+  if (!folder) {
+    return res.status(401).send("Folder not Found");
+  }
+
+  if (folder.userId !== req.user.id) {
+    res.status(401).send("You do not have permissions to delete this folder.");
+  }
+
+  await prisma.folder.delete({ where: { id: folderId } });
+  return res.redirect("/folders");
+});
+
 module.exports = folderRouter;

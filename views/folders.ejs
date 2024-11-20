@@ -13,7 +13,9 @@
     <% folders.forEach((folder) => {%>
       <div>
         <h1><%= folder.name %></h1>
-        <form action="/folders/<%= folder.id %>" method="POST">
+        <a href="/folders/<%= folder.id%>">Edit</a>
+
+        <form action="/folders/<%= folder.id %>/delete" method="POST" style="margin-top: 10px;">
           <button type="submit">Delete</button>
         </form>
       </div>
