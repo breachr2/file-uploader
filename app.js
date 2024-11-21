@@ -21,8 +21,8 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter);
-app.use("/files", fileRouter);
 app.use("/folders", folderRouter);
+app.use("/files", fileRouter);
 
 app.get("/", async (req, res) => {
   let session = null;

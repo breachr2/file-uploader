@@ -10,12 +10,11 @@ fileRouter.get("/", async (req, res) => {
   const userId = req.user?.id;
 
   if (!userId) {
-    return res.render("files")
+    return res.render("files");
   }
 
   const files = await prisma.file.findMany({
-    where: { userId: userId },
-    include: { Folder: true },
+    where: { userId: userId, folderId: null },
   });
   res.render("files", { files });
 });
