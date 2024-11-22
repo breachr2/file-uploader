@@ -2,7 +2,10 @@ const { Router } = require("express");
 const multer = require("multer");
 const prisma = require("../config/prisma");
 const isAuth = require("../middleware/authMiddleware");
-const upload = multer({ dest: "uploads/" });
+const s3Client = require("../config/s3Client");
+const { PutObjectCommand } = require("@aws-sdk/client-s3");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const fileRouter = Router();
 
@@ -31,13 +34,13 @@ fileRouter.post(
   upload.single("file"),
   async (req, res) => {
     const userId = req.user.id;
-    const { filename, size } = req.file;
+    const { originalname, size, mimetype, buffer } = req.file;
 
     // If user selects a folder when creating file
     if (req.body.folderId !== "") {
       await prisma.file.create({
         data: {
-          name: filename,
+          name: originalname,
           size: size,
           userId: userId,
           folderId: Number(req.body.folderId),
@@ -46,12 +49,22 @@ fileRouter.post(
     } else {
       await prisma.file.create({
         data: {
-          name: filename,
+          name: originalname,
           size: size,
           userId: userId,
         },
       });
     }
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: originalname,
+      Body: buffer,
+      ContentType: mimetype,
+    };
+
+    const command = new PutObjectCommand(params);
+    const response = await s3Client.send(command);
+    console.log(response);
     res.redirect("/");
   }
 );
