@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const crypto = require("crypto");
 const multer = require("multer");
 const prisma = require("../config/prisma");
 const isAuth = require("../middleware/authMiddleware");
@@ -8,6 +9,10 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const fileRouter = Router();
+
+const generateRandomName = (bytes = 32) => {
+  return crypto.randomBytes(bytes).toString("hex");
+};
 
 fileRouter.get("/", async (req, res) => {
   const userId = req.user?.id;
@@ -34,13 +39,14 @@ fileRouter.post(
   upload.single("file"),
   async (req, res) => {
     const userId = req.user.id;
-    const { originalname, size, mimetype, buffer } = req.file;
+    const { size, mimetype, buffer } = req.file;
+    const randomImageName = generateRandomName();
 
     // If user selects a folder when creating file
     if (req.body.folderId !== "") {
       await prisma.file.create({
         data: {
-          name: originalname,
+          name: randomImageName,
           size: size,
           userId: userId,
           folderId: Number(req.body.folderId),
@@ -49,7 +55,7 @@ fileRouter.post(
     } else {
       await prisma.file.create({
         data: {
-          name: originalname,
+          name: randomImageName,
           size: size,
           userId: userId,
         },
@@ -57,7 +63,7 @@ fileRouter.post(
     }
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: originalname,
+      Key: randomImageName,
       Body: buffer,
       ContentType: mimetype,
     };
