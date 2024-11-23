@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
+import { User } from "@prisma/client";
 
 async function getFolders(req: Request, res: Response) {
-  const userId = req.user?.id || null;
+  const userId = (req.user as User)?.id || null;
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
   if (folders.length !== 0) {
     return res.render("folders", { folders: folders });
@@ -16,7 +17,7 @@ function getFolderCreateForm(req: Request, res: Response) {
 
 async function postFolderCreateForm(req: Request, res: Response) {
   const { folder_name } = req.body;
-  const userId = Number(req.user.id);
+  const userId = (req.user as User)?.id;
 
   try {
     await prisma.folder.create({ data: { name: folder_name, userId: userId } });
@@ -47,8 +48,9 @@ async function getFolderUpdateForm(req: Request, res: Response) {
 
 async function postFolderUpdateForm(req: Request, res: Response) {
   const folderId = Number(req.params.folderId);
+  const userId = (req.user as User)?.id;
   await prisma.folder.update({
-    where: { id: folderId, userId: req.user.id },
+    where: { id: folderId, userId: userId },
     data: {
       name: req.body.name,
     },
@@ -58,14 +60,16 @@ async function postFolderUpdateForm(req: Request, res: Response) {
 
 async function deleteFolderById(req: Request, res: Response) {
   const folderId = Number(req.params.folderId);
+  const userId = (req.user as User)?.id;
   const folder = await prisma.folder.findUnique({
-    where: { id: folderId, userId: req.user?.id },
+    where: { id: folderId, userId: userId },
   });
 
   if (!folder) {
-    return res
+    res
       .status(404)
       .send("Folder not found or you do not have permissions to delete it.");
+    return;
   }
   await prisma.$transaction([
     prisma.file.deleteMany({ where: { folderId } }),

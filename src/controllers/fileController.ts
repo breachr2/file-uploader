@@ -3,13 +3,14 @@ import crypto from "crypto";
 import prisma from "../config/prisma";
 import s3Client from "../config/s3Client";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { User } from "@prisma/client";
 
 const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");
 };
 
 async function getFiles(req: Request, res: Response) {
-  const userId = req.user.id;
+  const userId = (req.user as User)?.id;
 
   if (!userId) {
     return res.render("files");
@@ -22,14 +23,14 @@ async function getFiles(req: Request, res: Response) {
 }
 
 async function getFileForm(req: Request, res: Response) {
-  const userId = req.user?.id || null;
+  const userId = (req.user as User)?.id || null;
   const folders = await prisma.folder.findMany({ where: { userId: userId } });
   res.render("upload-file-form", { folders });
 }
 
 async function postFileForm(req: Request, res: Response) {
-  const userId = req.user.id;
-  const { size, mimetype, buffer } = req.file;
+  const userId = (req.user as User)?.id;
+  const { size, mimetype, buffer } = req.file as Express.Multer.File;
   const randomImageName = generateRandomName();
 
   // If user selects a folder when creating file
@@ -60,6 +61,7 @@ async function postFileForm(req: Request, res: Response) {
 
   const command = new PutObjectCommand(params);
   const response = await s3Client.send(command);
+  console.log(response);
   res.redirect("/");
 }
 
