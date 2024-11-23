@@ -5,6 +5,7 @@ import {
   getFiles,
   getFileForm,
   postFileForm,
+  getFileDownload,
 } from "../controllers/fileController";
 
 const storage = multer.memoryStorage();
@@ -15,5 +16,6 @@ const fileRouter = Router();
 fileRouter.get("/", getFiles);
 fileRouter.get("/upload-file", getFileForm);
 fileRouter.post("/upload-file", isAuth, upload.single("file"), postFileForm);
+fileRouter.get("/:fileId/download", isAuth, getFileDownload);
 
 export default fileRouter;

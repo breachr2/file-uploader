@@ -15,7 +15,10 @@
       <% if (file.Folder) { %>
         <p>This file belongs to folder : "<%= file.Folder.name %>"</p>
       <% } %>
-      <img src="/uploads/<%= file.name%>" alt="Some image" style="height: 250px; width: 250px;"/>
+      <form action="/files/<%= file.id %>/download" method="GET">
+        <button type="submit">Download File</button>
+      </form>
+      <img src="<%= file.imageUrl %>" alt="Some image" style="height: 250px; width: 250px;"/>
     </div>
     <% }) %> <% } %>
   </body>
