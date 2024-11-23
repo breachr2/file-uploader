@@ -1,7 +1,6 @@
-const { Router } = require("express");
-const prisma = require("../config/prisma");
-const isAuth = require("../middleware/authMiddleware");
-
+import { Router } from "express";
+import prisma from "../config/prisma";
+import { isAuth } from "../middleware/authMiddleware";
 const folderRouter = Router();
 
 folderRouter.get("/", async (req, res) => {
@@ -78,4 +77,4 @@ folderRouter.post("/:folderId/delete", isAuth, async (req, res) => {
   res.redirect("/folders");
 });
 
-module.exports = folderRouter;
+export default folderRouter;

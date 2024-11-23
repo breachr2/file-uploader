@@ -1,13 +1,15 @@
-const expressSession = require("express-session");
-const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const { PrismaClient } = require("@prisma/client");
-require("dotenv").config();
+import expressSession from "express-session";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
+
+const secret = process.env.SECRET || "";
 
 const sessionConfig = expressSession({
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   },
-  secret: process.env.SECRET,
+  secret: secret,
   saveUninitialized: false,
   resave: false,
   store: new PrismaSessionStore(new PrismaClient(), {
@@ -17,4 +19,4 @@ const sessionConfig = expressSession({
   }),
 });
 
-module.exports = sessionConfig;
+export default sessionConfig

@@ -1,13 +1,12 @@
-require("dotenv").config();
-const express = require("express");
-const path = require("node:path");
-const passport = require("passport");
-const sessionConfig = require("./config/sessionConfig");
-const authRouter = require("./routes/authRoutes");
-const fileRouter = require("./routes/fileRoutes");
-const folderRouter = require("./routes/folderRoutes");
-const prisma = require("./config/prisma");
-require("./middleware/passport");
+import express, { Request, Response } from "express";
+import path from "node:path";
+import passport from "passport"
+import sessionConfig from "./config/sessionConfig"
+import authRouter from "./routes/authRoutes";
+import fileRouter from "./routes/fileRoutes";
+import folderRouter from "./routes/folderRoutes";
+import prisma from "./config/prisma";
+import "./middleware/passport"
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -24,7 +23,7 @@ app.use(authRouter);
 app.use("/folders", folderRouter);
 app.use("/files", fileRouter);
 
-app.get("/", async (req, res) => {
+app.get("/", async (req : Request, res : Response) => {
   let session = null;
 
   if (req.isAuthenticated()) {

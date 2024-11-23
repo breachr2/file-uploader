@@ -1,10 +1,10 @@
-const { Router } = require("express");
-const crypto = require("crypto");
-const multer = require("multer");
-const prisma = require("../config/prisma");
-const isAuth = require("../middleware/authMiddleware");
-const s3Client = require("../config/s3Client");
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
+import { Router } from "express";
+import crypto from "crypto";
+import multer from "multer";
+import prisma from "../config/prisma";
+import { isAuth } from "../middleware/authMiddleware";
+import s3Client from "../config/s3Client";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -70,21 +70,8 @@ fileRouter.post(
 
     const command = new PutObjectCommand(params);
     const response = await s3Client.send(command);
-    console.log(response);
     res.redirect("/");
   }
 );
 
-module.exports = fileRouter;
-
-// req.file object
-// {
-//   fieldname: 'file',
-//   originalname: '1afabf5f4c031530da0902b6fadad6a3.png',
-//   encoding: '7bit',
-//   mimetype: 'image/png',
-//   destination: 'uploads/',
-//   filename: '679ea057ca94b4c65ccb0f34a407216b',
-//   path: 'uploads/679ea057ca94b4c65ccb0f34a407216b',
-//   size: 309090
-// }
+export default fileRouter;
