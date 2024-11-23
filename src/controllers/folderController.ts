@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
 import { User } from "@prisma/client";
+import s3Client from "../config/s3Client";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 async function getFolders(req: Request, res: Response) {
   const userId = (req.user as User)?.id || null;
@@ -71,6 +73,18 @@ async function deleteFolderById(req: Request, res: Response) {
       .send("Folder not found or you do not have permissions to delete it.");
     return;
   }
+
+  const files = await prisma.file.findMany({ where: { folderId: folderId } });
+
+  for (const file of files) {
+    const deleteParams = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: file.name,
+    };
+    const command = new DeleteObjectCommand(deleteParams);
+    await s3Client.send(command)
+  }
+
   await prisma.$transaction([
     prisma.file.deleteMany({ where: { folderId } }),
     prisma.folder.delete({ where: { id: folderId } }),
