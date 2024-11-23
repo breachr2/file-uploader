@@ -35,4 +35,4 @@ function getLogOut(req: Request, res: Response, next: NextFunction) {
   });
 }
 
-export default { getLogInForm, getSignUpForm, postSignUpForm, getLogOut };
+export { getLogInForm, getSignUpForm, postSignUpForm, getLogOut };

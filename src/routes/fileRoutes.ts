@@ -1,77 +1,19 @@
 import { Router } from "express";
-import crypto from "crypto";
 import multer from "multer";
-import prisma from "../config/prisma";
 import { isAuth } from "../middleware/authMiddleware";
-import s3Client from "../config/s3Client";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  getFiles,
+  getFileForm,
+  postFileForm,
+} from "../controllers/fileController";
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const fileRouter = Router();
 
-const generateRandomName = (bytes = 32) => {
-  return crypto.randomBytes(bytes).toString("hex");
-};
-
-fileRouter.get("/", async (req, res) => {
-  const userId = req.user?.id;
-
-  if (!userId) {
-    return res.render("files");
-  }
-
-  const files = await prisma.file.findMany({
-    where: { userId: userId, folderId: null },
-  });
-  res.render("files", { files });
-});
-
-fileRouter.get("/upload-file", async (req, res) => {
-  const userId = req.user?.id || null;
-  const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  res.render("upload-file-form", { folders });
-});
-
-fileRouter.post(
-  "/upload-file",
-  isAuth,
-  upload.single("file"),
-  async (req, res) => {
-    const userId = req.user.id;
-    const { size, mimetype, buffer } = req.file;
-    const randomImageName = generateRandomName();
-
-    // If user selects a folder when creating file
-    if (req.body.folderId !== "") {
-      await prisma.file.create({
-        data: {
-          name: randomImageName,
-          size: size,
-          userId: userId,
-          folderId: Number(req.body.folderId),
-        },
-      });
-    } else {
-      await prisma.file.create({
-        data: {
-          name: randomImageName,
-          size: size,
-          userId: userId,
-        },
-      });
-    }
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: randomImageName,
-      Body: buffer,
-      ContentType: mimetype,
-    };
-
-    const command = new PutObjectCommand(params);
-    const response = await s3Client.send(command);
-    res.redirect("/");
-  }
-);
+fileRouter.get("/", getFiles);
+fileRouter.get("/upload-file", getFileForm);
+fileRouter.post("/upload-file", isAuth, upload.single("file"), postFileForm);
 
 export default fileRouter;

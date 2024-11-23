@@ -1,2 +1,86 @@
+import { Request, Response } from "express";
+import prisma from "../config/prisma";
 
-export default {}
+async function getFolders(req: Request, res: Response) {
+  const userId = req.user?.id || null;
+  const folders = await prisma.folder.findMany({ where: { userId: userId } });
+  if (folders.length !== 0) {
+    return res.render("folders", { folders: folders });
+  }
+  res.render("folders");
+}
+
+function getFolderCreateForm(req: Request, res: Response) {
+  res.render("create-folder-form");
+}
+
+async function postFolderCreateForm(req: Request, res: Response) {
+  const { folder_name } = req.body;
+  const userId = Number(req.user.id);
+
+  try {
+    await prisma.folder.create({ data: { name: folder_name, userId: userId } });
+  } catch (err) {
+    console.log(err);
+  }
+
+  res.redirect("/folders");
+}
+
+async function getFolderById(req: Request, res: Response) {
+  const folderId = Number(req.params.folderId);
+
+  const files = await prisma.file.findMany({
+    where: { folderId: folderId },
+    include: { Folder: true },
+  });
+
+  res.render("files", { files });
+}
+
+async function getFolderUpdateForm(req: Request, res: Response) {
+  const folderId = Number(req.params.folderId);
+  const folder = await prisma.folder.findUnique({ where: { id: folderId } });
+
+  res.render("update-folder-form", { folder });
+}
+
+async function postFolderUpdateForm(req: Request, res: Response) {
+  const folderId = Number(req.params.folderId);
+  await prisma.folder.update({
+    where: { id: folderId, userId: req.user.id },
+    data: {
+      name: req.body.name,
+    },
+  });
+  res.redirect("/folders");
+}
+
+async function deleteFolderById(req: Request, res: Response) {
+  const folderId = Number(req.params.folderId);
+  const folder = await prisma.folder.findUnique({
+    where: { id: folderId, userId: req.user?.id },
+  });
+
+  if (!folder) {
+    return res
+      .status(404)
+      .send("Folder not found or you do not have permissions to delete it.");
+  }
+  await prisma.$transaction([
+    prisma.file.deleteMany({ where: { folderId } }),
+    prisma.folder.delete({ where: { id: folderId } }),
+  ]);
+
+  res.redirect("/folders");
+}
+
+export {
+  getFolders,
+  getFolderCreateForm,
+  postFolderCreateForm,
+  getFolderById,
+  getFolderUpdateForm,
+  postFolderUpdateForm,
+  deleteFolderById,
+};
