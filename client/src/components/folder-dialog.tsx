@@ -7,15 +7,18 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "./ui/dialog";
-import { useActionState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-
-async function createFolder(previousState, formData) {}
+import { useState } from "react";
 
 function FolderDialog() {
-  const [state, actionFunction, isPending] = useActionState(createFolder, {});
+  const [folderName, setFolderName] = useState("");
+
+  function handleSubmit(e: any) {
+    e.preventDefault();
+    console.log(folderName);
+  }
 
   return (
     <Dialog>
@@ -29,12 +32,17 @@ function FolderDialog() {
             Enter a folder name, click Submit when you're done.
           </DialogDescription>
         </DialogHeader>
-
         <div>
-          <form action="" className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <Label htmlFor="folder-name">Name</Label>
-              <Input type="text" name="name" id="folder-name" />
+              <Label htmlFor="folder">Name</Label>
+              <Input
+                type="text"
+                name="name"
+                id="folder"
+                value={folderName}
+                onChange={(e) => setFolderName(e.target.value)}
+              />
             </div>
             <DialogFooter>
               <Button type="submit">Submit</Button>
