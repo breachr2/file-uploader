@@ -11,35 +11,46 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
+import Submit from "./ui/submit";
 
 function FileDialog() {
   const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_BASE_URL;
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!file) return;
 
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${apiUrl}/files/upload-file`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
+      // const result = await fetch(`${apiUrl}/files/upload-file`, {
+      //   method: "POST",
+      //   body: formData,
+      // });
+      // const data = await result.json();
+      // console.log(data);
+      await new Promise((resolve) => setTimeout(resolve, 2500));
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   }
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>New File</Button>
+        <Button className="w-full">New File</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -49,27 +60,19 @@ function FileDialog() {
           </DialogDescription>
         </DialogHeader>
         <div>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4"
-            encType="multipart/form-data"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <Label htmlFor="file">File</Label>
               <Input
                 type="file"
                 name="name"
                 id="file"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files.length > 0) {
-                    setFile(e.target.files[0]);
-                  }
-                }}
+                onChange={(e) => handleFileChange(e)}
                 required
               />
             </div>
             <DialogFooter>
-              <Button type="submit">Submit</Button>
+              <Submit isLoading={loading}>Submit</Submit>
             </DialogFooter>
           </form>
         </div>

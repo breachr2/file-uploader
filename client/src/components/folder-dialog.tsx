@@ -23,7 +23,7 @@ function FolderDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>New Folder</Button>
+        <Button className="w-full">New Folder</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

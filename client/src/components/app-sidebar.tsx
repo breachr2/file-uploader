@@ -1,9 +1,4 @@
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import FolderDialog from "./folder-dialog";
 import FileDialog from "./file-dialog";
 
@@ -12,8 +7,13 @@ function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <SidebarMenu>
-          <FolderDialog />
-          <FileDialog />
+          <SidebarMenuItem>
+            <FolderDialog />
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <FileDialog />
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
     </Sidebar>
