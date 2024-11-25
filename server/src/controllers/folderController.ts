@@ -6,12 +6,19 @@ import { GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 async function getFolders(req: Request, res: Response) {
-  const userId = (req.user as User)?.id || null;
-  const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  if (folders.length !== 0) {
-    return res.render("folders", { folders: folders });
+  // const userId = (req.user as User)?.id || null;
+  // const folders = await prisma.folder.findMany({ where: { userId: userId } });
+  // if (folders.length !== 0) {
+  //   return res.render("folders", { folders: folders });
+  // }
+  // res.render("folders");
+
+  try {
+    const folders = await prisma.folder.findMany({ include: { files: true } });
+    res.json(folders);
+  } catch (err) {
+    res.status(401).json("Failed to fetch folders");
   }
-  res.render("folders");
 }
 
 function getFolderCreateForm(req: Request, res: Response) {
@@ -44,10 +51,10 @@ async function getFolderById(req: Request, res: Response) {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: file.name,
     };
-  
+
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3Client, command, { expiresIn: 60 });
-    file.imageUrl = url
+    file.imageUrl = url;
   }
 
   res.render("files", { files });
@@ -94,7 +101,7 @@ async function deleteFolderById(req: Request, res: Response) {
       Key: file.name,
     };
     const command = new DeleteObjectCommand(deleteParams);
-    await s3Client.send(command)
+    await s3Client.send(command);
   }
 
   await prisma.$transaction([

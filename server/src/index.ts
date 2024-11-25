@@ -18,7 +18,7 @@ const corsOptions = {
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "../src/views"));
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(sessionConfig);
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
