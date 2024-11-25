@@ -13,7 +13,8 @@ const folderRouter = Router();
 
 folderRouter.get("/", getFolders);
 folderRouter.get("/create-folder", isAuth, getFolderCreateForm);
-folderRouter.post("/create-folder", isAuth, postFolderCreateForm);
+// folderRouter.post("/create-folder", isAuth, postFolderCreateForm);
+folderRouter.post("/", postFolderCreateForm);
 folderRouter.get("/:folderId", isAuth, getFolderById);
 folderRouter.get("/:folderId/update-folder", isAuth, getFolderUpdateForm);
 folderRouter.post("/:folderId", isAuth, postFolderUpdateForm);

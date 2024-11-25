@@ -11,9 +11,6 @@ import "./middleware/passport";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const corsOptions = {
-  origin: "http:localhost:5173",
-};
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "../src/views"));
@@ -21,6 +18,7 @@ app.set("views", path.resolve(__dirname, "../src/views"));
 app.use(cors());
 app.use(sessionConfig);
 app.use(passport.session());
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter);

@@ -26,11 +26,15 @@ function getFolderCreateForm(req: Request, res: Response) {
 }
 
 async function postFolderCreateForm(req: Request, res: Response) {
-  const { folder_name } = req.body;
-  const userId = (req.user as User)?.id;
+  const { folderName } = req.body;
+  res.json("Success")
+
+  // TODO
+  // const userId = (req.user as User)?.id;
 
   try {
-    await prisma.folder.create({ data: { name: folder_name, userId: userId } });
+    // await prisma.folder.create({ data: { name: folder_name, userId: userId } });
+    await prisma.folder.create({ data: { name: folderName} });
   } catch (err) {
     console.log(err);
   }

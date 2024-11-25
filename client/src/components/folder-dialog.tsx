@@ -11,13 +11,24 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
+import { API_URL } from "@/lib/constants";
 
 function FolderDialog() {
   const [folderName, setFolderName] = useState("");
 
-  function handleSubmit(e: any) {
+  async function handleSubmit(e: any) {
     e.preventDefault();
-    console.log(folderName);
+    try {
+      const response = await fetch(`${API_URL}/folders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ folderName }),
+      });
+      const result = await response.json();
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return (

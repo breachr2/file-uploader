@@ -18,6 +18,7 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { File, Folder } from "@/lib/types";
 
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
@@ -62,7 +63,7 @@ function AppSidebar() {
   );
 }
 
-function FileGroupContent({ files }) {
+function FileGroupContent({ files }: { files: File[] }) {
   return files.map((file) => {
     return (
       <Fragment key={file.id}>
@@ -78,7 +79,7 @@ function FileGroupContent({ files }) {
   });
 }
 
-function FolderGroup({ folders }) {
+function FolderGroup({ folders }: { folders: Folder[] }) {
   return folders.map((folder) => (
     <Fragment key={folder.id}>
       <Collapsible>
@@ -90,7 +91,7 @@ function FolderGroup({ folders }) {
             </CollapsibleTrigger>
           </SidebarGroupLabel>
           <CollapsibleContent>
-            <FileGroupContent files={folder.files} />
+            {folder.files && <FileGroupContent files={folder.files} />}
           </CollapsibleContent>
         </SidebarGroup>
       </Collapsible>
