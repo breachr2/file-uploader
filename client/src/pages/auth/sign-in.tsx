@@ -9,8 +9,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import Submit from "@/components/ui/submit";
+import { API_URL } from "@/lib/constants";
 
 function SignInCard() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<{ message: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit() {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/log-in`, {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const res = await response.json()
+      console.log(res)
+    } catch (err) {
+      setError({ message: "An unknown error has occured" });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -22,15 +49,31 @@ function SignInCard() {
       <CardContent>
         <div>
           <Label htmlFor="username">Username</Label>
-          <Input name="username" id="username" />
+          <Input
+            name="username"
+            id="username"
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+            required
+          />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input type="password" name="password" id="password" />
+          <Input
+            type="password"
+            name="password"
+            id="password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            required
+          />
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
-        <Button className="w-full">Sign In</Button>
+        {error && <p>{error.message}</p>}
+        <Submit isLoading={loading} className="w-full" onClick={handleSubmit}>
+          Sign In
+        </Submit>
         <Button className="w-full" variant="outline">
           Sign Up With Google
         </Button>

@@ -47,6 +47,7 @@ function SignUpCard() {
           message: errorData.error || "An unknown error has occured",
         });
       }
+
     } catch (err: any) {
       setError({
         message: "Failed to connect to the server. Please try again.",

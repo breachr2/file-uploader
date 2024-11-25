@@ -10,10 +10,9 @@ import {
 const authRouter = Router();
 
 authRouter.get("/log-in", getLogInForm);
-authRouter.post(
-  "/log-in",
-  passport.authenticate("local", { successRedirect: "/", failureRedirect: "/" })
-);
+authRouter.post("/log-in", passport.authenticate("local"), (req, res) => {
+  res.json("Succesfully logged in");
+});
 authRouter.get("/sign-up", getSignUpForm);
 authRouter.post("/sign-up", postSignUpForm);
 authRouter.get("/log-out", getLogOut);
