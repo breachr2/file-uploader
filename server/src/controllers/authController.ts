@@ -11,18 +11,29 @@ function getSignUpForm(req: Request, res: Response) {
 }
 
 async function postSignUpForm(req: Request, res: Response, next: NextFunction) {
+  const { username, password } = req.body.formData;
+
   try {
-    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-      await prisma.user.create({
-        data: {
-          username: req.body.username,
-          password: hashedPassword,
-        },
-      });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await prisma.user.create({
+      data: {
+        username: username,
+        password: hashedPassword,
+      },
     });
-    res.redirect("/");
-  } catch (err) {
-    return next(err);
+
+    res.status(201).json(`${username} successfuly created. `);
+  } catch (err: any) {
+    // Prisma error code for unique constraint failed on username
+    if ((err.code = "P2002")) {
+      res.status(400).json({
+        error: "Username already exists. Please choose a different username",
+      });
+    } else {
+      res.status(500).json({
+        error: "An error occured during sign-up. Please try again later.",
+      });
+    }
   }
 }
 

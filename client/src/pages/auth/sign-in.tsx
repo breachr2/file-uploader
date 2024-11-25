@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
 
 function SignInCard() {
   return (
@@ -29,10 +28,12 @@ function SignInCard() {
           <Label htmlFor="password">Password</Label>
           <Input type="password" name="password" id="password" />
         </div>
-        
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col gap-2">
         <Button className="w-full">Sign In</Button>
+        <Button className="w-full" variant="outline">
+          Sign Up With Google
+        </Button>
       </CardFooter>
     </Card>
   );
