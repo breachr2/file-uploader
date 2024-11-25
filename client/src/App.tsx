@@ -1,23 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Folder from "./pages/Folder";
-import AppSidebar from "./components/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import Home from "./pages/home";
+import Folder from "./pages/folder";
+import Auth from "./pages/auth/auth";
+import Layout from "./pages/layout";
 
 function App() {
   return (
-    <div>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarTrigger />
-        <Routes>
-          <Route path="/" element={<Home />} />
+    <>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
           <Route path="/folders" element={<Folder />} />
-          <Route path="/folders/:folderId" element={<p>Folder</p>}  />
-          <Route path="/folders/:folderId/:fileId"  />
-        </Routes>
-      </SidebarProvider>
-    </div>
+          <Route path="/folders/:folderId" element={<p>Folder</p>} />
+          <Route path="/folders/:folderId/:fileId" element={<p>File</p>} />
+        </Route>
+
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
+    </>
   );
 }
 
