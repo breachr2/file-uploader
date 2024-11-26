@@ -13,3 +13,8 @@ export type Folder = {
   userId: number;
   files?: File[];
 };
+
+export type User = {
+  id: number;
+  username: string;
+};

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Submit from "@/components/ui/submit";
 import { API_URL } from "@/lib/constants";
+import { useNavigate } from "react-router-dom";
 import RedAsterisk from "@/components/ui/red-asterisk";
 
 function SignInCard() {
@@ -19,6 +20,7 @@ function SignInCard() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<{ message: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit() {
     setLoading(true);
@@ -26,12 +28,14 @@ function SignInCard() {
       const response = await fetch(`${API_URL}/log-in`, {
         method: "POST",
         body: JSON.stringify({ username, password }),
+        credentials : "include",
         headers: {
           "Content-Type": "application/json",
         },
       });
       const res = await response.json();
       console.log(res);
+      navigate("/");
     } catch (err) {
       setError({ message: "An unknown error has occured" });
     } finally {

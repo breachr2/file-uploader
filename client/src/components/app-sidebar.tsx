@@ -21,12 +21,21 @@ import {
   SidebarMenuSubItem,
   SidebarMenuSkeleton,
   SidebarSeparator,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "@/context/auth-context";
 
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { authStatus } = useContext(AuthContext);
+
+  console.log(authStatus);
 
   useEffect(() => {
     const fetchFolders = async () => {
@@ -47,6 +56,14 @@ function AppSidebar() {
     fetchFolders();
   }, []);
 
+  async function handleClick() {
+    const response = await fetch(`${API_URL}/log-out`, {
+      credentials: "include",
+    });
+    const res = await response.json();
+    navigate("/auth");
+  }
+
   return (
     <Sidebar>
       <SidebarContent className="bg-sidebar-accent">
@@ -60,6 +77,9 @@ function AppSidebar() {
           </SidebarMenu>
         )}
       </SidebarContent>
+      <SidebarFooter>
+        <Button onClick={handleClick}>Sign Out</Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }

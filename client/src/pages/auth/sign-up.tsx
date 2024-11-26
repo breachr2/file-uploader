@@ -32,8 +32,8 @@ function SignUpCard() {
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetch(`${API_URL}/sign-up`, {
         method: "POST",
         body: JSON.stringify({ formData }),
