@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import prisma from "../config/prisma";
+import { User } from "@prisma/client";
 
 function getLogInForm(req: Request, res: Response) {
   res.render("log-in-form");
@@ -42,8 +43,26 @@ function getLogOut(req: Request, res: Response, next: NextFunction) {
     if (err) {
       return next(err);
     }
-    res.redirect("/");
+    res.json("Successfully logged out");
   });
 }
 
-export { getLogInForm, getSignUpForm, postSignUpForm, getLogOut };
+function getAuthStatus(req: Request, res: Response) {
+  const user = req.user as User;
+  if (req.isAuthenticated()) {
+    res.json({
+      isAuthenticated: true,
+      user: { id: user.id, username: user.username },
+    });
+    return;
+  }
+  res.json({ isAuthenticated: false });
+}
+
+export {
+  getLogInForm,
+  getSignUpForm,
+  postSignUpForm,
+  getLogOut,
+  getAuthStatus,
+};
