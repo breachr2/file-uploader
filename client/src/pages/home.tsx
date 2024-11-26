@@ -1,9 +1,12 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Home() {
-  
   return (
-    <div>Home Page</div>
-  )
+    <div className="">
+     
+    </div>
+  );
 }
 
-export default Home
+export default Home;

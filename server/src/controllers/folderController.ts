@@ -18,10 +18,6 @@ async function getFolders(req: Request, res: Response) {
   }
 }
 
-function getFolderCreateForm(req: Request, res: Response) {
-  res.render("create-folder-form");
-}
-
 async function postFolderCreateForm(req: Request, res: Response) {
   const { folderName } = req.body;
   const userId = (req.user as User)?.id;
@@ -56,13 +52,6 @@ async function getFolderById(req: Request, res: Response) {
   }
 
   res.render("files", { files });
-}
-
-async function getFolderUpdateForm(req: Request, res: Response) {
-  const folderId = Number(req.params.folderId);
-  const folder = await prisma.folder.findUnique({ where: { id: folderId } });
-
-  res.render("update-folder-form", { folder });
 }
 
 async function postFolderUpdateForm(req: Request, res: Response) {
@@ -112,10 +101,8 @@ async function deleteFolderById(req: Request, res: Response) {
 
 export {
   getFolders,
-  getFolderCreateForm,
   postFolderCreateForm,
   getFolderById,
-  getFolderUpdateForm,
   postFolderUpdateForm,
   deleteFolderById,
 };

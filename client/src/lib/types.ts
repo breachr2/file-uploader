@@ -11,7 +11,7 @@ export type Folder = {
   id: number;
   name: string;
   userId: number;
-  files?: File[];
+  files: File[] | [];
 };
 
 export type User = {

@@ -10,9 +10,8 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="/folders" element={<Folder />} />
-          <Route path="/folders/:folderId" element={<p>Folder</p>} />
+          <Route path="/folders" index element={<Home />} />
+          <Route path="/folders/:folderId" element={<Folder />} />
           <Route path="/folders/:folderId/:fileId" element={<p>File</p>} />
         </Route>
         <Route path="/auth" element={<Auth />} />

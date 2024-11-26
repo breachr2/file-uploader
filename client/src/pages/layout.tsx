@@ -1,6 +1,7 @@
 import AppSidebar from "@/components/app-sidebar";
 import { Outlet } from "react-router-dom";
 import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
+import AppBreadcrumb from "@/components/app-breadcrumb";
 
 function Layout() {
   return (
@@ -11,8 +12,9 @@ function Layout() {
       <SidebarProvider>
         <AppSidebar />
 
-        <main className="w-full bg-secondary ">
+        <main className="flex flex-col w-full bg-secondary border-2 border-red-300 p-2">
           <SidebarTrigger />
+          <AppBreadcrumb />
           <Outlet />
         </main>
       </SidebarProvider>

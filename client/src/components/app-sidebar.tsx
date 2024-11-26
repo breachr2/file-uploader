@@ -24,7 +24,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
@@ -101,10 +101,14 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
     <Collapsible key={folder.id} className="group/collapsible">
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton>
-            {folder.name}
-            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-          </SidebarMenuButton>
+          <Link to={`folders/${folder.id}`}>
+            <SidebarMenuButton>
+              {folder.name}
+              {folder.files.length > 0 && (
+                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              )}
+            </SidebarMenuButton>
+          </Link>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
