@@ -1,24 +1,25 @@
-import { Fragment } from "react";
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-} from "@/components/ui/sidebar";
 import FolderDialog from "./folder-dialog";
 import FileDialog from "./file-dialog";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/lib/constants";
+import { ChevronDown } from "lucide-react";
+import { Folder } from "@/lib/types";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { ChevronDown } from "lucide-react";
-import { File, Folder } from "@/lib/types";
+import {
+  Sidebar,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar";
 
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
@@ -41,11 +42,22 @@ function AppSidebar() {
     fetchFolders();
   }, []);
 
-  console.log(folders);
-
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarContent>
+        <DialogGroup />
+        <SidebarMenu>
+          {folders && <FolderMenuItem folders={folders} />}
+        </SidebarMenu>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+function DialogGroup() {
+  return (
+    <SidebarGroup>
+      <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
             <FolderDialog />
@@ -54,48 +66,36 @@ function AppSidebar() {
             <FileDialog />
           </SidebarMenuItem>
         </SidebarMenu>
-      </SidebarHeader>
-
-      <SidebarContent>
-        {folders && <FolderGroup folders={folders} />}
-      </SidebarContent>
-    </Sidebar>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 }
 
-function FileGroupContent({ files }: { files: File[] }) {
-  return files.map((file) => {
-    return (
-      <Fragment key={file.id}>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel className="overflow-hidden">
-              {file.name}
-            </SidebarGroupLabel>
-          </SidebarGroup>
-        </SidebarContent>
-      </Fragment>
-    );
-  });
-}
-
-function FolderGroup({ folders }: { folders: Folder[] }) {
+function FolderMenuItem({ folders }: { folders: Folder[] }) {
   return folders.map((folder) => (
-    <Fragment key={folder.id}>
-      <Collapsible>
-        <SidebarGroup>
-          <SidebarGroupLabel asChild>
-            <CollapsibleTrigger>
-              {folder.name}
-              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-            </CollapsibleTrigger>
-          </SidebarGroupLabel>
-          <CollapsibleContent>
-            {folder.files && <FileGroupContent files={folder.files} />}
-          </CollapsibleContent>
-        </SidebarGroup>
-      </Collapsible>
-    </Fragment>
+    <Collapsible key={folder.id} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton>
+            {folder.name}
+            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {folder.files?.map((file) => (
+              <SidebarMenuSubItem
+                key={file.id}
+                className="overflow-hidden text-ellipsis"
+              >
+                {file.name}
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
   ));
 }
 
