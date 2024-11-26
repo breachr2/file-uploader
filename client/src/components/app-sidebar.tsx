@@ -19,6 +19,8 @@ import {
   SidebarMenuButton,
   SidebarMenuSub,
   SidebarMenuSubItem,
+  SidebarMenuSkeleton,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 function AppSidebar() {
@@ -30,6 +32,9 @@ function AppSidebar() {
     const fetchFolders = async () => {
       setLoading(true);
       try {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 2000);
+        });
         const response = await fetch(`${API_URL}/folders`);
         const data = await response.json();
         setFolders(data);
@@ -46,9 +51,14 @@ function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <DialogGroup />
-        <SidebarMenu>
-          {folders && <FolderMenuItem folders={folders} />}
-        </SidebarMenu>
+        <SidebarSeparator />
+        {loading ? (
+          <SidebarSkeleton />
+        ) : (
+          <SidebarMenu>
+            {folders && <FolderMenuItem folders={folders} />}
+          </SidebarMenu>
+        )}
       </SidebarContent>
     </Sidebar>
   );
@@ -97,6 +107,18 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
       </SidebarMenuItem>
     </Collapsible>
   ));
+}
+
+function SidebarSkeleton() {
+  return (
+    <SidebarMenu>
+      {Array.from({ length: 8 }).map((_, index) => (
+        <SidebarMenuItem key={index}>
+          <SidebarMenuSkeleton />
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
 }
 
 export default AppSidebar;
