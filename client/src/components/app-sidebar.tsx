@@ -25,26 +25,20 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
 
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { authStatus } = useContext(AuthContext);
-
-  console.log(authStatus);
 
   useEffect(() => {
     const fetchFolders = async () => {
       setLoading(true);
       try {
-        // await new Promise((resolve) => {
-        //   // setTimeout(resolve, 2000);
-        // });
-        const response = await fetch(`${API_URL}/folders`);
+        const response = await fetch(`${API_URL}/folders`, {
+          credentials: "include",
+        });
+
         const data = await response.json();
         setFolders(data);
       } catch (err) {
@@ -60,7 +54,8 @@ function AppSidebar() {
     const response = await fetch(`${API_URL}/log-out`, {
       credentials: "include",
     });
-    const res = await response.json();
+    const data = await response.json();
+    console.log(data);
     navigate("/auth");
   }
 

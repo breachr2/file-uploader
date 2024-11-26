@@ -6,15 +6,12 @@ import { GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 async function getFolders(req: Request, res: Response) {
-  // const userId = (req.user as User)?.id || null;
-  // const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  // if (folders.length !== 0) {
-  //   return res.render("folders", { folders: folders });
-  // }
-  // res.render("folders");
-
+  const userId = (req.user as User)?.id || null;
   try {
-    const folders = await prisma.folder.findMany({ include: { files: true } });
+    const folders = await prisma.folder.findMany({
+      where: { userId },
+      include: { files: true },
+    });
     res.json(folders);
   } catch (err) {
     res.status(401).json("Failed to fetch folders");
@@ -27,19 +24,16 @@ function getFolderCreateForm(req: Request, res: Response) {
 
 async function postFolderCreateForm(req: Request, res: Response) {
   const { folderName } = req.body;
-  res.json("Success")
-
-  // TODO
-  // const userId = (req.user as User)?.id;
+  const userId = (req.user as User)?.id;
 
   try {
-    // await prisma.folder.create({ data: { name: folder_name, userId: userId } });
-    await prisma.folder.create({ data: { name: folderName} });
+    const newFolder = await prisma.folder.create({
+      data: { name: folderName, userId: userId },
+    });
+    res.status(201).json(newFolder);
   } catch (err) {
-    console.log(err);
+    res.json("A server error has occured.");
   }
-
-  res.redirect("/folders");
 }
 
 async function getFolderById(req: Request, res: Response) {

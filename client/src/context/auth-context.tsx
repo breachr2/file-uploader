@@ -12,7 +12,10 @@ type AuthContextType = {
   setAuthStatus: React.Dispatch<React.SetStateAction<AuthStatus>>;
 };
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType>({
+  authStatus: { isAuthenticated: false, user: null },
+  setAuthStatus: () => {},
+});
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authStatus, setAuthStatus] = useState<AuthStatus>({
