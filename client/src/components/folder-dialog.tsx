@@ -12,6 +12,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
 import { API_URL } from "@/lib/constants";
+import RedAsterisk from "./ui/red-asterisk";
 
 function FolderDialog() {
   const [folderName, setFolderName] = useState("");
@@ -46,7 +47,9 @@ function FolderDialog() {
         <div>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <Label htmlFor="folder">Name</Label>
+              <Label htmlFor="folder">
+                Name <RedAsterisk />
+              </Label>
               <Input
                 type="text"
                 name="name"

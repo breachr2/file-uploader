@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Submit from "@/components/ui/submit";
 import { API_URL } from "@/lib/constants";
+import RedAsterisk from "@/components/ui/red-asterisk";
 
 function SignInCard() {
   const [username, setUsername] = useState("");
@@ -29,8 +30,8 @@ function SignInCard() {
           "Content-Type": "application/json",
         },
       });
-      const res = await response.json()
-      console.log(res)
+      const res = await response.json();
+      console.log(res);
     } catch (err) {
       setError({ message: "An unknown error has occured" });
     } finally {
@@ -48,7 +49,9 @@ function SignInCard() {
       </CardHeader>
       <CardContent>
         <div>
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username">
+            Username <RedAsterisk />
+          </Label>
           <Input
             name="username"
             id="username"
@@ -58,7 +61,9 @@ function SignInCard() {
           />
         </div>
         <div>
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">
+            Password <RedAsterisk />
+          </Label>
           <Input
             type="password"
             name="password"

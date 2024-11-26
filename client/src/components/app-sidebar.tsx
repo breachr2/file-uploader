@@ -32,9 +32,9 @@ function AppSidebar() {
     const fetchFolders = async () => {
       setLoading(true);
       try {
-        await new Promise((resolve) => {
-          setTimeout(resolve, 2000);
-        });
+        // await new Promise((resolve) => {
+        //   // setTimeout(resolve, 2000);
+        // });
         const response = await fetch(`${API_URL}/folders`);
         const data = await response.json();
         setFolders(data);
@@ -49,7 +49,7 @@ function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="bg-sidebar-accent">
         <DialogGroup />
         <SidebarSeparator />
         {loading ? (
@@ -99,7 +99,7 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
                 key={file.id}
                 className="overflow-hidden text-ellipsis"
               >
-                {file.name}
+                <SidebarMenuButton>{file.name}</SidebarMenuButton>
               </SidebarMenuSubItem>
             ))}
           </SidebarMenuSub>

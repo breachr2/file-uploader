@@ -1,10 +1,6 @@
 import AppSidebar from "@/components/app-sidebar";
 import { Outlet } from "react-router-dom";
-import {
-  SidebarTrigger,
-  SidebarProvider,
-  SidebarInset,
-} from "@/components/ui/sidebar";
+import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
 
 function Layout() {
   return (
@@ -14,7 +10,8 @@ function Layout() {
       </header> */}
       <SidebarProvider>
         <AppSidebar />
-        <main className="border-2 border-red-200 w-full">
+
+        <main className="w-full bg-secondary ">
           <SidebarTrigger />
           <Outlet />
         </main>

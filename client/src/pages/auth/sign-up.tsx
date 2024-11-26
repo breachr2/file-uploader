@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { API_URL } from "@/lib/constants";
 import Submit from "@/components/ui/submit";
+import RedAsterisk from "@/components/ui/red-asterisk";
 
 function SignUpCard() {
   const [formData, setFormData] = useState({
@@ -47,7 +48,6 @@ function SignUpCard() {
           message: errorData.error || "An unknown error has occured",
         });
       }
-
     } catch (err: any) {
       setError({
         message: "Failed to connect to the server. Please try again.",
@@ -75,7 +75,9 @@ function SignUpCard() {
       <CardContent>
         <form>
           <div>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">
+              Username <RedAsterisk />
+            </Label>
             <Input
               name="username"
               id="username"
@@ -85,7 +87,9 @@ function SignUpCard() {
             />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">
+              Password <RedAsterisk />
+            </Label>
             <Input
               type="password"
               name="password"
@@ -96,7 +100,9 @@ function SignUpCard() {
             />
           </div>
           <div>
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">
+              Confirm Password <RedAsterisk />
+            </Label>
             <Input
               type="password"
               name="confirmPassword"

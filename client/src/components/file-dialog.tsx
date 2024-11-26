@@ -12,6 +12,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
 import Submit from "./ui/submit";
+import RedAsterisk from "./ui/red-asterisk";
 
 function FileDialog() {
   const [file, setFile] = useState<File | null>(null);
@@ -34,13 +35,13 @@ function FileDialog() {
     formData.append("file", file);
 
     try {
-      // const result = await fetch(`${apiUrl}/files/upload-file`, {
-      //   method: "POST",
-      //   body: formData,
-      // });
-      // const data = await result.json();
-      // console.log(data);
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      const result = await fetch(`${apiUrl}/files/upload-file`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await result.json();
+      console.log(data);
+      await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (err) {
       console.log(err);
     } finally {
@@ -62,7 +63,9 @@ function FileDialog() {
         <div>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <Label htmlFor="file">File</Label>
+              <Label htmlFor="file">
+                File <RedAsterisk />
+              </Label>
               <Input
                 type="file"
                 name="name"
