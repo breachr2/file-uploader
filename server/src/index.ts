@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import path from "node:path";
 import passport from "passport";
 import sessionConfig from "./config/sessionConfig";
@@ -8,6 +8,7 @@ import folderRouter from "./routes/folderRoutes";
 import prisma from "./config/prisma";
 import cors from "cors";
 import "./middleware/passport";
+import { MulterError } from "multer";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -15,10 +16,10 @@ const PORT = process.env.PORT || 8000;
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "../src/views"));
 
-app.use(cors({ origin : 'http://localhost:5173', credentials : true}));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(sessionConfig);
 app.use(passport.session());
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter);
@@ -35,6 +36,19 @@ app.get("/", async (req: Request, res: Response) => {
   }
 
   res.render("index", { user: req.user, sessionId: session?.sid });
+});
+
+
+// Catch all error route
+app.use((err: any, req: Request, res: Response, next : NextFunction) => {
+  if (err instanceof MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      res.status(400).json({ error: "File size exceeds the 50 MB limit" });
+      return;
+    }
+  }
+
+  res.status(500).json({ error: "A server error has occured" });
 });
 
 app.listen(PORT);

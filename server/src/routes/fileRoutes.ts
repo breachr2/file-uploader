@@ -9,13 +9,14 @@ import {
 } from "../controllers/fileController";
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// 50 MB file size limit
+const upload = multer({ storage: storage, limits: { fileSize : 50 * 1024 * 1024} }); 
 
 const fileRouter = Router();
 
 fileRouter.get("/", getFiles);
 fileRouter.get("/upload-file", getFileForm);
-fileRouter.post("/upload-file", isAuth, upload.single("file"), postFileForm);
+fileRouter.post("/", isAuth, upload.single("file"), postFileForm);
 fileRouter.get("/:fileId/download", isAuth, getFileDownload);
 
 export default fileRouter;

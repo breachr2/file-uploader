@@ -13,10 +13,16 @@ export function formatDate(date: string) {
   return `${monthName} ${newDate.getDate()}, ${newDate.getFullYear()}`;
 }
 
-export function formatFileSize(fileSize : number) {
-  if (fileSize) {
+export function formatFileSize(fileSize: number) {
+  let formattedFileSize: string;
 
-  } else if (fileSize) {
-    
+  if (fileSize < 1024) {
+    formattedFileSize = `${fileSize} bytes`;
+  } else if (fileSize < 1024 ** 2) {
+    formattedFileSize = `${(fileSize / 1024).toFixed(0)} kB`;
+  } else {
+    formattedFileSize = `${(fileSize / 1024 ** 2).toFixed(2)} mB`;
   }
+
+  return formattedFileSize
 }

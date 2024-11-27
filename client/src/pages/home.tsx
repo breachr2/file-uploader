@@ -2,7 +2,7 @@ import { API_URL } from "@/lib/constants";
 import { useEffect, useState } from "react";
 import { FolderClosed, FileText } from "lucide-react";
 import { Folder, File } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatFileSize } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import {
   Sheet,
@@ -16,7 +16,6 @@ import {
 function Home() {
   const [folders, setFolders] = useState<Folder[] | null>(null);
   const [files, setFiles] = useState<File[] | null>(null);
-  console.log(files);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,14 +79,14 @@ const FileItem = ({ file }: { file: File }) => {
           <p className="flex items-center gap-2 col-span-2 p-2">
             <FileText size={16} /> {file.name}
           </p>
-          <p className="col-span-1 p-2">{file.size}</p>
+          <p className="col-span-1 p-2">{formatFileSize(file.size)}</p>
           <p className="col-span-1 p-2">{formatDate(file.createdAt)}</p>
         </div>
       </SheetTrigger>
       <SheetContent >
         <SheetHeader>File Information</SheetHeader>
         <SheetDescription>Name: {file.name}</SheetDescription>
-        <SheetDescription>Size: {file.size}</SheetDescription>
+        <SheetDescription>Size: {formatFileSize(file.size)}</SheetDescription>
         <SheetDescription>Created At: {formatDate(file.createdAt)}</SheetDescription>
         <SheetFooter>This is sheet footer</SheetFooter>
       </SheetContent>

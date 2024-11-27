@@ -5,6 +5,7 @@ import s3Client from "../config/s3Client";
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { User } from "@prisma/client";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Prisma } from "@prisma/client";
 
 const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");
@@ -14,14 +15,14 @@ async function getFiles(req: Request, res: Response) {
   const userId = (req.user as User)?.id;
 
   if (!userId) {
-    res.json("Wrong user")
-    return
+    res.json("Wrong user");
+    return;
   }
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
   });
-  res.json(files)
+  res.json(files);
 }
 
 async function getFileForm(req: Request, res: Response) {
@@ -35,25 +36,19 @@ async function postFileForm(req: Request, res: Response) {
   const { size, mimetype, buffer } = req.file as Express.Multer.File;
   const randomImageName = generateRandomName();
 
-  // If user selects a folder when creating file
-  if (req.body.folderId !== "") {
-    await prisma.file.create({
-      data: {
-        name: randomImageName,
-        size: size,
-        userId: userId,
-        folderId: Number(req.body.folderId),
-      },
-    });
-  } else {
-    await prisma.file.create({
-      data: {
-        name: randomImageName,
-        size: size,
-        userId: userId,
-      },
-    });
+  const fileData: Prisma.FileCreateInput = {
+    name: randomImageName,
+    size: size,
+    User: { connect: { id: userId } },
+    mimetype: mimetype,
+  };
+
+  if (req.body.folderId) {
+    fileData.Folder = { connect: { id: Number(req.body.folderId) } };
   }
+
+  const newFile = await prisma.file.create({ data: fileData });
+
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: randomImageName,
@@ -63,7 +58,7 @@ async function postFileForm(req: Request, res: Response) {
 
   const command = new PutObjectCommand(params);
   await s3Client.send(command);
-  res.redirect("/");
+  res.json(newFile);
 }
 
 async function getFileDownload(req: Request, res: Response) {

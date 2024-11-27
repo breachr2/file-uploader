@@ -13,11 +13,11 @@ import { Label } from "./ui/label";
 import { useState } from "react";
 import Submit from "./ui/submit";
 import RedAsterisk from "./ui/red-asterisk";
+import { API_URL } from "@/lib/constants";
 
 function FileDialog() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_BASE_URL;
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
@@ -35,9 +35,10 @@ function FileDialog() {
     formData.append("file", file);
 
     try {
-      const result = await fetch(`${apiUrl}/files/upload-file`, {
+      const result = await fetch(`${API_URL}/files`, {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
       const data = await result.json();
       console.log(data);

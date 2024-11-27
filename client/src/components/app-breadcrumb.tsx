@@ -10,7 +10,6 @@ import { Link, useLocation } from "react-router-dom";
 function AppBreadcrumb({ ...rest }) {
   const location = useLocation();
   const pathname = location.pathname.split("/");
-  console.log(pathname);
 
   return (
     <Breadcrumb {...rest}>
