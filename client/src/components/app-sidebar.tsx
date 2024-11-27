@@ -72,7 +72,7 @@ function AppSidebar() {
           </SidebarMenu>
         )}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border">
         <Button onClick={handleClick}>Sign Out</Button>
       </SidebarFooter>
     </Sidebar>
@@ -102,7 +102,7 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           <Link to={`folders/${folder.id}`}>
-            <SidebarMenuButton>
+            <SidebarMenuButton className="hover:bg-hover">
               {folder.name}
               {folder.files.length > 0 && (
                 <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
@@ -112,7 +112,7 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <SidebarMenuSub>
+          <SidebarMenuSub className="hover:bg-hover">
             {folder.files?.map((file) => (
               <SidebarMenuSubItem
                 key={file.id}

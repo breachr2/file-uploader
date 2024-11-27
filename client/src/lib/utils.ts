@@ -19,9 +19,9 @@ export function formatFileSize(fileSize: number) {
   if (fileSize < 1024) {
     formattedFileSize = `${fileSize} bytes`;
   } else if (fileSize < 1024 ** 2) {
-    formattedFileSize = `${(fileSize / 1024).toFixed(0)} kB`;
+    formattedFileSize = `${(fileSize / 1024).toFixed(1)} kB`;
   } else {
-    formattedFileSize = `${(fileSize / 1024 ** 2).toFixed(2)} mB`;
+    formattedFileSize = `${(fileSize / 1024 ** 2).toFixed(1)} mB`;
   }
 
   return formattedFileSize

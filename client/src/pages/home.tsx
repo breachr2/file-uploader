@@ -4,6 +4,7 @@ import { FolderClosed, FileText } from "lucide-react";
 import { Folder, File } from "@/lib/types";
 import { formatDate, formatFileSize } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -38,18 +39,20 @@ function Home() {
   }, []);
 
   return (
-    <div className=" h-full flex flex-col gap-1">
-      <div className="grid grid-cols-4 text-md">
-        <p className="col-span-2 hover:bg-gray-300 rounded-sm p-2 cursor-pointer">
+    <div className="h-full flex flex-col gap-2">
+      <div className="grid grid-cols-4 text-md ">
+        <p className="col-span-2 hover:bg-hover rounded-sm px-2 py-1 cursor-pointer">
           Name
         </p>
-        <p className="col-span-1 hover:bg-gray-300 rounded-sm  p-2 cursor-pointer">
+        <p className="col-span-1 hover:bg-hover  rounded-sm px-2 py-1 cursor-pointer">
           Size
         </p>
-        <p className="col-span-1 hover:bg-gray-300 rounded-sm  p-2 cursor-pointer">
+        <p className="col-span-1 hover:bg-hover  rounded-sm px-2 py-1 cursor-pointer">
           Created
         </p>
       </div>
+
+      <Separator className="bg-neutral-800" />
       {folders &&
         folders.map((folder) => <FolderItem key={folder.id} folder={folder} />)}
       {files && files.map((file) => <FileItem key={file.id} file={file} />)}
@@ -60,7 +63,7 @@ function Home() {
 const FolderItem = ({ folder }: { folder: Folder }) => {
   return (
     <Link to={`/folders/${folder.id}`}>
-      <div className="grid grid-cols-4 cursor-pointer hover:bg-neutral-500 bg-neutral-700 text-background rounded-sm text-sm">
+      <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md  rounded-sm text-sm border">
         <p className="flex items-center gap-2 col-span-2 p-2">
           <FolderClosed size={16} /> {folder.name}
         </p>
@@ -75,7 +78,7 @@ const FileItem = ({ file }: { file: File }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="grid grid-cols-4 cursor-pointer hover:bg-neutral-500 bg-neutral-700 text-background rounded-sm text-sm">
+        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md  rounded-sm text-sm  border-border border">
           <p className="flex items-center gap-2 col-span-2 p-2">
             <FileText size={16} /> {file.name}
           </p>
@@ -83,36 +86,16 @@ const FileItem = ({ file }: { file: File }) => {
           <p className="col-span-1 p-2">{formatDate(file.createdAt)}</p>
         </div>
       </SheetTrigger>
-      <SheetContent >
+      <SheetContent>
         <SheetHeader>File Information</SheetHeader>
         <SheetDescription>Name: {file.name}</SheetDescription>
         <SheetDescription>Size: {formatFileSize(file.size)}</SheetDescription>
-        <SheetDescription>Created At: {formatDate(file.createdAt)}</SheetDescription>
+        <SheetDescription>
+          Created At: {formatDate(file.createdAt)}
+        </SheetDescription>
         <SheetFooter>This is sheet footer</SheetFooter>
       </SheetContent>
     </Sheet>
-  );
-};
-
-const FolderFileItem = ({
-  name,
-  size,
-  createdDate,
-}: {
-  name: string;
-  size: number | null;
-  createdDate: string;
-}) => {
-  return (
-    <Link to="">
-      <div className="grid grid-cols-4 cursor-pointer hover:bg-neutral-500 bg-neutral-700 text-background rounded-sm text-sm">
-        <p className="flex items-center gap-2 col-span-2 p-2">
-          <FolderClosed size={16} /> {name}
-        </p>
-        <p className="col-span-1 p-2">{size || "--"}</p>
-        <p className="col-span-1 p-2">{formatDate(createdDate)}</p>
-      </div>
-    </Link>
   );
 };
 

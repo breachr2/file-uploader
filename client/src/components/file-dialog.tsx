@@ -52,7 +52,7 @@ function FileDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full">New File</Button>
+        <Button className="w-full border ">New File</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
