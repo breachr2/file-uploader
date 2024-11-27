@@ -14,13 +14,14 @@ async function getFiles(req: Request, res: Response) {
   const userId = (req.user as User)?.id;
 
   if (!userId) {
-    return res.render("files");
+    res.json("Wrong user")
+    return
   }
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
   });
-  res.render("files", { files });
+  res.json(files)
 }
 
 async function getFileForm(req: Request, res: Response) {

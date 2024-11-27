@@ -1,22 +1,39 @@
 import { API_URL } from "@/lib/constants";
 import { useEffect, useState } from "react";
-import { FolderClosed } from "lucide-react";
-import { Folder } from "@/lib/types";
+import { FolderClosed, FileText } from "lucide-react";
+import { Folder, File } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 function Home() {
   const [folders, setFolders] = useState<Folder[] | null>(null);
-  console.log(folders);
+  const [files, setFiles] = useState<File[] | null>(null);
+  console.log(files);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${API_URL}/folders`, {
-        credentials: "include",
-      });
-      const data = await response.json();
+      const [folderResponse, fileResponse] = await Promise.all([
+        fetch(`${API_URL}/folders`, {
+          credentials: "include",
+        }),
+        fetch(`${API_URL}/files`, {
+          credentials: "include",
+        }),
+      ]);
 
-      setFolders(data);
+      const folders = await folderResponse.json();
+      const files = await fileResponse.json();
+
+      setFolders(folders);
+      setFiles(files);
     };
     fetchData();
   }, []);
@@ -36,6 +53,7 @@ function Home() {
       </div>
       {folders &&
         folders.map((folder) => <FolderItem key={folder.id} folder={folder} />)}
+      {files && files.map((file) => <FileItem key={file.id} file={file} />)}
     </div>
   );
 }
@@ -55,7 +73,26 @@ const FolderItem = ({ folder }: { folder: Folder }) => {
 };
 
 const FileItem = ({ file }: { file: File }) => {
-  
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <div className="grid grid-cols-4 cursor-pointer hover:bg-neutral-500 bg-neutral-700 text-background rounded-sm text-sm">
+          <p className="flex items-center gap-2 col-span-2 p-2">
+            <FileText size={16} /> {file.name}
+          </p>
+          <p className="col-span-1 p-2">{file.size}</p>
+          <p className="col-span-1 p-2">{formatDate(file.createdAt)}</p>
+        </div>
+      </SheetTrigger>
+      <SheetContent >
+        <SheetHeader>File Information</SheetHeader>
+        <SheetDescription>Name: {file.name}</SheetDescription>
+        <SheetDescription>Size: {file.size}</SheetDescription>
+        <SheetDescription>Created At: {formatDate(file.createdAt)}</SheetDescription>
+        <SheetFooter>This is sheet footer</SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
 };
 
 const FolderFileItem = ({

@@ -12,3 +12,11 @@ export function formatDate(date: string) {
   // Returns month, day, year
   return `${monthName} ${newDate.getDate()}, ${newDate.getFullYear()}`;
 }
+
+export function formatFileSize(fileSize : number) {
+  if (fileSize) {
+
+  } else if (fileSize) {
+    
+  }
+}
