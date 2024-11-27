@@ -112,13 +112,12 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <SidebarMenuSub className="hover:bg-hover">
+          <SidebarMenuSub>
             {folder.files?.map((file) => (
-              <SidebarMenuSubItem
-                key={file.id}
-                className="overflow-hidden text-ellipsis"
-              >
-                <SidebarMenuButton>{file.name}</SidebarMenuButton>
+              <SidebarMenuSubItem key={file.id}>
+                <SidebarMenuButton className="hover:bg-hover overflow-hidden text-ellipsis">
+                  {file.name}
+                </SidebarMenuButton>
               </SidebarMenuSubItem>
             ))}
           </SidebarMenuSub>

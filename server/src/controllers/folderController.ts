@@ -34,12 +34,14 @@ async function postFolderCreateForm(req: Request, res: Response) {
 
 async function getFolderById(req: Request, res: Response) {
   const folderId = Number(req.params.folderId);
+  const userId = (req.user as User).id;
 
   const files = await prisma.file.findMany({
-    where: { folderId: folderId },
+    where: { folderId: folderId, userId },
     include: { Folder: true },
   });
 
+  // Retrieve each file from S3
   for (const file of files) {
     const getObjectParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -51,7 +53,7 @@ async function getFolderById(req: Request, res: Response) {
     file.imageUrl = url;
   }
 
-  res.render("files", { files });
+  res.json(files);
 }
 
 async function postFolderUpdateForm(req: Request, res: Response) {

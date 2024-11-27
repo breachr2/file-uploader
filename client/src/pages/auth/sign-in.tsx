@@ -35,7 +35,7 @@ function SignInCard() {
       });
       const res = await response.json();
       console.log(res);
-      navigate("/");
+      navigate("/folders");
     } catch (err) {
       setError({ message: "An unknown error has occured" });
     } finally {
