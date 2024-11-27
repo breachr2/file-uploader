@@ -29,11 +29,13 @@ model Session {
 }
 
 model Folder {
-  id     Int    @id @default(autoincrement())
-  name   String @unique
-  files  File[]
-  User   User?  @relation(fields: [userId], references: [id])
-  userId Int?
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  files     File[]
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
 
 model File {

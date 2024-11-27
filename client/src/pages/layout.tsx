@@ -12,8 +12,8 @@ function Layout() {
       <SidebarProvider>
         <AppSidebar />
 
-        <main className="flex flex-col w-full bg-secondary border-2 border-red-300 p-2">
-          <SidebarTrigger />
+        <main className="flex flex-col w-full bg-secondary border-2 border-red-300 p-2 gap-4">
+          {/* <SidebarTrigger /> */}
           <AppBreadcrumb />
           <Outlet />
         </main>

@@ -12,6 +12,7 @@ export type Folder = {
   name: string;
   userId: number;
   files: File[] | [];
+  createdAt: string;
 };
 
 export type User = {

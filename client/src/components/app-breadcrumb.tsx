@@ -20,13 +20,15 @@ function AppBreadcrumb({ ...rest }) {
             <Link to="/folders">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
         {pathname.length === 3 && (
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={`/folders/${pathname[2]}`}>Folder {pathname[2]}</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to={`/folders/${pathname[2]}`}>Folder {pathname[2]}</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
         )}
       </BreadcrumbList>
     </Breadcrumb>
