@@ -2,17 +2,17 @@ import { Router } from "express";
 import { isAuth } from "../middleware/authMiddleware";
 import {
   getFolders,
-  postFolderCreateForm,
+  postFolderCreate,
   getFolderById,
-  postFolderUpdateForm,
+  postFolderUpdate,
   deleteFolderById,
 } from "../controllers/folderController";
 const folderRouter = Router();
 
 folderRouter.get("/", getFolders);
-folderRouter.post("/", postFolderCreateForm);
+folderRouter.post("/", isAuth, postFolderCreate);
 folderRouter.get("/:folderId", isAuth, getFolderById);
-folderRouter.post("/:folderId", isAuth, postFolderUpdateForm);
+folderRouter.post("/:folderId", isAuth, postFolderUpdate);
 folderRouter.post("/:folderId/delete", isAuth, deleteFolderById);
 
 export default folderRouter;

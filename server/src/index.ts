@@ -9,6 +9,7 @@ import prisma from "./config/prisma";
 import cors from "cors";
 import "./middleware/passport";
 import { MulterError } from "multer";
+import CustomError from "./utils/customError";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -38,14 +39,20 @@ app.get("/", async (req: Request, res: Response) => {
   res.render("index", { user: req.user, sessionId: session?.sid });
 });
 
-
 // Catch all error route
-app.use((err: any, req: Request, res: Response, next : NextFunction) => {
-  if (err instanceof MulterError) {
-    if (err.code === "LIMIT_FILE_SIZE") {
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  if (error instanceof MulterError) {
+    if (error.code === "LIMIT_FILE_SIZE") {
       res.status(400).json({ error: "File size exceeds the 50 MB limit" });
       return;
     }
+  }
+
+  if (error instanceof CustomError) {
+    res
+      .status(error.statusCode)
+      .json({ errorCode: error.errorCode, error: error.message });
+    return;
   }
 
   res.status(500).json({ error: "A server error has occured" });
