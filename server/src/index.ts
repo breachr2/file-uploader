@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8000;
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "../src/views"));
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(sessionConfig);
 app.use(passport.session());
 app.use(express.json());

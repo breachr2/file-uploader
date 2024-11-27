@@ -6,32 +6,22 @@ import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { User } from "@prisma/client";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Prisma } from "@prisma/client";
+import asyncHandler from "express-async-handler";
 
 const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");
 };
 
-async function getFiles(req: Request, res: Response) {
+const getFiles = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
-
-  if (!userId) {
-    res.json("Wrong user");
-    return;
-  }
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
   });
   res.json(files);
-}
+});
 
-async function getFileForm(req: Request, res: Response) {
-  const userId = (req.user as User)?.id || null;
-  const folders = await prisma.folder.findMany({ where: { userId: userId } });
-  res.render("upload-file-form", { folders });
-}
-
-async function postFileForm(req: Request, res: Response) {
+const postFileCreate = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
   const { size, mimetype, buffer } = req.file as Express.Multer.File;
   const randomImageName = generateRandomName();
@@ -59,7 +49,8 @@ async function postFileForm(req: Request, res: Response) {
   const command = new PutObjectCommand(params);
   await s3Client.send(command);
   res.json(newFile);
-}
+});
+
 
 async function getFileDownload(req: Request, res: Response) {
   const userId = (req.user as User)?.id;
@@ -87,4 +78,4 @@ async function getFileDownload(req: Request, res: Response) {
   res.render("files", { file, imageUrl: url });
 }
 
-export { getFiles, getFileForm, postFileForm, getFileDownload };
+export { getFiles, postFileCreate, getFileDownload };

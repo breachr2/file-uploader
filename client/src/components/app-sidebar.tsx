@@ -24,11 +24,13 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import DeleteFolderDialog from "./delete-folder-dialog";
 
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,15 +82,22 @@ function AppSidebar() {
 }
 
 function DialogGroup() {
+  // If there are url params, then a folder is selected
+  const { folderId } = useParams();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <FolderDialog />
+            <FolderDialog actionType={folderId ? "update" : "create"} />
           </SidebarMenuItem>
           <SidebarMenuItem>
             <FileDialog />
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            {folderId && <DeleteFolderDialog folderId={Number(folderId)}/>}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>

@@ -1,0 +1,1 @@
+export const INVALID_AUTHENTICATION = 300;

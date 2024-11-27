@@ -13,6 +13,6 @@ folderRouter.get("/", getFolders);
 folderRouter.post("/", isAuth, postFolderCreate);
 folderRouter.get("/:folderId", isAuth, getFolderById);
 folderRouter.post("/:folderId", isAuth, postFolderUpdate);
-folderRouter.post("/:folderId/delete", isAuth, deleteFolderById);
+folderRouter.delete("/:folderId", isAuth, deleteFolderById);
 
 export default folderRouter;

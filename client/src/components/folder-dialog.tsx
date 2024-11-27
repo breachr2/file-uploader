@@ -14,7 +14,9 @@ import { useState } from "react";
 import { API_URL } from "@/lib/constants";
 import RedAsterisk from "./ui/red-asterisk";
 
-function FolderDialog() {
+type ActionType = "create" | "update";
+
+function FolderDialog({ actionType }: { actionType: ActionType }) {
   const [folderName, setFolderName] = useState("");
 
   async function handleSubmit(e: any) {
@@ -36,13 +38,19 @@ function FolderDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full border">New Folder</Button>
+        <Button className="w-full border">
+          {actionType === "create" ? "New Folder" : "Update Folder"}
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Folder</DialogTitle>
+          <DialogTitle>
+            {actionType === "create" ? "New Folder" : "Update Folder"}
+          </DialogTitle>
           <DialogDescription>
-            Enter a folder name, click Submit when you're done.
+            {actionType === "create"
+              ? "Enter a folder name, click submit when you're done."
+              : "Choose a new folder name, click submit when you're done."}
           </DialogDescription>
         </DialogHeader>
         <div>
