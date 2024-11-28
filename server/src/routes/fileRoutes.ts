@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { isAuth } from "../middleware/authMiddleware";
+import { isAuthenticated } from "../middleware/authMiddleware";
 import {
   getFiles,
   postFileCreate,
@@ -17,7 +17,7 @@ const upload = multer({
 const fileRouter = Router();
 
 fileRouter.get("/", getFiles);
-fileRouter.post("/", isAuth, upload.single("file"), postFileCreate);
-fileRouter.get("/:fileId/download", isAuth, getFileDownload);
+fileRouter.post("/", isAuthenticated, upload.single("file"), postFileCreate);
+fileRouter.get("/:fileId/download", isAuthenticated, getFileDownload);
 
 export default fileRouter;

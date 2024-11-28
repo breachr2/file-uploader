@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { INVALID_AUTHENTICATION } from "../utils/errorConstants";
 import CustomError from "../utils/customError";
 
-export function isAuth(req: Request, res: Response, next: NextFunction) {
+export function isAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (req.isAuthenticated()) {
     next();
   } else {

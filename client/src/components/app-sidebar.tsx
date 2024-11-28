@@ -30,7 +30,6 @@ import DeleteFolderDialog from "./delete-folder-dialog";
 function AppSidebar() {
   const [folders, setFolders] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,7 +41,9 @@ function AppSidebar() {
         });
 
         const data = await response.json();
-        setFolders(data);
+        if (response.ok) {
+          setFolders(data);
+        }
       } catch (err) {
         console.log(err);
       } finally {
@@ -97,7 +98,7 @@ function DialogGroup() {
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            {folderId && <DeleteFolderDialog folderId={Number(folderId)}/>}
+            {folderId && <DeleteFolderDialog folderId={Number(folderId)} />}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>

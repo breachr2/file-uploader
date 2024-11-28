@@ -7,20 +7,35 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import asyncHandler from "express-async-handler";
 import CustomError from "../utils/customError";
 import { NextFunction } from "express-serve-static-core";
+import { INVALID_AUTHORIZATION } from "../utils/errorConstants";
 
-const getFolders = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req.user as User)?.id;
-  const folders = await prisma.folder.findMany({
-    where: { userId },
-    include: { files: true },
-  });
+const getFolders = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.user as User)?.id || null;
 
-  res.json(folders);
-});
+
+    if (!userId) {
+      return next(
+        new CustomError(
+          INVALID_AUTHORIZATION,
+          "You do not have permissions to access this resource.",
+          403
+        )
+      );
+    }
+
+    const folders = await prisma.folder.findMany({
+      where: { userId: userId },
+      include: { files: true },
+    });
+
+    res.json(folders);
+  }
+);
 
 const postFolderCreate = asyncHandler(async (req: Request, res: Response) => {
   const { folderName } = req.body;
-  const userId = (req.user as User)?.id;
+  const userId = (req.user as User)?.id || null;
   const newFolder = await prisma.folder.create({
     data: { name: folderName, userId: userId },
   });

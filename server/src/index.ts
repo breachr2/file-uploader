@@ -5,11 +5,11 @@ import sessionConfig from "./config/sessionConfig";
 import authRouter from "./routes/authRoutes";
 import fileRouter from "./routes/fileRoutes";
 import folderRouter from "./routes/folderRoutes";
-import prisma from "./config/prisma";
 import cors from "cors";
 import "./middleware/passport";
 import { MulterError } from "multer";
 import CustomError from "./utils/customError";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -27,23 +27,25 @@ app.use(authRouter);
 app.use("/folders", folderRouter);
 app.use("/files", fileRouter);
 
-app.get("/", async (req: Request, res: Response) => {
-  let session = null;
-
-  if (req.isAuthenticated()) {
-    session = await prisma.session.findUnique({
-      where: { sid: req.session.id },
-    });
-  }
-
-  res.render("index", { user: req.user, sessionId: session?.sid });
-});
-
 // Catch all error route
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  
   if (error instanceof MulterError) {
     if (error.code === "LIMIT_FILE_SIZE") {
       res.status(400).json({ error: "File size exceeds the 50 MB limit" });
+      return;
+    }
+  }
+
+  if (error instanceof PrismaClientKnownRequestError) {
+    if (error.code === "P2002") {
+      res.status(400).json({
+        errorCode: "P2002",
+        error: "Username already exists. Please choose a different username.",
+      });
+      return;
+    } else {
+      res.status(400).json({ errorCode: error.code, error: error.message });
       return;
     }
   }

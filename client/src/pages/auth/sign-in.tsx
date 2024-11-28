@@ -24,18 +24,24 @@ function SignInCard() {
 
   async function handleSubmit() {
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`${API_URL}/log-in`, {
         method: "POST",
         body: JSON.stringify({ username, password }),
-        credentials : "include",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      const res = await response.json();
-      console.log(res);
-      navigate("/folders");
+
+      if (response.ok) {
+        navigate("/folders");
+      } else {
+        const error = await response.json();
+        console.log(error);
+        setError({ message: error });
+      }
     } catch (err) {
       setError({ message: "An unknown error has occured" });
     } finally {

@@ -2,20 +2,42 @@ import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import prisma from "../config/prisma";
 import { User } from "@prisma/client";
+import asyncHandler from "express-async-handler";
+import passport from "passport";
 
-function getLogInForm(req: Request, res: Response) {
-  res.render("log-in-form");
+async function postSignIn(req: Request, res: Response, next: NextFunction) {
+  passport.authenticate(
+    "local",
+    function (err: any, user: any, info: any, status: any) {
+      if (err) {
+        return next(err);
+      }
+
+      if (info) {
+        return res.status(401).json(info.message || "Authentication failed");
+      }
+
+      if (!user) {
+        return res.status(401).json("No user");
+      }
+
+      if (user) {
+        req.login(user, (loginErr) => {
+          if (loginErr) {
+            return next(loginErr);
+          }
+          return res.json("Successfully logged in");
+        });
+      }
+    }
+  )(req, res, next);
 }
 
-function getSignUpForm(req: Request, res: Response) {
-  res.render("sign-up-form");
-}
-
-async function postSignUpForm(req: Request, res: Response, next: NextFunction) {
-  const { username, password } = req.body.formData;
-
-  try {
+const postSignUp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { username, password } = req.body.formData;
     const hashedPassword = await bcrypt.hash(password, 10);
+
     await prisma.user.create({
       data: {
         username: username,
@@ -24,19 +46,8 @@ async function postSignUpForm(req: Request, res: Response, next: NextFunction) {
     });
 
     res.status(201).json(`${username} successfuly created. `);
-  } catch (err: any) {
-    // Prisma error code for unique constraint failed on username
-    if ((err.code = "P2002")) {
-      res.status(400).json({
-        error: "Username already exists. Please choose a different username",
-      });
-    } else {
-      res.status(500).json({
-        error: "An error occured during sign-up. Please try again later.",
-      });
-    }
   }
-}
+);
 
 function getLogOut(req: Request, res: Response, next: NextFunction) {
   req.logOut((err) => {
@@ -59,10 +70,4 @@ function getAuthStatus(req: Request, res: Response) {
   res.json({ isAuthenticated: false });
 }
 
-export {
-  getLogInForm,
-  getSignUpForm,
-  postSignUpForm,
-  getLogOut,
-  getAuthStatus,
-};
+export { postSignIn, postSignUp, getLogOut, getAuthStatus };
