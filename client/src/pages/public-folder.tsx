@@ -47,7 +47,8 @@ function PublicFolder() {
     <div className="flex flex-col gap-2">
       {folders &&
         folders.map((folder) => <FolderItem key={folder.id} folder={folder} />)}
-      {publicFiles && publicFiles.map((file) => <FileItem key={file.id} file={file} />)}
+      {publicFiles &&
+        publicFiles.map((file) => <FileItem key={file.id} file={file} />)}
     </div>
   );
 }
@@ -55,7 +56,7 @@ function PublicFolder() {
 const FolderItem = ({ folder }: { folder: Folder }) => {
   return (
     <Link to={`/folders/${folder.id}`}>
-      <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md  rounded-sm text-sm border">
+      <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md rounded-sm text-sm border">
         <p className="flex items-center gap-2 col-span-2 p-2">
           <FolderClosed size={16} /> {folder.name}
         </p>
@@ -70,7 +71,7 @@ export const FileItem = ({ file }: { file: File }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md  rounded-sm text-sm  border-border border">
+        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md rounded-sm text-sm border">
           <p className="flex items-center gap-2 col-span-2 p-2">
             <FileText size={16} /> {file.name}
           </p>

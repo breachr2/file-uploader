@@ -1,6 +1,6 @@
 import FolderDialog from "./folder-dialog";
 import FileDialog from "./file-dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { API_URL } from "@/lib/constants";
 import { ChevronDown } from "lucide-react";
 import { Folder } from "@/lib/types";
@@ -26,13 +26,18 @@ import {
 import { Button } from "./ui/button";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
+import { AuthContext } from "@/context/auth-context";
 
 function AppSidebar() {
-  const [folders, setFolders] = useState(null);
+  const [folders, setFolders] = useState<Folder[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const { authStatus } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!authStatus.isAuthenticated) {
+      return;
+    }
     const fetchFolders = async () => {
       setLoading(true);
       try {
@@ -57,8 +62,6 @@ function AppSidebar() {
     const response = await fetch(`${API_URL}/log-out`, {
       credentials: "include",
     });
-    const data = await response.json();
-    console.log(data);
     navigate("/auth");
   }
 
@@ -75,9 +78,11 @@ function AppSidebar() {
           </SidebarMenu>
         )}
       </SidebarContent>
-      <SidebarFooter className="border">
-        <Button onClick={handleClick}>Sign Out</Button>
-      </SidebarFooter>
+      {authStatus.isAuthenticated && (
+        <SidebarFooter className="border">
+          <Button onClick={handleClick}>Sign Out</Button>
+        </SidebarFooter>
+      )}
     </Sidebar>
   );
 }
@@ -85,7 +90,6 @@ function AppSidebar() {
 function DialogGroup() {
   // If there are url params, then a folder is selected
   const { folderId } = useParams();
-
   return (
     <SidebarGroup>
       <SidebarGroupContent>

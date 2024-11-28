@@ -1,14 +1,19 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { API_URL } from "@/lib/constants";
 import { FileItem } from "./public-folder";
 import { File } from "@/lib/types";
+import { AuthContext } from "@/context/auth-context";
 
 function Folder() {
   const [files, setFiles] = useState<File[] | null>(null);
   const { folderId } = useParams();
+  const { authStatus } = useContext(AuthContext);
 
   useEffect(() => {
+    if (!authStatus.isAuthenticated) {
+      return;
+    }
     const fetchFolderById = async () => {
       try {
         const response = await fetch(`${API_URL}/folders/${folderId}`, {
@@ -22,7 +27,7 @@ function Folder() {
     };
 
     fetchFolderById();
-  }, []);
+  }, [folderId]);
 
   return (
     <div className="flex flex-col gap-2">

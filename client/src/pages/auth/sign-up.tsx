@@ -13,6 +13,7 @@ import { useState } from "react";
 import { API_URL } from "@/lib/constants";
 import Submit from "@/components/ui/submit";
 import RedAsterisk from "@/components/ui/red-asterisk";
+import { useNavigate } from "react-router-dom";
 
 function SignUpCard() {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ function SignUpCard() {
     message: "",
   });
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit() {
     setError(null);
@@ -47,6 +49,8 @@ function SignUpCard() {
         setError({
           message: errorData.error || "An unknown error has occured",
         });
+      } else {
+        navigate("/auth", { replace: true });
       }
     } catch (err: any) {
       setError({
