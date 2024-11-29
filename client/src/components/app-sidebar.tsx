@@ -27,36 +27,47 @@ import { Button } from "./ui/button";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
 import { AuthContext } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
 
 function AppSidebar() {
-  const [folders, setFolders] = useState<Folder[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { data: folders, isLoading } = useQuery({
+    queryKey: ["folders"],
+    queryFn: async () => {
+      const data = await fetch(`${API_URL}/folders`, {
+        credentials: "include",
+      });
+      return data.json();
+    },
+  });
+
+  // const [folders, setFolders] = useState<Folder[] | null>(null);
+  // const [loading, setLoading] = useState(false);
   const { authStatus } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!authStatus.isAuthenticated) {
-      return;
-    }
-    const fetchFolders = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${API_URL}/folders`, {
-          credentials: "include",
-        });
+  // useEffect(() => {
+  //   if (!authStatus.isAuthenticated) {
+  //     return;
+  //   }
+  //   const fetchFolders = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(`${API_URL}/folders`, {
+  //         credentials: "include",
+  //       });
 
-        const data = await response.json();
-        if (response.ok) {
-          setFolders(data);
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFolders();
-  }, [authStatus]);
+  //       const data = await response.json();
+  //       if (response.ok) {
+  //         setFolders(data);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchFolders();
+  // }, [authStatus]);
 
   async function handleClick() {
     const response = await fetch(`${API_URL}/log-out`, {
@@ -70,7 +81,7 @@ function AppSidebar() {
       <SidebarContent className="bg-sidebar-accent">
         <DialogGroup />
         <SidebarSeparator />
-        {loading ? (
+        {isLoading ? (
           <SidebarSkeleton />
         ) : (
           <SidebarMenu>

@@ -24,5 +24,9 @@ export function formatFileSize(fileSize: number) {
     formattedFileSize = `${(fileSize / 1024 ** 2).toFixed(1)} mB`;
   }
 
-  return formattedFileSize
+  return formattedFileSize;
+}
+
+export function wait(duration: number) {
+  return new Promise((resolve) => setTimeout(resolve, duration));
 }

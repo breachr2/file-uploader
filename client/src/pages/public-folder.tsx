@@ -13,35 +13,62 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchFolders = async (): Promise<Folder[]> => {
+  const data = await fetch(`${API_URL}/folders`, {
+    credentials: "include",
+  });
+
+  return data.json();
+};
+
+const fetchPublicFiles = async (): Promise<File[]> => {
+  const data = await fetch(`${API_URL}/files`, {
+    credentials: "include",
+  });
+  return data.json();
+};
 
 function PublicFolder() {
-  const [folders, setFolders] = useState<Folder[] | null>(null);
-  const [publicFiles, setPublicFiles] = useState<File[] | null>(null);
+  const { data: folders } = useQuery({
+    queryKey: ["folders"],
+    queryFn: fetchFolders,
+  });
+
+  const { data: publicFiles } = useQuery({
+    queryKey: ["public-files"],
+    queryFn: fetchPublicFiles,
+  });
+
   const { authStatus } = useContext(AuthContext);
 
-  useEffect(() => {
-    // If user not authenticated, don't fetch data
-    if (!authStatus.isAuthenticated) {
-      return;
-    }
-    const fetchData = async () => {
-      const [folderResponse, fileResponse] = await Promise.all([
-        fetch(`${API_URL}/folders`, {
-          credentials: "include",
-        }),
-        fetch(`${API_URL}/files`, {
-          credentials: "include",
-        }),
-      ]);
+  // const [folders, setFolders] = useState<Folder[] | null>(null);
+  // const [publicFiles, setPublicFiles] = useState<File[] | null>(null);
 
-      const folders = await folderResponse.json();
-      const files = await fileResponse.json();
+  // useEffect(() => {
+  //   // If user not authenticated, don't fetch data
+  //   if (!authStatus.isAuthenticated) {
+  //     return;
+  //   }
+  //   const fetchData = async () => {
+  //     const [folderResponse, fileResponse] = await Promise.all([
+  //       fetch(`${API_URL}/folders`, {
+  //         credentials: "include",
+  //       }),
+  //       fetch(`${API_URL}/files`, {
+  //         credentials: "include",
+  //       }),
+  //     ]);
 
-      setFolders(folders);
-      setPublicFiles(files);
-    };
-    fetchData();
-  }, [authStatus]);
+  //     const folders = await folderResponse.json();
+  //     const files = await fileResponse.json();
+
+  //     setFolders(folders);
+  //     setPublicFiles(files);
+  //   };
+  //   fetchData();
+  // }, [authStatus]);
 
   return (
     <div className="flex flex-col gap-2">
