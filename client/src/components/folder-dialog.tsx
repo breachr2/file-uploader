@@ -14,20 +14,27 @@ import { useState, useContext } from "react";
 import { API_URL } from "@/lib/constants";
 import RedAsterisk from "./ui/red-asterisk";
 import { AuthContext } from "@/context/auth-context";
+import { useParams } from "react-router-dom";
+import Submit from "./ui/submit";
 
 type ActionType = "create" | "update";
 
 function FolderDialog({ actionType }: { actionType: ActionType }) {
   const [folderName, setFolderName] = useState("");
   const [error, setError] = useState<{ message: string } | null>(null);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { authStatus } = useContext(AuthContext);
+  const { folderId } = useParams();
 
-  async function handleSubmit(e: any) {
+  async function handleCreateFolder(e: any) {
     e.preventDefault();
     if (!authStatus.isAuthenticated) {
       setError({ message: "You must be logged in to create a folder." });
       return;
     }
+
+    setLoading(true);
     try {
       const response = await fetch(`${API_URL}/folders`, {
         method: "POST",
@@ -35,15 +42,42 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
         credentials: "include",
         body: JSON.stringify({ folderName }),
       });
-      const result = await response.json();
-      console.log(result);
+      const res = await response.json();
+      console.log(res);
     } catch (err) {
       console.log(err);
+    } finally {
+      setOpen(false);
+      setLoading(false);
+    }
+  }
+
+  async function handleUpdateFolder(e: any) {
+    if (!authStatus.isAuthenticated) {
+      setError({ message: "You must be logged in to create a folder." });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/folders/${folderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ folderName }),
+      });
+      const res = await response.json();
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setOpen(false);
+      setLoading(false);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full border">
           {actionType === "create" ? "New Folder" : "Update Folder"}
@@ -61,7 +95,12 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
           </DialogDescription>
         </DialogHeader>
         <div>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form
+            onSubmit={
+              actionType === "create" ? handleCreateFolder : handleUpdateFolder
+            }
+            className="flex flex-col gap-4"
+          >
             <div>
               <Label htmlFor="folder">
                 Name <RedAsterisk />
@@ -72,11 +111,14 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
                 id="folder"
                 value={folderName}
                 onChange={(e) => setFolderName(e.target.value)}
+                required
               />
             </div>
             {error && <p className="text-red-600">{error.message}</p>}
             <DialogFooter>
-              <Button type="submit">Submit</Button>
+              <Submit isLoading={loading} type="submit">
+                Submit
+              </Submit>
             </DialogFooter>
           </form>
         </div>

@@ -16,8 +16,7 @@ import { API_URL } from "@/lib/constants";
 function DeleteFolderDialog({ folderId }: { folderId: number }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  console.log(error);
+  const [open, setOpen] = useState(false);
 
   async function handleSubmit() {
     console.log(`Deleting folder ${folderId}`);
@@ -37,10 +36,11 @@ function DeleteFolderDialog({ folderId }: { folderId: number }) {
       console.log(err);
     } finally {
       setLoading(false);
+      setOpen(false);
     }
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full">Delete Folder</Button>
       </DialogTrigger>

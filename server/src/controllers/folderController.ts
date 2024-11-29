@@ -13,7 +13,6 @@ const getFolders = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req.user as User)?.id || null;
 
-
     if (!userId) {
       return next(
         new CustomError(
@@ -27,6 +26,7 @@ const getFolders = asyncHandler(
     const folders = await prisma.folder.findMany({
       where: { userId: userId },
       include: { files: true },
+      orderBy: { createdAt: "asc" },
     });
 
     res.json(folders);
@@ -64,16 +64,16 @@ const getFolderById = asyncHandler(async (req: Request, res: Response) => {
   res.json(files);
 });
 
-const postFolderUpdate = asyncHandler(async (req: Request, res: Response) => {
+const patchFolderUpdate = asyncHandler(async (req: Request, res: Response) => {
   const folderId = Number(req.params.folderId);
   const userId = (req.user as User)?.id;
-  await prisma.folder.update({
+  const updatedFolder = await prisma.folder.update({
     where: { id: folderId, userId: userId },
     data: {
-      name: req.body.name,
+      name: req.body.folderName,
     },
   });
-  res.redirect("/folders");
+  res.json(updatedFolder);
 });
 
 const deleteFolderById = asyncHandler(
@@ -113,6 +113,6 @@ export {
   getFolders,
   postFolderCreate,
   getFolderById,
-  postFolderUpdate,
+  patchFolderUpdate,
   deleteFolderById,
 };

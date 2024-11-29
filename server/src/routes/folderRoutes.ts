@@ -4,7 +4,7 @@ import {
   getFolders,
   postFolderCreate,
   getFolderById,
-  postFolderUpdate,
+  patchFolderUpdate,
   deleteFolderById,
 } from "../controllers/folderController";
 const folderRouter = Router();
@@ -12,7 +12,7 @@ const folderRouter = Router();
 folderRouter.get("/", isAuthenticated, getFolders);
 folderRouter.post("/", isAuthenticated, postFolderCreate);
 folderRouter.get("/:folderId", isAuthenticated, getFolderById);
-folderRouter.post("/:folderId", isAuthenticated, postFolderUpdate);
+folderRouter.patch("/:folderId", isAuthenticated, patchFolderUpdate);
 folderRouter.delete("/:folderId", isAuthenticated, deleteFolderById);
 
 export default folderRouter;
