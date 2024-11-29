@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8000;
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "../src/views"));
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(sessionConfig);
 app.use(passport.session());
 app.use(express.json());
@@ -29,7 +29,6 @@ app.use("/files", fileRouter);
 
 // Catch all error route
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-  
   if (error instanceof MulterError) {
     if (error.code === "LIMIT_FILE_SIZE") {
       res.status(400).json({ error: "File size exceeds the 50 MB limit" });

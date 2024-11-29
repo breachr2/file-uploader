@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
+import FolderLayout from "./pages/folder-layout";
 import Folder from "./pages/folder";
 import Auth from "./pages/auth/auth";
 import Layout from "./pages/layout";
@@ -12,9 +12,9 @@ function App() {
       <Routes>
         <Route path="/" index element={<p>Welcome</p>} />
         <Route element={<Layout />}>
-          <Route path="/folders" element={<Home />}>
-            <Route path="/folders" element={<PublicFolder />}/>
-            <Route path="/folders/:folderId" element={<Folder />} />
+          <Route path="/folders" element={<FolderLayout />}>
+            <Route index element={<PublicFolder />} />
+            <Route path=":folderId" element={<Folder />} />
           </Route>
           <Route path="/folders/:folderId/:fileId" element={<p>File</p>} />
         </Route>

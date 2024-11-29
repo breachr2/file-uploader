@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
-function Home() {
+function FolderLayout() {
   return (
     <div className="h-full flex flex-col gap-2">
       <div className="grid grid-cols-4 text-md ">
@@ -22,4 +22,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default FolderLayout;

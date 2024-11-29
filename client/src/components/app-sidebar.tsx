@@ -56,7 +56,7 @@ function AppSidebar() {
       }
     };
     fetchFolders();
-  }, []);
+  }, [authStatus]);
 
   async function handleClick() {
     const response = await fetch(`${API_URL}/log-out`, {
