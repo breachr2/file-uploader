@@ -14,68 +14,66 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useQuery } from "@tanstack/react-query";
+import { wait } from "@/lib/utils";
 
-const fetchFolders = async (): Promise<Folder[]> => {
-  const data = await fetch(`${API_URL}/folders`, {
+export const fetchWithAuth = async (
+  url: string,
+  isAuth: boolean
+): Promise<any> => {
+  if (!isAuth) {
+    throw new Error("You are not autheneticated in. Log in to get started.");
+  }
+
+  const response = await fetch(url, {
     credentials: "include",
   });
 
-  return data.json();
-};
+  if (!response.ok) {
+    throw new Error("Network request failed");
+  }
 
-const fetchPublicFiles = async (): Promise<File[]> => {
-  const data = await fetch(`${API_URL}/files`, {
-    credentials: "include",
-  });
-  return data.json();
+  return response.json();
 };
 
 function PublicFolder() {
-  const { data: folders } = useQuery({
+  const { authStatus } = useContext(AuthContext);
+
+  const fetchFolders = (): Promise<Folder[]> =>
+    fetchWithAuth(`${API_URL}/folders`, authStatus.isAuthenticated);
+
+  const fetchPublicFiles = (): Promise<File[]> =>
+    fetchWithAuth(`${API_URL}/files`, authStatus.isAuthenticated);
+
+  const foldersResult = useQuery({
     queryKey: ["folders"],
     queryFn: fetchFolders,
   });
 
-  const { data: publicFiles } = useQuery({
+  const filesResult = useQuery({
     queryKey: ["public-files"],
     queryFn: fetchPublicFiles,
   });
 
-  const { authStatus } = useContext(AuthContext);
+  if (foldersResult.isError) {
+    return <div className="text-center">{foldersResult.error.message}</div>;
+  }
 
-  // const [folders, setFolders] = useState<Folder[] | null>(null);
-  // const [publicFiles, setPublicFiles] = useState<File[] | null>(null);
+  if (filesResult.isError) {
+    return <div className="text-center">{filesResult.error.message}</div>;
+  }
 
-  // useEffect(() => {
-  //   // If user not authenticated, don't fetch data
-  //   if (!authStatus.isAuthenticated) {
-  //     return;
-  //   }
-  //   const fetchData = async () => {
-  //     const [folderResponse, fileResponse] = await Promise.all([
-  //       fetch(`${API_URL}/folders`, {
-  //         credentials: "include",
-  //       }),
-  //       fetch(`${API_URL}/files`, {
-  //         credentials: "include",
-  //       }),
-  //     ]);
-
-  //     const folders = await folderResponse.json();
-  //     const files = await fileResponse.json();
-
-  //     setFolders(folders);
-  //     setPublicFiles(files);
-  //   };
-  //   fetchData();
-  // }, [authStatus]);
+  if (foldersResult.isLoading || filesResult.isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="flex flex-col gap-2">
-      {folders &&
-        folders.map((folder) => <FolderItem key={folder.id} folder={folder} />)}
-      {publicFiles &&
-        publicFiles.map((file) => <FileItem key={file.id} file={file} />)}
+      {foldersResult.data &&
+        foldersResult.data.map((folder) => (
+          <FolderItem key={folder.id} folder={folder} />
+        ))}
+      {filesResult.data &&
+        filesResult.data.map((file) => <FileItem key={file.id} file={file} />)}
     </div>
   );
 }

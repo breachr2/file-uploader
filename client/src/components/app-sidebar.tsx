@@ -28,46 +28,19 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
 import { AuthContext } from "@/context/auth-context";
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "@/pages/public-folder";
 
 function AppSidebar() {
-  const { data: folders, isLoading } = useQuery({
+  const { authStatus } = useContext(AuthContext);
+  const fetchFolders = (): Promise<Folder[]> =>
+    fetchWithAuth(`${API_URL}/folders`, authStatus.isAuthenticated);
+
+  const result = useQuery({
     queryKey: ["folders"],
-    queryFn: async () => {
-      const data = await fetch(`${API_URL}/folders`, {
-        credentials: "include",
-      });
-      return data.json();
-    },
+    queryFn: fetchFolders,
   });
 
-  // const [folders, setFolders] = useState<Folder[] | null>(null);
-  // const [loading, setLoading] = useState(false);
-  const { authStatus } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!authStatus.isAuthenticated) {
-  //     return;
-  //   }
-  //   const fetchFolders = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch(`${API_URL}/folders`, {
-  //         credentials: "include",
-  //       });
-
-  //       const data = await response.json();
-  //       if (response.ok) {
-  //         setFolders(data);
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchFolders();
-  // }, [authStatus]);
 
   async function handleClick() {
     const response = await fetch(`${API_URL}/log-out`, {
@@ -79,13 +52,13 @@ function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent className="bg-sidebar-accent">
-        <DialogGroup />
+        {<DialogGroup />}
         <SidebarSeparator />
-        {isLoading ? (
+        {result.isPending ? (
           <SidebarSkeleton />
         ) : (
           <SidebarMenu>
-            {folders && <FolderMenuItem folders={folders} />}
+            {result.data && <FolderMenuItem folders={result.data} />}
           </SidebarMenu>
         )}
       </SidebarContent>
