@@ -4,6 +4,7 @@ import { API_URL } from "@/lib/constants";
 import { FileItem } from "./public-folder";
 import { File } from "@/lib/types";
 import { AuthContext } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
 
 function Folder() {
   const [files, setFiles] = useState<File[] | null>(null);
