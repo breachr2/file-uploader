@@ -14,10 +14,57 @@ import { useState } from "react";
 import Submit from "./ui/submit";
 import RedAsterisk from "./ui/red-asterisk";
 import { API_URL } from "@/lib/constants";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams, useNavigate } from "react-router-dom";
 
 function FileDialog() {
   const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { folderId } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const createFileMutation = useMutation({
+    mutationFn: async () => {
+      if (!file) {
+        throw new Error("Please choose a file");
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+
+      if (folderId) {
+        formData.append("folderId", folderId);
+      }
+
+      const response = await fetch(`${API_URL}/files`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res);
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      if (folderId) {
+        Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["folder", folderId] }),
+          queryClient.invalidateQueries({ queryKey: ["folders"] }),
+        ]);
+        navigate(`/folders/${folderId}`);
+      } else {
+        Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["folders"] }),
+          queryClient.invalidateQueries({ queryKey: ["public-files"] }),
+        ]);
+      }
+
+      setOpen(false);
+    },
+  });
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
@@ -25,32 +72,8 @@ function FileDialog() {
     }
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!file) return;
-
-    setLoading(true);
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const result = await fetch(`${API_URL}/files`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-      const data = await result.json();
-      console.log(data);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full border ">New File</Button>
       </DialogTrigger>
@@ -62,7 +85,10 @@ function FileDialog() {
           </DialogDescription>
         </DialogHeader>
         <div>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form
+            onSubmit={() => createFileMutation.mutate()}
+            className="flex flex-col gap-4"
+          >
             <div>
               <Label htmlFor="file">
                 File <RedAsterisk />
@@ -76,7 +102,7 @@ function FileDialog() {
               />
             </div>
             <DialogFooter>
-              <Submit isLoading={loading}>Submit</Submit>
+              <Submit isLoading={createFileMutation.isPending}>Submit</Submit>
             </DialogFooter>
           </form>
         </div>

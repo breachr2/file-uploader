@@ -51,7 +51,6 @@ const postFileCreate = asyncHandler(async (req: Request, res: Response) => {
   res.json(newFile);
 });
 
-
 async function getFileDownload(req: Request, res: Response) {
   const userId = (req.user as User)?.id;
   const fileId = Number(req.params.fileId);
