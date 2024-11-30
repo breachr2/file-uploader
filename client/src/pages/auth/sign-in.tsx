@@ -14,18 +14,15 @@ import Submit from "@/components/ui/submit";
 import { API_URL } from "@/lib/constants";
 import { useNavigate } from "react-router-dom";
 import RedAsterisk from "@/components/ui/red-asterisk";
+import { useMutation } from "@tanstack/react-query";
 
 function SignInCard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<{ message: string } | null>(null);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  async function handleSubmit() {
-    setLoading(true);
-    setError(null);
-    try {
+  const signInMutation = useMutation({
+    mutationFn: async () => {
       const response = await fetch(`${API_URL}/log-in`, {
         method: "POST",
         body: JSON.stringify({ username, password }),
@@ -35,19 +32,14 @@ function SignInCard() {
         },
       });
 
-      if (response.ok) {
-        navigate("/folders");
-      } else {
-        const error = await response.json();
-        console.log(error);
-        setError({ message: error });
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res.error);
       }
-    } catch (err) {
-      setError({ message: "An unknown error has occured" });
-    } finally {
-      setLoading(false);
-    }
-  }
+
+      navigate("/folders");
+    },
+  });
 
   return (
     <Card>
@@ -85,8 +77,12 @@ function SignInCard() {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
-        {error && <p>{error.message}</p>}
-        <Submit isLoading={loading} className="w-full" onClick={handleSubmit}>
+        {signInMutation.isError && <p>{signInMutation.error.message}</p>}
+        <Submit
+          isLoading={signInMutation.isPending}
+          className="w-full"
+          onClick={() => signInMutation.mutate()}
+        >
           Sign In
         </Submit>
         <Button className="w-full" variant="outline">

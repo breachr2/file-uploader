@@ -29,7 +29,9 @@ export const fetchWithAuth = async (
   });
 
   if (!response.ok) {
-    throw new Error("Network request failed");
+    const error = await response.json()
+    console.log(error)
+    throw new Error(error);
   }
 
   return response.json();

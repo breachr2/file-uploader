@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { API_URL } from "@/lib/constants";
 import { FileItem } from "./public-folder";
 import { File } from "@/lib/types";
