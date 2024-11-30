@@ -1,9 +1,14 @@
 import FolderDialog from "./folder-dialog";
 import FileDialog from "./file-dialog";
 import { useContext } from "react";
-import { API_URL } from "@/lib/constants";
 import { ChevronDown } from "lucide-react";
 import { Folder } from "@/lib/types";
+import { Button } from "./ui/button";
+import { Link, useParams } from "react-router-dom";
+import DeleteFolderDialog from "./delete-folder-dialog";
+import { AuthContext } from "@/context/auth-context";
+import useFolders from "@/hooks/useFolders";
+import useLogout from "@/hooks/useLogout";
 import {
   Collapsible,
   CollapsibleContent,
@@ -23,35 +28,11 @@ import {
   SidebarSeparator,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
-import { useNavigate, Link, useParams } from "react-router-dom";
-import DeleteFolderDialog from "./delete-folder-dialog";
-import { AuthContext } from "@/context/auth-context";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useFolders from "@/hooks/useFolders";
 
 function AppSidebar() {
   const { isAuthenticated } = useContext(AuthContext);
-  const { data, isPending, isError } = useFolders(isAuthenticated);
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  const logOutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${API_URL}/log-out`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Logout Failed");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-status"] });
-      navigate("/auth");
-    },
-  });
+  const { data, isPending } = useFolders(isAuthenticated);
+  const logOutMutation = useLogout();
 
   return (
     <Sidebar>
@@ -79,7 +60,6 @@ function AppSidebar() {
 }
 
 function DialogGroup() {
-  // If there are url params, then a folder is selected
   const { folderId } = useParams();
   return (
     <SidebarGroup>

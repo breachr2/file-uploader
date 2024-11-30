@@ -1,7 +1,7 @@
 import AppSidebar from "@/components/app-sidebar";
+import AppBreadcrumb from "@/components/app-breadcrumb";
 import { Outlet } from "react-router-dom";
 import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
-import AppBreadcrumb from "@/components/app-breadcrumb";
 
 function Layout() {
   return (

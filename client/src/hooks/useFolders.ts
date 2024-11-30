@@ -20,7 +20,7 @@ const useFolders = (isAuthenticated: boolean) => {
   return useQuery({
     queryKey: ["folders", { isAuthenticated }],
     queryFn: fetchFolders,
-    enabled: isAuthenticated === true,
+    enabled: isAuthenticated,
   });
 };
 

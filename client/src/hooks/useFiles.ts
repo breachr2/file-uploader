@@ -20,7 +20,7 @@ const useFiles = (isAuthenticated: boolean) => {
   return useQuery({
     queryKey: ["public-files", { isAuthenticated }],
     queryFn: fetchFiles,
-    enabled: isAuthenticated === true,
+    enabled: isAuthenticated,
   });
 };
 

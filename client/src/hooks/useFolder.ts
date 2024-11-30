@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { File } from "@/lib/types";
 import { API_URL } from "@/lib/constants";
 
-const fetchFolderById = async (folderId: string): Promise<File[]> => {
+const fetchFolderById = async (
+  folderId: string | undefined
+): Promise<File[]> => {
   const response = await fetch(`${API_URL}/folders/${folderId}`, {
     credentials: "include",
   });
@@ -16,11 +18,11 @@ const fetchFolderById = async (folderId: string): Promise<File[]> => {
   return response.json();
 };
 
-const useFolder = (folderId: string, isAuthenticated: boolean) => {
+const useFolder = (folderId: string | undefined, isAuthenticated: boolean) => {
   return useQuery({
     queryKey: ["folder", folderId, { isAuthenticated }],
     queryFn: () => fetchFolderById(folderId),
-    enabled: isAuthenticated === true,
+    enabled: isAuthenticated && !!folderId,
   });
 };
 
