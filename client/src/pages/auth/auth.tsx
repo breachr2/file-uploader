@@ -4,8 +4,8 @@ import SignInCard from "./sign-in";
 import SignUpCard from "./sign-up";
 
 function Auth() {
-  const [tab, setTab] = useState("signin");
-  
+  const [tab, setTab] = useState("signIn");
+
   const onTabChange = (value: string) => {
     setTab(value);
   };
@@ -15,7 +15,7 @@ function Auth() {
       <Tabs
         value={tab}
         onValueChange={onTabChange}
-        defaultValue="signin"
+        defaultValue="signIn"
         className="w-[400px]"
       >
         <TabsList className="grid w-full grid-cols-2">

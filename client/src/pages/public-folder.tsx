@@ -1,5 +1,4 @@
-import { API_URL } from "@/lib/constants";
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { FolderClosed, FileText } from "lucide-react";
 import { Folder, File } from "@/lib/types";
 import { formatDate, formatFileSize } from "@/lib/utils";
@@ -13,19 +12,13 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useQuery } from "@tanstack/react-query";
 import useFiles from "@/hooks/useFiles";
 import useFolders from "@/hooks/useFolders";
 
 function PublicFolder() {
   const { isAuthenticated } = useContext(AuthContext);
-
-  if (!isAuthenticated) {
-    return <div></div>;
-  }
-
-  const foldersResult = useFolders();
-  const filesResult = useFiles();
+  const foldersResult = useFolders(isAuthenticated);
+  const filesResult = useFiles(isAuthenticated);
 
   if (foldersResult.isError) {
     return <div className="text-center">{foldersResult.error.message}</div>;
@@ -37,6 +30,10 @@ function PublicFolder() {
 
   if (foldersResult.isLoading || filesResult.isLoading) {
     return <p>Loading...</p>;
+  }
+
+  if (!isAuthenticated) {
+    return <div className="flex flex-col gap-2">Login to get started</div>;
   }
 
   return (

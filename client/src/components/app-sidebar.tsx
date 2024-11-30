@@ -32,7 +32,7 @@ import useFolders from "@/hooks/useFolders";
 
 function AppSidebar() {
   const { isAuthenticated } = useContext(AuthContext);
-  const { data, isPending, isError } = useFolders();
+  const { data, isPending, isError } = useFolders(isAuthenticated);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -56,7 +56,7 @@ function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent className="bg-sidebar-accent">
-        {<DialogGroup />}
+        <DialogGroup />
         <SidebarSeparator />
         {isPending ? (
           <SidebarSkeleton />

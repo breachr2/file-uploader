@@ -16,10 +16,11 @@ const fetchFolders = async (): Promise<Folder[]> => {
   return response.json();
 };
 
-const useFolders = () => {
+const useFolders = (isAuthenticated: boolean) => {
   return useQuery({
-    queryKey: ["folders"],
+    queryKey: ["folders", { isAuthenticated }],
     queryFn: fetchFolders,
+    enabled: isAuthenticated === true,
   });
 };
 

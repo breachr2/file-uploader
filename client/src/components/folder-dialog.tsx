@@ -28,14 +28,6 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
   const { isAuthenticated } = useContext(AuthContext);
   const { folderId } = useParams();
 
-  if (!isAuthenticated) {
-    return (
-      <ErrorAlertDialog>
-        You must be logged in to access this resource.
-      </ErrorAlertDialog>
-    );
-  }
-
   const queryClient = useQueryClient();
   const createFolderMutation = useMutation({
     mutationFn: async () => {

@@ -26,15 +26,6 @@ function FileDialog() {
   const [open, setOpen] = useState(false);
   const { folderId } = useParams();
   const navigate = useNavigate();
-
-  if (!isAuthenticated) {
-    return (
-      <ErrorAlertDialog>
-        You must be logged in to access this resource.
-      </ErrorAlertDialog>
-    );
-  }
-
   const queryClient = useQueryClient();
   const createFileMutation = useMutation({
     mutationFn: async () => {

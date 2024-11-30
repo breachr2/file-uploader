@@ -3,7 +3,7 @@ import { File } from "@/lib/types";
 import { API_URL } from "@/lib/constants";
 
 const fetchFiles = async (): Promise<File[]> => {
-  const response = await fetch(`${API_URL}/files}`, {
+  const response = await fetch(`${API_URL}/files`, {
     credentials: "include",
   });
 
@@ -16,10 +16,11 @@ const fetchFiles = async (): Promise<File[]> => {
   return response.json();
 };
 
-const useFiles = () => {
+const useFiles = (isAuthenticated: boolean) => {
   return useQuery({
-    queryKey: ["public-files"],
+    queryKey: ["public-files", { isAuthenticated }],
     queryFn: fetchFiles,
+    enabled: isAuthenticated === true,
   });
 };
 
