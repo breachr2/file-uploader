@@ -14,46 +14,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useQuery } from "@tanstack/react-query";
-
-export const fetchWithAuth = async (
-  url: string,
-  isAuth: boolean
-): Promise<any> => {
-  if (!isAuth) {
-    throw new Error("You are not autheneticated in. Log in to get started.");
-  }
-
-  const response = await fetch(url, {
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    console.log(error);
-    throw new Error(error);
-  }
-
-  return response.json();
-};
+import useFiles from "@/hooks/useFiles";
+import useFolders from "@/hooks/useFolders";
 
 function PublicFolder() {
   const { isAuthenticated } = useContext(AuthContext);
 
-  const fetchFolders = (): Promise<Folder[]> =>
-    fetchWithAuth(`${API_URL}/folders`, isAuthenticated);
+  if (!isAuthenticated) {
+    return <div></div>;
+  }
 
-  const fetchPublicFiles = (): Promise<File[]> =>
-    fetchWithAuth(`${API_URL}/files`, isAuthenticated);
-
-  const foldersResult = useQuery({
-    queryKey: ["folders"],
-    queryFn: fetchFolders,
-  });
-
-  const filesResult = useQuery({
-    queryKey: ["public-files"],
-    queryFn: fetchPublicFiles,
-  });
+  const foldersResult = useFolders();
+  const filesResult = useFiles();
 
   if (foldersResult.isError) {
     return <div className="text-center">{foldersResult.error.message}</div>;

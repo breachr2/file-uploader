@@ -10,11 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import Submit from "@/components/ui/submit";
 import { API_URL } from "@/lib/constants";
 import { useNavigate } from "react-router-dom";
-import RedAsterisk from "@/components/ui/red-asterisk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Submit from "@/components/ui/submit";
+import RedAsterisk from "@/components/ui/red-asterisk";
+import ErrorAlert from "@/components/error.alert";
 
 function SignInCard() {
   const [username, setUsername] = useState("");
@@ -81,7 +82,9 @@ function SignInCard() {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
-        {signInMutation.isError && <p>{signInMutation.error.message}</p>}
+        {signInMutation.isError && (
+          <ErrorAlert>{signInMutation.error.message}</ErrorAlert>
+        )}
         <Submit
           isLoading={signInMutation.isPending}
           className="w-full"

@@ -13,17 +13,20 @@ import { useState } from "react";
 import { API_URL } from "@/lib/constants";
 import Submit from "@/components/ui/submit";
 import RedAsterisk from "@/components/ui/red-asterisk";
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import ErrorAlert from "@/components/error.alert";
 
-function SignUpCard() {
+type SignUpCardProps = {
+  setTab: (value: string) => void;
+};
+
+function SignUpCard({ setTab }: SignUpCardProps) {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     confirmPassword: "",
   });
 
-  const navigate = useNavigate();
   const signUpMutation = useMutation({
     mutationFn: async () => {
       if (formData.password !== formData.confirmPassword) {
@@ -45,7 +48,7 @@ function SignUpCard() {
       return response.json();
     },
     onSuccess: () => {
-      navigate("/auth", { replace: true });
+      setTab("signIn");
     },
   });
 
@@ -108,7 +111,9 @@ function SignUpCard() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
-        {signUpMutation.isError && <p>{signUpMutation.error.message}</p>}
+        {signUpMutation.isError && (
+          <ErrorAlert>{signUpMutation.error.message}</ErrorAlert>
+        )}
         <Submit
           isLoading={signUpMutation.isPending}
           className="w-full"

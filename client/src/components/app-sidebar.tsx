@@ -1,6 +1,6 @@
 import FolderDialog from "./folder-dialog";
 import FileDialog from "./file-dialog";
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { API_URL } from "@/lib/constants";
 import { ChevronDown } from "lucide-react";
 import { Folder } from "@/lib/types";
@@ -27,19 +27,14 @@ import { Button } from "./ui/button";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
 import { AuthContext } from "@/context/auth-context";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchWithAuth } from "@/pages/public-folder";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useFolders from "@/hooks/useFolders";
 
 function AppSidebar() {
   const { isAuthenticated } = useContext(AuthContext);
+  const { data, isPending, isError } = useFolders();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const fetchFolders = (): Promise<Folder[]> =>
-    fetchWithAuth(`${API_URL}/folders`, isAuthenticated);
-
-  const result = useQuery({
-    queryKey: ["folders"],
-    queryFn: fetchFolders,
-  });
 
   const logOutMutation = useMutation({
     mutationFn: async () => {
@@ -58,19 +53,15 @@ function AppSidebar() {
     },
   });
 
-  const navigate = useNavigate();
-
   return (
     <Sidebar>
       <SidebarContent className="bg-sidebar-accent">
         {<DialogGroup />}
         <SidebarSeparator />
-        {result.isPending ? (
+        {isPending ? (
           <SidebarSkeleton />
         ) : (
-          <SidebarMenu>
-            {result.data && <FolderMenuItem folders={result.data} />}
-          </SidebarMenu>
+          <SidebarMenu>{data && <FolderMenuItem folders={data} />}</SidebarMenu>
         )}
       </SidebarContent>
       {isAuthenticated && (

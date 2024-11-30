@@ -10,18 +10,31 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Submit from "./ui/submit";
 import RedAsterisk from "./ui/red-asterisk";
 import { API_URL } from "@/lib/constants";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
+import ErrorAlertDialog from "./error-alert-dialog";
+import { AuthContext } from "@/context/auth-context";
+import ErrorAlert from "./error.alert";
 
 function FileDialog() {
+  const { isAuthenticated } = useContext(AuthContext);
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
   const { folderId } = useParams();
   const navigate = useNavigate();
+
+  if (!isAuthenticated) {
+    return (
+      <ErrorAlertDialog>
+        You must be logged in to access this resource.
+      </ErrorAlertDialog>
+    );
+  }
+
   const queryClient = useQueryClient();
   const createFileMutation = useMutation({
     mutationFn: async () => {
@@ -101,6 +114,9 @@ function FileDialog() {
                 required
               />
             </div>
+            {createFileMutation.isError && (
+              <ErrorAlert>{createFileMutation.error.message}</ErrorAlert>
+            )}
             <DialogFooter>
               <Submit isLoading={createFileMutation.isPending}>Submit</Submit>
             </DialogFooter>

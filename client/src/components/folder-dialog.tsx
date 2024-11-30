@@ -17,6 +17,8 @@ import { AuthContext } from "@/context/auth-context";
 import { useParams } from "react-router-dom";
 import Submit from "./ui/submit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import ErrorAlertDialog from "./error-alert-dialog";
+import ErrorAlert from "./error.alert";
 
 type ActionType = "create" | "update";
 
@@ -25,13 +27,18 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
   const { folderId } = useParams();
+
+  if (!isAuthenticated) {
+    return (
+      <ErrorAlertDialog>
+        You must be logged in to access this resource.
+      </ErrorAlertDialog>
+    );
+  }
+
   const queryClient = useQueryClient();
   const createFolderMutation = useMutation({
     mutationFn: async () => {
-      if (!isAuthenticated) {
-        throw new Error("You must be logged in to create a folder.");
-      }
-
       const response = await fetch(`${API_URL}/folders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,10 +60,6 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
 
   const updateFolderMutation = useMutation({
     mutationFn: async () => {
-      if (!isAuthenticated) {
-        throw new Error("You must be logged in to update a folder.");
-      }
-
       const response = await fetch(`${API_URL}/folders/${folderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -121,14 +124,10 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
               />
             </div>
             {createFolderMutation.isError && (
-              <p className="text-red-600">
-                {createFolderMutation.error.message}
-              </p>
+              <ErrorAlert>{createFolderMutation.error.message}</ErrorAlert>
             )}
             {updateFolderMutation.isError && (
-              <p className="text-red-600">
-                {updateFolderMutation.error.message}
-              </p>
+              <ErrorAlert>{updateFolderMutation.error.message}</ErrorAlert>
             )}
 
             <DialogFooter>
