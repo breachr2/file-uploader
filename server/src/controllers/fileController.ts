@@ -23,10 +23,12 @@ const getFiles = asyncHandler(async (req: Request, res: Response) => {
 
 const postFileCreate = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
-  const { size, mimetype, buffer } = req.file as Express.Multer.File;
+  const { originalname, size, mimetype, buffer } =
+    req.file as Express.Multer.File;
   const randomImageName = generateRandomName();
 
   const fileData: Prisma.FileCreateInput = {
+    originalName: originalname,
     name: randomImageName,
     size: size,
     User: { connect: { id: userId } },

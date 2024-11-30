@@ -1,6 +1,7 @@
 export type File = {
   id: number;
   name: string;
+  originalName: string;
   size: number;
   userId: number;
   imageUrl?: string;
