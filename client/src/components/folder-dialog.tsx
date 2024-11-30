@@ -24,12 +24,12 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
   const [error, setError] = useState<{ message: string } | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { authStatus } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const { folderId } = useParams();
 
   async function handleCreateFolder(e: any) {
     e.preventDefault();
-    if (!authStatus.isAuthenticated) {
+    if (!isAuthenticated) {
       setError({ message: "You must be logged in to create a folder." });
       return;
     }
@@ -53,7 +53,7 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
   }
 
   async function handleUpdateFolder(e: any) {
-    if (!authStatus.isAuthenticated) {
+    if (!isAuthenticated) {
       setError({ message: "You must be logged in to create a folder." });
       return;
     }

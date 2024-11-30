@@ -9,10 +9,10 @@ import { fetchWithAuth } from "./public-folder";
 
 function Folder() {
   const { folderId } = useParams();
-  const { authStatus } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const fetchFolderById = (): Promise<File[]> =>
-    fetchWithAuth(`${API_URL}/folders/${folderId}`, authStatus.isAuthenticated);
+    fetchWithAuth(`${API_URL}/folders/${folderId}`, isAuthenticated);
 
   const result = useQuery({
     queryKey: ["folder", folderId],

@@ -1,46 +1,44 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext } from "react";
 import { API_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 
-type AuthStatus = {
+type AuthContextType = {
   isAuthenticated: boolean;
   user: User | null;
 };
 
-type AuthContextType = {
-  authStatus: AuthStatus;
-  setAuthStatus: React.Dispatch<React.SetStateAction<AuthStatus>>;
-};
-
 export const AuthContext = createContext<AuthContextType>({
-  authStatus: { isAuthenticated: false, user: null },
-  setAuthStatus: () => {},
+  isAuthenticated: false,
+  user: null,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authStatus, setAuthStatus] = useState<AuthStatus>({
-    isAuthenticated: false,
-    user: null,
+  const fetchAuthStatus = async (): Promise<AuthContextType> => {
+    const response = await fetch(`${API_URL}/auth/status`, {
+      credentials: "include",
+    });
+    return response.json();
+  };
+
+  const {
+    data: authStatus,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["auth-status"],
+    queryFn: fetchAuthStatus,
   });
 
-  useEffect(() => {
-    const fetchAuthStatus = async () => {
-      try {
-        const response = await fetch(`${API_URL}/auth/status`, {
-          credentials: "include",
-        });
-        const data = await response.json();
-        setAuthStatus(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchAuthStatus();
-  }, []);
+  if (isPending) {
+    return <p></p>;
+  }
+
+  if (isError) {
+    return <p></p>;
+  }
 
   return (
-    <AuthContext.Provider value={{ authStatus, setAuthStatus }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authStatus}>{children}</AuthContext.Provider>
   );
 }

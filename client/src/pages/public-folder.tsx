@@ -14,7 +14,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useQuery } from "@tanstack/react-query";
-import { wait } from "@/lib/utils";
 
 export const fetchWithAuth = async (
   url: string,
@@ -29,8 +28,8 @@ export const fetchWithAuth = async (
   });
 
   if (!response.ok) {
-    const error = await response.json()
-    console.log(error)
+    const error = await response.json();
+    console.log(error);
     throw new Error(error);
   }
 
@@ -38,13 +37,13 @@ export const fetchWithAuth = async (
 };
 
 function PublicFolder() {
-  const { authStatus } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const fetchFolders = (): Promise<Folder[]> =>
-    fetchWithAuth(`${API_URL}/folders`, authStatus.isAuthenticated);
+    fetchWithAuth(`${API_URL}/folders`, isAuthenticated);
 
   const fetchPublicFiles = (): Promise<File[]> =>
-    fetchWithAuth(`${API_URL}/files`, authStatus.isAuthenticated);
+    fetchWithAuth(`${API_URL}/files`, isAuthenticated);
 
   const foldersResult = useQuery({
     queryKey: ["folders"],

@@ -38,10 +38,13 @@ function SignUpCard() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error);
+        const res = await response.json();
+        throw new Error(res.error);
       }
 
+      return response.json();
+    },
+    onSuccess: () => {
       navigate("/auth", { replace: true });
     },
   });

@@ -27,27 +27,38 @@ import { Button } from "./ui/button";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
 import { AuthContext } from "@/context/auth-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchWithAuth } from "@/pages/public-folder";
 
 function AppSidebar() {
-  const { authStatus } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
+  const queryClient = useQueryClient();
   const fetchFolders = (): Promise<Folder[]> =>
-    fetchWithAuth(`${API_URL}/folders`, authStatus.isAuthenticated);
+    fetchWithAuth(`${API_URL}/folders`, isAuthenticated);
 
   const result = useQuery({
     queryKey: ["folders"],
     queryFn: fetchFolders,
   });
 
-  const navigate = useNavigate();
+  const logOutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`${API_URL}/log-out`, {
+        credentials: "include",
+      });
 
-  async function handleClick() {
-    const response = await fetch(`${API_URL}/log-out`, {
-      credentials: "include",
-    });
-    navigate("/auth");
-  }
+      if (!response.ok) {
+        throw new Error("Logout Failed");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth-status"] });
+      navigate("/auth");
+    },
+  });
+
+  const navigate = useNavigate();
 
   return (
     <Sidebar>
@@ -62,9 +73,14 @@ function AppSidebar() {
           </SidebarMenu>
         )}
       </SidebarContent>
-      {authStatus.isAuthenticated && (
+      {isAuthenticated && (
         <SidebarFooter className="border">
-          <Button onClick={handleClick}>Sign Out</Button>
+          <Button
+            onClick={() => logOutMutation.mutate()}
+            disabled={logOutMutation.isPending}
+          >
+            {logOutMutation.isPending ? "Logging out..." : "Log Out"}
+          </Button>
         </SidebarFooter>
       )}
     </Sidebar>

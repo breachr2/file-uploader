@@ -14,11 +14,12 @@ import Submit from "@/components/ui/submit";
 import { API_URL } from "@/lib/constants";
 import { useNavigate } from "react-router-dom";
 import RedAsterisk from "@/components/ui/red-asterisk";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function SignInCard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const signInMutation = useMutation({
@@ -34,9 +35,12 @@ function SignInCard() {
 
       if (!response.ok) {
         const res = await response.json();
-        throw new Error(res.error);
+        throw new Error(res);
       }
-
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth-status"] });
       navigate("/folders");
     },
   });
