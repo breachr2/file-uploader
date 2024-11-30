@@ -16,64 +16,72 @@ import RedAsterisk from "./ui/red-asterisk";
 import { AuthContext } from "@/context/auth-context";
 import { useParams } from "react-router-dom";
 import Submit from "./ui/submit";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type ActionType = "create" | "update";
 
 function FolderDialog({ actionType }: { actionType: ActionType }) {
   const [folderName, setFolderName] = useState("");
-  const [error, setError] = useState<{ message: string } | null>(null);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
   const { folderId } = useParams();
+  const queryClient = useQueryClient();
+  const createFolderMutation = useMutation({
+    mutationFn: async () => {
+      if (!isAuthenticated) {
+        throw new Error("You must be logged in to create a folder.");
+      }
 
-  async function handleCreateFolder(e: any) {
-    e.preventDefault();
-    if (!isAuthenticated) {
-      setError({ message: "You must be logged in to create a folder." });
-      return;
-    }
-
-    setLoading(true);
-    try {
       const response = await fetch(`${API_URL}/folders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ folderName }),
       });
-      const res = await response.json();
-      console.log(res);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setOpen(false);
-      setLoading(false);
-    }
-  }
 
-  async function handleUpdateFolder(e: any) {
-    if (!isAuthenticated) {
-      setError({ message: "You must be logged in to create a folder." });
-      return;
-    }
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res || "An error has occured creating a folder");
+      }
 
-    setLoading(true);
-    try {
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
+    },
+  });
+
+  const updateFolderMutation = useMutation({
+    mutationFn: async () => {
+      if (!isAuthenticated) {
+        throw new Error("You must be logged in to update a folder.");
+      }
+
       const response = await fetch(`${API_URL}/folders/${folderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ folderName }),
       });
-      const res = await response.json();
-      console.log(res);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setOpen(false);
-      setLoading(false);
+
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res || "An error has occured creating a folder");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
+    },
+  });
+
+  function handleSubmit(actionType: ActionType) {
+    if (actionType === "create") {
+      createFolderMutation.mutate();
+      return;
     }
+    updateFolderMutation.mutate();
   }
 
   return (
@@ -96,9 +104,7 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
         </DialogHeader>
         <div>
           <form
-            onSubmit={
-              actionType === "create" ? handleCreateFolder : handleUpdateFolder
-            }
+            onSubmit={() => handleSubmit(actionType)}
             className="flex flex-col gap-4"
           >
             <div>
@@ -114,9 +120,25 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
                 required
               />
             </div>
-            {error && <p className="text-red-600">{error.message}</p>}
+            {createFolderMutation.isError && (
+              <p className="text-red-600">
+                {createFolderMutation.error.message}
+              </p>
+            )}
+            {updateFolderMutation.isError && (
+              <p className="text-red-600">
+                {updateFolderMutation.error.message}
+              </p>
+            )}
+
             <DialogFooter>
-              <Submit isLoading={loading} type="submit">
+              <Submit
+                isLoading={
+                  updateFolderMutation.isPending ||
+                  createFolderMutation.isPending
+                }
+                type="submit"
+              >
                 Submit
               </Submit>
             </DialogFooter>

@@ -12,33 +12,34 @@ import { Button } from "./ui/button";
 import Submit from "./ui/submit";
 import { useState } from "react";
 import { API_URL } from "@/lib/constants";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 function DeleteFolderDialog({ folderId }: { folderId: number }) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
-  async function handleSubmit() {
-    console.log(`Deleting folder ${folderId}`);
-    setLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  const deleteFolderMutation = useMutation({
+    mutationFn: async () => {
       const response = await fetch(`${API_URL}/folders/${folderId}`, {
         method: "DELETE",
         credentials: "include",
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        setError(error);
+        const res = await response.json();
+        throw new Error(res || "Error occured deleting folder");
       }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
       setOpen(false);
-    }
-  }
+      navigate("/folders");
+    },
+  });
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -51,6 +52,9 @@ function DeleteFolderDialog({ folderId }: { folderId: number }) {
             Are you sure you want to delete the current folder and all of its
             contents?
           </DialogDescription>
+          {deleteFolderMutation.isError && (
+            <div>{deleteFolderMutation.error.message}</div>
+          )}
         </DialogHeader>
 
         <DialogFooter>
@@ -60,10 +64,10 @@ function DeleteFolderDialog({ folderId }: { folderId: number }) {
             </Button>
           </DialogClose>
           <Submit
-            isLoading={loading}
+            isLoading={deleteFolderMutation.isPending}
             variant="destructive"
             className="border w-20"
-            onClick={handleSubmit}
+            onClick={() => deleteFolderMutation.mutate()}
           >
             Delete
           </Submit>
