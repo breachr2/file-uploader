@@ -12,7 +12,6 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Prisma } from "@prisma/client";
 import asyncHandler from "express-async-handler";
 import CustomError from "../utils/customError";
-import s3Client from "../config/s3Client";
 
 const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");

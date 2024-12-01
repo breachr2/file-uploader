@@ -42,6 +42,8 @@ function SignInCard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-status"] });
+      queryClient.invalidateQueries({ queryKey: ["folders"] })
+      queryClient.invalidateQueries({ queryKey: ["public-files"] })
       navigate("/folders");
     },
   });

@@ -10,15 +10,14 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { useState, useContext } from "react";
-import { API_URL } from "@/lib/constants";
-import RedAsterisk from "./ui/red-asterisk";
 import { AuthContext } from "@/context/auth-context";
 import { useParams } from "react-router-dom";
+import { useState, useContext } from "react";
+import RedAsterisk from "./ui/red-asterisk";
 import Submit from "./ui/submit";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ErrorAlertDialog from "./error-alert-dialog";
 import ErrorAlert from "./error.alert";
+import useUpdateFolder from "@/hooks/useUpdateFolder";
+import useCreateFolder from "@/hooks/useCreateFolder";
 
 type ActionType = "create" | "update";
 
@@ -28,55 +27,19 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
   const { isAuthenticated } = useContext(AuthContext);
   const { folderId } = useParams();
 
-  const queryClient = useQueryClient();
-  const createFolderMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${API_URL}/folders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ folderName }),
-      });
-
-      if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res || "An error has occured creating a folder");
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["folders"] });
-    },
-  });
-
-  const updateFolderMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${API_URL}/folders/${folderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ folderName }),
-      });
-
-      if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res || "An error has occured creating a folder");
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["folders"] });
-    },
-  });
+  const createFolderMutation = useCreateFolder();
+  const updateFolderMutation = useUpdateFolder();
 
   function handleSubmit(actionType: ActionType) {
-    if (actionType === "create") {
-      createFolderMutation.mutate();
+    if (!isAuthenticated) {
       return;
     }
-    updateFolderMutation.mutate();
+    if (actionType === "create") {
+      createFolderMutation.mutate(folderName);
+      return;
+    }
+    updateFolderMutation.mutate({ folderId, folderName });
+    setOpen(false);
   }
 
   return (
