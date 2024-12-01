@@ -13,12 +13,10 @@ import { Label } from "./ui/label";
 import { useContext, useState } from "react";
 import Submit from "./ui/submit";
 import RedAsterisk from "./ui/red-asterisk";
-import { API_URL } from "@/lib/constants";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import ErrorAlertDialog from "./error-alert-dialog";
 import { AuthContext } from "@/context/auth-context";
 import ErrorAlert from "./error.alert";
+import useCreateFile from "@/hooks/useCreateFile";
 
 function FileDialog() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -26,49 +24,19 @@ function FileDialog() {
   const [open, setOpen] = useState(false);
   const { folderId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const createFileMutation = useMutation({
-    mutationFn: async () => {
-      if (!file) {
-        throw new Error("Please choose a file");
-      }
-      const formData = new FormData();
-      formData.append("file", file);
+  const createFileMutation = useCreateFile();
 
-      if (folderId) {
-        formData.append("folderId", folderId);
-      }
+  const handleFileUpload = () => {
+    if (!file || !isAuthenticated) {
+      return;
+    }
 
-      const response = await fetch(`${API_URL}/files`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res);
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      if (folderId) {
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: ["folder", folderId] }),
-          queryClient.invalidateQueries({ queryKey: ["folders"] }),
-        ]);
-        navigate(`/folders/${folderId}`);
-      } else {
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: ["folders"] }),
-          queryClient.invalidateQueries({ queryKey: ["public-files"] }),
-        ]);
-      }
-
-      setOpen(false);
-    },
-  });
+    createFileMutation.mutate({ file, folderId });
+    setOpen(false);
+    if (folderId) {
+      navigate(`/folders/${folderId}`);
+    }
+  };
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
@@ -89,10 +57,7 @@ function FileDialog() {
           </DialogDescription>
         </DialogHeader>
         <div>
-          <form
-            onSubmit={() => createFileMutation.mutate()}
-            className="flex flex-col gap-4"
-          >
+          <form onSubmit={handleFileUpload} className="flex flex-col gap-4">
             <div>
               <Label htmlFor="file">
                 File <RedAsterisk />
