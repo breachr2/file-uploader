@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import crypto from "crypto";
 import prisma from "../config/prisma";
 import s3Client from "../config/s3Client";
+import cloudFrontClient from "../config/cloudFrontClient";
+import { CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -113,6 +115,21 @@ const deleteFileById = asyncHandler(async (req: Request, res: Response) => {
 
   const command = new DeleteObjectCommand(deleteParams);
   await s3Client.send(command);
+
+  // Invalidating cloud front cache for deleted file
+  const invalidationParams = {
+    DistributionId: process.env.DISTRIBUTION_ID,
+    InvalidationBatch: {
+      Paths: {
+        Quantity: 1,
+        Items: ["/" + file.name],
+      },
+      CallerReference: file.name,
+    },
+  };
+
+  const invalidationCommand = new CreateInvalidationCommand(invalidationParams);
+  await cloudFrontClient.send(invalidationCommand);
 
   const deletedFile = await prisma.file.delete({
     where: { id: fileId, userId: userId },
