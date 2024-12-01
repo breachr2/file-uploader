@@ -10,8 +10,18 @@ import {
   SheetFooter,
   SheetTitle,
 } from "./ui/sheet";
+import { Button } from "./ui/button";
+import useDeleteFile from "@/hooks/useDeleteFile";
+import { useNavigate } from "react-router-dom";
 
 function FileItem({ file }: { file: File }) {
+  const deleteFileMutation = useDeleteFile();
+  const navigate = useNavigate();
+
+  const handleFileDelete = () => {
+    deleteFileMutation.mutate(file.id);
+    navigate("/folders")
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -24,15 +34,19 @@ function FileItem({ file }: { file: File }) {
         </div>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>File Information</SheetHeader>
-        <SheetDescription className="text-nowrap overflow-hidden text-ellipsis">
-          Name: {file.originalName}
-        </SheetDescription>
+        <SheetHeader>
+          <SheetTitle>File Information</SheetTitle>
+          <SheetDescription className="text-nowrap overflow-hidden text-ellipsis">
+            Name: {file.originalName}
+          </SheetDescription>
+        </SheetHeader>
         <SheetDescription>Size: {formatFileSize(file.size)}</SheetDescription>
         <SheetDescription>
           Created At: {formatDate(file.createdAt)}
         </SheetDescription>
-        <SheetFooter>This is sheet footer</SheetFooter>
+        <SheetFooter>
+          <Button onClick={handleFileDelete}>Delete</Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
