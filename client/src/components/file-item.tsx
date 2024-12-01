@@ -20,7 +20,7 @@ function FileItem({ file }: { file: File }) {
 
   const handleFileDelete = () => {
     deleteFileMutation.mutate(file.id);
-    navigate("/folders")
+    navigate("/folders");
   };
   return (
     <Sheet>
@@ -43,6 +43,9 @@ function FileItem({ file }: { file: File }) {
         <SheetDescription>Size: {formatFileSize(file.size)}</SheetDescription>
         <SheetDescription>
           Created At: {formatDate(file.createdAt)}
+        </SheetDescription>
+        <SheetDescription>
+          File URL: <a href={file.fileUrl}>{file.originalName}</a>
         </SheetDescription>
         <SheetFooter>
           <Button onClick={handleFileDelete}>Delete</Button>

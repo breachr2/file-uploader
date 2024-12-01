@@ -23,6 +23,17 @@ const getFiles = asyncHandler(async (req: Request, res: Response) => {
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
   });
+
+  for (const file of files) {
+    // const getObjectParams = {
+    //   Bucket: process.env.AWS_BUCKET_NAME,
+    //   Key: file.name,
+    // };
+    // const command = new GetObjectCommand(getObjectParams);
+    // const url = await getSignedUrl(s3Client, command, { expiresIn : 60})
+    file.fileUrl = `${process.env.CLOUDFRONT_URL}/${file.name}`;
+  }
+
   res.json(files);
 });
 

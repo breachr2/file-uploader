@@ -49,5 +49,5 @@ model File {
   userId       Int
   Folder       Folder?  @relation(fields: [folderId], references: [id])
   folderId     Int?
-  imageUrl     String?
+  fileUrl      String?
 }

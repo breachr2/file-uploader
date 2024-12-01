@@ -4,8 +4,8 @@ export type File = {
   originalName: string;
   size: number;
   userId: number;
-  imageUrl?: string;
   createdAt: string;
+  fileUrl?: string;
 };
 
 export type Folder = {
