@@ -22,6 +22,7 @@ const useDeleteFile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["public-files"] });
       queryClient.invalidateQueries({ queryKey: ["folders"] });
+      queryClient.invalidateQueries({ queryKey: ["folder"] });
     },
   });
 };

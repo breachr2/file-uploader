@@ -6,7 +6,7 @@ import FolderItem from "@/components/folder-item";
 import FileItem from "@/components/file-item";
 
 function PublicFolder() {
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const foldersResult = useFolders(isAuthenticated);
   const filesResult = useFiles(isAuthenticated);
 

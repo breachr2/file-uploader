@@ -20,6 +20,7 @@
     "@radix-ui/react-tooltip": "^1.1.4",
     "@tanstack/react-query": "^5.61.5",
     "@tanstack/react-query-devtools": "^5.61.5",
+    "@types/prop-types": "^15.7.13",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",

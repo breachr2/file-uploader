@@ -13,6 +13,7 @@ import {
 import { Button } from "./ui/button";
 import useDeleteFile from "@/hooks/useDeleteFile";
 import { useNavigate } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
 
 function FileItem({ file }: { file: File }) {
   const deleteFileMutation = useDeleteFile();
@@ -21,6 +22,10 @@ function FileItem({ file }: { file: File }) {
   const handleFileDelete = () => {
     deleteFileMutation.mutate(file.id);
     navigate("/folders");
+  };
+
+  const openInNewTab = (url: string) => {
+    window.open(url, "_blank", "noreferrer");
   };
   return (
     <Sheet>
@@ -44,9 +49,18 @@ function FileItem({ file }: { file: File }) {
         <SheetDescription>
           Created At: {formatDate(file.createdAt)}
         </SheetDescription>
-        <SheetDescription>
-          File URL: <a href={file.fileUrl}>{file.originalName}</a>
-        </SheetDescription>
+        {file.fileUrl && (
+          <div className="flex items-center gap-1">
+            File URL:{" "}
+            <span
+              role="link"
+              onClick={() => openInNewTab(file.fileUrl!)}
+              className="cursor-pointer text-blue-500 underline flex items-center gap-1"
+            >
+              {file.originalName} <ExternalLink size={16} />
+            </span>
+          </div>
+        )}
         <SheetFooter>
           <Button onClick={handleFileDelete}>Delete</Button>
         </SheetFooter>
