@@ -30,7 +30,11 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
   const createFolderMutation = useCreateFolder();
   const updateFolderMutation = useUpdateFolder();
 
-  function handleSubmit(actionType: ActionType) {
+  function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+    actionType: ActionType
+  ) {
+    event.preventDefault();
     if (!isAuthenticated) {
       return;
     }
@@ -62,7 +66,7 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
         </DialogHeader>
         <div>
           <form
-            onSubmit={() => handleSubmit(actionType)}
+            onSubmit={(e) => handleSubmit(e, actionType)}
             className="flex flex-col gap-4"
           >
             <div>

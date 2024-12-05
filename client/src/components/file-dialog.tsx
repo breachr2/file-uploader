@@ -17,6 +17,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/auth-context";
 import ErrorAlert from "./error.alert";
 import useCreateFile from "@/hooks/useCreateFile";
+import { useQueryClient } from "@tanstack/react-query";
 
 function FileDialog() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -25,17 +26,29 @@ function FileDialog() {
   const { folderId } = useParams();
   const navigate = useNavigate();
   const createFileMutation = useCreateFile();
+  const queryClient = useQueryClient();
 
-  const handleFileUpload = () => {
+  const handleFileUpload = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!file || !isAuthenticated) {
       return;
     }
-
-    createFileMutation.mutate({ file, folderId });
-    setOpen(false);
-    if (folderId) {
-      navigate(`/folders/${folderId}`);
-    }
+    createFileMutation.mutate(
+      { file, folderId },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          if (folderId) {
+            queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
+            queryClient.invalidateQueries({ queryKey: ["folders"] });
+            navigate(`/folders/${folderId}`);
+          } else {
+            queryClient.invalidateQueries({ queryKey: ["folders"] });
+            queryClient.invalidateQueries({ queryKey: ["public-files"] });
+          }
+        },
+      }
+    );
   };
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {

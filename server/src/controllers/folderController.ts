@@ -46,6 +46,13 @@ const getFolderById = asyncHandler(async (req: Request, res: Response) => {
   const folderId = Number(req.params.folderId);
   const userId = (req.user as User).id;
 
+  const folder = await prisma.folder.findUnique({
+    where: { id: folderId, userId: userId },
+    include: { files: true },
+  });
+
+  console.log(folder);
+
   const files = await prisma.file.findMany({
     where: { folderId: folderId, userId },
     include: { Folder: true },

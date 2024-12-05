@@ -35,20 +35,16 @@ const useCreateFile = () => {
 
   return useMutation({
     mutationFn: createFile,
-    onSuccess: (_data, variables) => {
-      const { folderId } = variables;
-      if (folderId) {
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: ["folder", folderId] }),
-          queryClient.invalidateQueries({ queryKey: ["folders"] }),
-        ]);
-      } else {
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: ["folders"] }),
-          queryClient.invalidateQueries({ queryKey: ["public-files"] }),
-        ]);
-      }
-    },
+    // onSuccess: (_data, variables) => {
+    //   const { folderId } = variables;
+    //   if (folderId) {
+    //     queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
+    //     queryClient.invalidateQueries({ queryKey: ["folders"] });
+    //   } else {
+    //     queryClient.invalidateQueries({ queryKey: ["folders"] });
+    //     queryClient.invalidateQueries({ queryKey: ["public-files"] });
+    //   }
+    // },
   });
 };
 
