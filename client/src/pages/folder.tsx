@@ -25,7 +25,7 @@ function Folder() {
     return (
       <div className="flex flex-col gap-2">
         {Array.from({ length: 8 }).map((_, index) => (
-          <Skeleton key={index} className="rounded-sm h-4" />
+          <Skeleton key={index} className="rounded-sm h-8" />
         ))}
       </div>
     );
@@ -33,10 +33,10 @@ function Folder() {
 
   return (
     <div className="flex flex-col gap-2">
-      {data.map((file) => (
+      {data.files.map((file) => (
         <FileItem key={file.id} file={file} />
       ))}
-      {data.length === 0 && (
+      {data.files.length === 0 && (
         <h1 className="text-center">This folder is empty...</h1>
       )}
     </div>

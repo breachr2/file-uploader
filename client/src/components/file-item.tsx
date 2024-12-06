@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import useDeleteFile from "@/hooks/useDeleteFile";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
+import { Document } from "react-pdf";
 
 function FileItem({ file }: { file: File }) {
   const deleteFileMutation = useDeleteFile();

@@ -6,10 +6,10 @@ import authRouter from "./routes/authRoutes";
 import fileRouter from "./routes/fileRoutes";
 import folderRouter from "./routes/folderRoutes";
 import cors from "cors";
-import "./middleware/passport";
 import { MulterError } from "multer";
 import CustomError from "./utils/customError";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import "./middleware/passport";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -43,16 +43,13 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
         error: "Username already exists. Please choose a different username.",
       });
       return;
-    } else {
-      res.status(400).json({ errorCode: error.code, error: error.message });
-      return;
     }
+    res.status(400).json({ errorCode: error.code, error: error.message });
+    return;
   }
 
   if (error instanceof CustomError) {
-    res
-      .status(error.statusCode)
-      .json({ errorCode: error.errorCode, error: error.message });
+    res.status(error.statusCode).json(error.message);
     return;
   }
 

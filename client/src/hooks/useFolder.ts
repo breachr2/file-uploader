@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { File } from "@/lib/types";
+import { Folder } from "@/lib/types";
 import { API_URL } from "@/lib/constants";
 
 const fetchFolderById = async (
   folderId: string | undefined
-): Promise<File[]> => {
+): Promise<Folder> => {
   const response = await fetch(`${API_URL}/folders/${folderId}`, {
     credentials: "include",
   });
