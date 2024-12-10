@@ -1,5 +1,10 @@
 # File Uploader
 
+## Table of Contents
+- [About The Project](#-about-the-project)
+- [Built With](#-built-with)
+- [Getting Started](#-getting-started)
+
 ## About the Project
 
 This is a website that lets users upload and store files in the Cloud. These files are stored securely in an S3 bucket and distributed globally with CloudFront for low latency.
@@ -15,6 +20,13 @@ This is a website that lets users upload and store files in the Cloud. These fil
 * [![AWS][AWS]][AWS-url]
 * [![S3][S3]][S3-url]
 * [![CloudFront][CloudFront]][CloudFront-url]
+
+## Getting Started
+
+This is an example of how you may give instructions on setting up your project locally.
+To get a local copy up and running follow these simple example steps.
+
+### Prerequisites
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
