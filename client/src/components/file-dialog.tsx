@@ -18,6 +18,7 @@ import { AuthContext } from "@/context/auth-context";
 import ErrorAlert from "./error.alert";
 import useCreateFile from "@/hooks/useCreateFile";
 import { useQueryClient } from "@tanstack/react-query";
+import { FilePlus } from "lucide-react";
 
 function FileDialog() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -60,7 +61,10 @@ function FileDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full border ">New File</Button>
+        <Button className="w-full border justify-start">
+          <FilePlus />
+          New File
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

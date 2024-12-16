@@ -56,8 +56,6 @@ const getFolderById = asyncHandler(
       return;
     }
 
-    console.log(folder);
-
     for (const file of folder.files) {
       file.fileUrl = `${process.env.CLOUDFRONT_URL}/${file.name}`;
     }

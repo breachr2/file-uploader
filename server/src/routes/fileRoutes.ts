@@ -4,8 +4,7 @@ import { isAuthenticated } from "../middleware/authMiddleware";
 import {
   getFiles,
   postFileCreate,
-  getFileDownload,
-  deleteFileById
+  deleteFileById,
 } from "../controllers/fileController";
 
 const storage = multer.memoryStorage();
@@ -19,7 +18,6 @@ const fileRouter = Router();
 
 fileRouter.get("/", getFiles);
 fileRouter.post("/", isAuthenticated, upload.single("file"), postFileCreate);
-fileRouter.delete("/:fileId", isAuthenticated, deleteFileById)
-fileRouter.get("/:fileId/download", isAuthenticated, getFileDownload);
+fileRouter.delete("/:fileId", isAuthenticated, deleteFileById);
 
 export default fileRouter;

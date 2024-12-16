@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "./ui/dialog";
+import { FolderPlus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -40,16 +41,18 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
     }
     if (actionType === "create") {
       createFolderMutation.mutate(folderName);
-      return;
+    } else {
+      updateFolderMutation.mutate({ folderId, folderName });
     }
-    updateFolderMutation.mutate({ folderId, folderName });
+    setFolderName("")
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full border">
+        <Button className="w-full border justify-start">
+          <FolderPlus />
           {actionType === "create" ? "New Folder" : "Update Folder"}
         </Button>
       </DialogTrigger>

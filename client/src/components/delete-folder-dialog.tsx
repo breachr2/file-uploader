@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import Submit from "./ui/submit";
 import useDeleteFolder from "@/hooks/useDeleteFolder";
 import ErrorAlert from "./error.alert";
+import { Trash2 } from "lucide-react";
 
 function DeleteFolderDialog({ folderId }: { folderId: number }) {
   const [open, setOpen] = useState(false);
@@ -26,7 +27,9 @@ function DeleteFolderDialog({ folderId }: { folderId: number }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full">Delete Folder</Button>
+        <Button className="w-full justify-start" variant="destructive">
+          <Trash2 /> Delete Folder
+        </Button>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-6">
         <DialogHeader>

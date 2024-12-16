@@ -22,7 +22,7 @@ const useCreateFolder = () => {
   return useMutation({
     mutationFn: createFolder,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["folders"], exact: true });
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
     },
   });
 };
