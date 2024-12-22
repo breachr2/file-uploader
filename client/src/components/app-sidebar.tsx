@@ -66,14 +66,14 @@ function DialogGroup() {
       <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <FolderDialog actionType={folderId ? "update" : "create"} />
+            <FolderDialog actionType={folderId ? "update" : "create"} folderId={folderId || ""}/>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <FileDialog />
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            {folderId && <DeleteFolderDialog folderId={Number(folderId)} />}
+            {folderId && <DeleteFolderDialog folderId={folderId} />}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>

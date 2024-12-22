@@ -14,12 +14,18 @@ import Submit from "./ui/submit";
 import useDeleteFolder from "@/hooks/useDeleteFolder";
 import ErrorAlert from "./error.alert";
 import { Trash2 } from "lucide-react";
+import { AuthContext } from "@/context/auth-context";
+import { useContext } from "react";
+import useFolder from "@/hooks/useFolder";
 
-function DeleteFolderDialog({ folderId }: { folderId: number }) {
+function DeleteFolderDialog({ folderId }: { folderId: string }) {
   const [open, setOpen] = useState(false);
-  const deleteFolderMutation = useDeleteFolder(folderId);
+  const { isAuthenticated } = useContext(AuthContext);
+  const { data } = useFolder(folderId, isAuthenticated);
+  const deleteFolderMutation = useDeleteFolder(Number(folderId));
 
   const handleSubmit = () => {
+    if (isAuthenticated) return;
     deleteFolderMutation.mutate();
     setOpen(false);
   };
@@ -33,7 +39,7 @@ function DeleteFolderDialog({ folderId }: { folderId: number }) {
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-6">
         <DialogHeader>
-          <DialogTitle>Delete Folder</DialogTitle>
+          <DialogTitle>Delete Folder "{data?.name}"</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete the current folder and all of its
             contents?

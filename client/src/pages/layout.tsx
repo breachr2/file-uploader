@@ -16,8 +16,10 @@ function Layout() {
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/auth");
+      return;
     }
 
+    navigate("/folders");
   }, [isAuthenticated]);
   return (
     <>

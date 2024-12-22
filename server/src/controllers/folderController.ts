@@ -7,6 +7,7 @@ import asyncHandler from "express-async-handler";
 import CustomError from "../utils/customError";
 import { NextFunction } from "express-serve-static-core";
 import { INVALID_AUTHORIZATION } from "../utils/errorConstants";
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 const getFolders = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -45,6 +46,8 @@ const getFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderId = Number(req.params.folderId);
     const userId = (req.user as User).id;
+    const privateKey = process.env.CLOUDFRONT_PRIVATE_KEY || "";
+    const keyPairId = process.env.KEY_PAIR_ID || "";
 
     const folder = await prisma.folder.findUnique({
       where: { id: folderId, userId: userId },
@@ -57,7 +60,14 @@ const getFolderById = asyncHandler(
     }
 
     for (const file of folder.files) {
-      file.fileUrl = `${process.env.CLOUDFRONT_URL}/${file.name}`;
+      file.fileUrl = getSignedUrl({
+        url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
+        dateLessThan: new Date(
+          Date.now() + 1000 * 60 * 60 * 24 * 7
+        ).toISOString(),
+        privateKey: privateKey,
+        keyPairId: keyPairId,
+      });
     }
 
     res.json(folder);

@@ -6,14 +6,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useFolder from "@/hooks/useFolder";
 import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
+import { useParams } from "react-router-dom";
 
 function AppBreadcrumb({ ...rest }) {
-  const location = useLocation();
-  const pathname = location.pathname.split("/");
+  const { folderId } = useParams();
 
   return (
     <Breadcrumb {...rest}>
@@ -23,11 +23,11 @@ function AppBreadcrumb({ ...rest }) {
             <Link to="/folders">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {pathname.length >= 3 && (
+        {folderId && (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <FolderBreadCrumbPage folderId={pathname[2]} />
+              <FolderBreadCrumbPage folderId={folderId} />
             </BreadcrumbItem>
           </>
         )}

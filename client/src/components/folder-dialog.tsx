@@ -12,7 +12,6 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { AuthContext } from "@/context/auth-context";
-import { useParams } from "react-router-dom";
 import { useState, useContext } from "react";
 import RedAsterisk from "./ui/red-asterisk";
 import Submit from "./ui/submit";
@@ -20,20 +19,22 @@ import ErrorAlert from "./error.alert";
 import useUpdateFolder from "@/hooks/useUpdateFolder";
 import useCreateFolder from "@/hooks/useCreateFolder";
 
-type ActionType = "create" | "update";
+type FolderDialogProps = {
+  actionType: "create" | "update";
+  folderId: string;
+};
 
-function FolderDialog({ actionType }: { actionType: ActionType }) {
+function FolderDialog({ actionType, folderId }: FolderDialogProps) {
+  const { isAuthenticated } = useContext(AuthContext);
   const [folderName, setFolderName] = useState("");
   const [open, setOpen] = useState(false);
-  const { isAuthenticated } = useContext(AuthContext);
-  const { folderId } = useParams();
 
   const createFolderMutation = useCreateFolder();
   const updateFolderMutation = useUpdateFolder();
 
   function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
-    actionType: ActionType
+    actionType: "create" | "update"
   ) {
     event.preventDefault();
     if (!isAuthenticated) {
@@ -44,7 +45,7 @@ function FolderDialog({ actionType }: { actionType: ActionType }) {
     } else {
       updateFolderMutation.mutate({ folderId, folderName });
     }
-    setFolderName("")
+    setFolderName("");
     setOpen(false);
   }
 
