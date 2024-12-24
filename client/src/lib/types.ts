@@ -5,7 +5,7 @@ export type File = {
   size: number;
   userId: number;
   createdAt: string;
-  fileUrl?: string;
+  signedUrl?: string;
 };
 
 export type Folder = {

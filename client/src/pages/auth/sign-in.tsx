@@ -6,6 +6,8 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
+import { useEffect, useContext } from "react";
+import { AuthContext } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -20,6 +22,7 @@ import ErrorAlert from "@/components/error.alert";
 function SignInCard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { isAuthenticated } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -42,11 +45,18 @@ function SignInCard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-status"] });
-      queryClient.invalidateQueries({ queryKey: ["folders"] })
-      queryClient.invalidateQueries({ queryKey: ["public-files"] })
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
+      queryClient.invalidateQueries({ queryKey: ["public-files"] });
       navigate("/folders");
     },
   });
+
+  useEffect(() => {
+    // Navigate to previous page
+    if (isAuthenticated) {
+      navigate(-1);
+    }
+  }, [isAuthenticated]);
 
   return (
     <Card>

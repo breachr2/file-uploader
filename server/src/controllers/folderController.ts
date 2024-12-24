@@ -60,14 +60,29 @@ const getFolderById = asyncHandler(
     }
 
     for (const file of folder.files) {
-      file.fileUrl = getSignedUrl({
-        url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
-        dateLessThan: new Date(
-          Date.now() + 1000 * 60 * 60 * 24 * 7
-        ).toISOString(),
-        privateKey: privateKey,
-        keyPairId: keyPairId,
-      });
+      const isExpired =
+        !file.signedUrl || !file.expiresAt || file.expiresAt < new Date();
+
+      if (isExpired) {
+        // Url expires in 24 hours
+        const expiresDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
+        const signedUrl = getSignedUrl({
+          url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
+          dateLessThan: expiresDate.toISOString(),
+          privateKey: privateKey,
+          keyPairId: keyPairId,
+        });
+
+        file.signedUrl = signedUrl;
+
+        await prisma.file.update({
+          where: { id: file.id },
+          data: {
+            signedUrl: signedUrl,
+            expiresAt: expiresDate,
+          },
+        });
+      }
     }
 
     res.json(folder);

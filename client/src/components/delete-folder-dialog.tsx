@@ -25,7 +25,9 @@ function DeleteFolderDialog({ folderId }: { folderId: string }) {
   const deleteFolderMutation = useDeleteFolder(Number(folderId));
 
   const handleSubmit = () => {
-    if (isAuthenticated) return;
+    if (!isAuthenticated) {
+      return;
+    }
     deleteFolderMutation.mutate();
     setOpen(false);
   };

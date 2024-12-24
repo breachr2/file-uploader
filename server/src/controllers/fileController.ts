@@ -4,10 +4,7 @@ import prisma from "../config/prisma";
 import s3Client from "../config/s3Client";
 import cloudFrontClient from "../config/cloudFrontClient";
 import { CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-} from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { User } from "@prisma/client";
 import { Prisma } from "@prisma/client";
@@ -20,20 +17,37 @@ const generateRandomName = (bytes = 32) => {
 
 const getFiles = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
-  const privateKey = process.env.CLOUDFRONT_PRIVATE_KEY || ""
-  const keyPairId = process.env.KEY_PAIR_ID || ""
+  const privateKey = process.env.CLOUDFRONT_PRIVATE_KEY || "";
+  const keyPairId = process.env.KEY_PAIR_ID || "";
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
   });
 
   for (const file of files) {
-    file.fileUrl = getSignedUrl({
-      url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
-      dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
-      privateKey: privateKey,
-      keyPairId: keyPairId
-    })
+    const isExpired =
+      !file.signedUrl || !file.expiresAt || file.expiresAt < new Date();
+
+    if (isExpired) {
+      // Url expires in 24 hours
+      const expiresDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
+      const signedUrl = getSignedUrl({
+        url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
+        dateLessThan: expiresDate.toISOString(),
+        privateKey: privateKey,
+        keyPairId: keyPairId,
+      });
+
+      file.signedUrl = signedUrl;
+
+      await prisma.file.update({
+        where: { id: file.id },
+        data: {
+          signedUrl: signedUrl,
+          expiresAt: expiresDate,
+        },
+      });
+    }
   }
 
   res.json(files);

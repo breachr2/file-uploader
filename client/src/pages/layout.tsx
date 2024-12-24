@@ -1,26 +1,11 @@
-import { useEffect } from "react";
 import AppSidebar from "@/components/app-sidebar";
 import AppBreadcrumb from "@/components/app-breadcrumb";
 import { Outlet } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { AuthContext } from "@/context/auth-context";
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 function Layout() {
-  const { isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/auth");
-      return;
-    }
-
-    navigate("/folders");
-  }, [isAuthenticated]);
   return (
     <>
       {/* <header className="bg-foreground text-background p-2 h-10 flex items-center shadow-md">

@@ -14,8 +14,10 @@ import { Button } from "./ui/button";
 import useDeleteFile from "@/hooks/useDeleteFile";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
+import { useRef } from "react";
 
 function FileItem({ file }: { file: File }) {
+  const fileLinkRef = useRef<HTMLAnchorElement>(null);
   const deleteFileMutation = useDeleteFile();
   const navigate = useNavigate();
 
@@ -24,9 +26,10 @@ function FileItem({ file }: { file: File }) {
     navigate("/folders");
   };
 
-  const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noreferrer");
-  };
+  // const openInNewTab = (url: string) => {
+  //   window.open(url, "_blank", "noreferrer");
+  // };
+  
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -49,16 +52,17 @@ function FileItem({ file }: { file: File }) {
         <SheetDescription>
           Created At: {formatDate(file.createdAt)}
         </SheetDescription>
-        {file.fileUrl && (
+        {file.signedUrl && (
           <div className="flex items-center gap-1">
-            File URL:{" "}
-            <span
-              role="link"
-              onClick={() => openInNewTab(file.fileUrl!)}
-              className="cursor-pointer text-blue-500 underline flex items-center gap-1"
+            <span>File URL: </span>
+            <a
+              href={file.signedUrl}
+              target="_blank"
+              ref={fileLinkRef}
+              className="flex cursor-pointer text-blue-500 underline items-center gap-1"
             >
               {file.originalName} <ExternalLink size={16} />
-            </span>
+            </a>
           </div>
         )}
         <SheetFooter>
