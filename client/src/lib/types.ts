@@ -14,6 +14,7 @@ export type Folder = {
   userId: number;
   files: File[] | [];
   createdAt: string;
+  folderUrl?: string;
 };
 
 export type User = {

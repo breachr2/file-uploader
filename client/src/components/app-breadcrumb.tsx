@@ -8,8 +8,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
 import useFolder from "@/hooks/useFolder";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
 import { useParams } from "react-router-dom";
 
 function AppBreadcrumb({ ...rest }) {
@@ -37,8 +35,7 @@ function AppBreadcrumb({ ...rest }) {
 }
 
 const FolderBreadCrumbPage = ({ folderId }: { folderId: string }) => {
-  const { isAuthenticated } = useContext(AuthContext);
-  const { data, isPending, isError } = useFolder(folderId, isAuthenticated);
+  const { data, isPending, isError } = useFolder(folderId);
 
   if (isError) {
     return <div>Cannot find folder</div>;

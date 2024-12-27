@@ -10,7 +10,6 @@ function Folder() {
   const { isAuthenticated } = useContext(AuthContext);
   const { data, isPending, isError, error } = useFolder(
     folderId,
-    isAuthenticated
   );
 
   if (isError) {

@@ -19,9 +19,15 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import useFolder from "@/hooks/useFolder";
+import useUpdateFolder from "@/hooks/useUpdateFolder";
 
 function ShareFolderDialog({ folderId }: { folderId: string }) {
-  const {data} = useFolder(folderId)
+  const { data } = useFolder(folderId);
+  const updateFolderMutation = useUpdateFolder();
+
+  function handleSubmit() {
+    updateFolderMutation.mutate({ folderId, folderName: data?.name });
+  }
 
   return (
     <Dialog>
@@ -43,40 +49,41 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
           <div>
             <h1>Select Duration</h1>
             <ToggleGroup type="single" className="justify-start gap-0">
-              <ToggleGroupItem value="1 hour">1 hour</ToggleGroupItem>
-              <ToggleGroupItem value="4 hours">4 hours</ToggleGroupItem>
-              <ToggleGroupItem value="1 day">1 day</ToggleGroupItem>
-              <ToggleGroupItem value="3 days">3 days</ToggleGroupItem>
-              <ToggleGroupItem value="7 days">1 week</ToggleGroupItem>
+              <ToggleGroupItem value="3600">1 hour</ToggleGroupItem>
+              <ToggleGroupItem value="14400">4 hours</ToggleGroupItem>
+              <ToggleGroupItem value="86400">1 day</ToggleGroupItem>
+              <ToggleGroupItem value="259200">3 days</ToggleGroupItem>
+              <ToggleGroupItem value="604800">1 week</ToggleGroupItem>
             </ToggleGroup>
             <p className="text-muted-foreground text-sm">
               Links will expire after the specified duration.
             </p>
           </div>
 
-          <div className="flex gap-2 items-center">
-            <Input type="text" readOnly value="hello" />
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button>
-                    <Copy />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Copy link</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-
+          {data?.folderUrl && (
+            <div className="flex gap-2 items-center">
+              <Input type="text" readOnly value={data.folderUrl} />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button>
+                      <Copy />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy link</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
         </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
 
-          <Button>Generate Link</Button>
+          <Button onClick={handleSubmit}>Generate Link</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
