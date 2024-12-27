@@ -21,7 +21,7 @@ import useFolder from "@/hooks/useFolder";
 function DeleteFolderDialog({ folderId }: { folderId: string }) {
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
-  const { data } = useFolder(folderId, isAuthenticated);
+  const { data } = useFolder(folderId);
   const deleteFolderMutation = useDeleteFolder(Number(folderId));
 
   const handleSubmit = () => {

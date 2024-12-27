@@ -28,6 +28,7 @@ import {
   SidebarSeparator,
   SidebarFooter,
 } from "@/components/ui/sidebar";
+import ShareFolderDialog from "./share-folder-dialog";
 
 function AppSidebar() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -70,6 +71,10 @@ function DialogGroup() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <FileDialog />
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            {folderId && <ShareFolderDialog folderId={folderId} />}
           </SidebarMenuItem>
 
           <SidebarMenuItem>
