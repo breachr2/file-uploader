@@ -8,6 +8,7 @@ import CustomError from "../utils/customError";
 import { NextFunction } from "express-serve-static-core";
 import { INVALID_AUTHORIZATION } from "../utils/errorConstants";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { generateRandomName } from "./fileController";
 
 const getFolders = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -92,11 +93,19 @@ const getFolderById = asyncHandler(
 const patchFolderUpdate = asyncHandler(async (req: Request, res: Response) => {
   const folderId = Number(req.params.folderId);
   const userId = (req.user as User)?.id;
+  const { folderName, expiresAt } = req.body;
+
+  const updateData: Record<string, any> = {};
+
+  if (folderName) updateData.name = folderName;
+  if (expiresAt) {
+    updateData.expiresAt = new Date(Date.now() + Number(expiresAt));
+    updateData.folderUrl = `http://localhost:5173/share/${generateRandomName()}`
+  }
+
   const updatedFolder = await prisma.folder.update({
     where: { id: folderId, userId: userId },
-    data: {
-      name: req.body.folderName,
-    },
+    data: updateData,
   });
   res.json(updatedFolder);
 });

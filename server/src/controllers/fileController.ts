@@ -11,7 +11,7 @@ import { Prisma } from "@prisma/client";
 import asyncHandler from "express-async-handler";
 import CustomError from "../utils/customError";
 
-const generateRandomName = (bytes = 32) => {
+export const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");
 };
 

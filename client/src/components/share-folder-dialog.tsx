@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -20,13 +21,15 @@ import {
 } from "./ui/tooltip";
 import useFolder from "@/hooks/useFolder";
 import useUpdateFolder from "@/hooks/useUpdateFolder";
+import Submit from "./ui/submit";
 
 function ShareFolderDialog({ folderId }: { folderId: string }) {
-  const { data } = useFolder(folderId);
+  const [expiresValue, setExpiresValue] = useState<string | undefined>()
+  const { data, isLoading } = useFolder(folderId);
   const updateFolderMutation = useUpdateFolder();
 
   function handleSubmit() {
-    updateFolderMutation.mutate({ folderId, folderName: data?.name });
+    updateFolderMutation.mutate({ folderId, expiresAt : expiresValue});
   }
 
   return (
@@ -48,7 +51,7 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
         <div className="flex flex-col gap-2">
           <div>
             <h1>Select Duration</h1>
-            <ToggleGroup type="single" className="justify-start gap-0">
+            <ToggleGroup type="single" className="justify-start gap-0" onValueChange={(value) => { if (value) setExpiresValue(value)}}>
               <ToggleGroupItem value="3600">1 hour</ToggleGroupItem>
               <ToggleGroupItem value="14400">4 hours</ToggleGroupItem>
               <ToggleGroupItem value="86400">1 day</ToggleGroupItem>
@@ -83,7 +86,7 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
 
-          <Button onClick={handleSubmit}>Generate Link</Button>
+          <Submit onClick={handleSubmit} isLoading={isLoading} className="w-30" disabled={data?.folderUrl ? true : false}>Generate Link</Submit>
         </DialogFooter>
       </DialogContent>
     </Dialog>
