@@ -100,7 +100,7 @@ const patchFolderUpdate = asyncHandler(async (req: Request, res: Response) => {
   if (folderName) updateData.name = folderName;
   if (expiresAt) {
     updateData.expiresAt = new Date(Date.now() + Number(expiresAt));
-    updateData.folderUrl = `http://localhost:5173/share/${generateRandomName()}`
+    updateData.folderUrl = `http://localhost:5173/share/${generateRandomName()}`;
   }
 
   const updatedFolder = await prisma.folder.update({
@@ -143,10 +143,34 @@ const deleteFolderById = asyncHandler(
   }
 );
 
+const getPublicFolder = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const folderId = Number(req.params.folderId);
+
+    const folder = await prisma.folder.findUnique({ where: { id: folderId } });
+
+    if (!folder?.expiresAt || !folder.folderUrl) {
+      return next(
+        new CustomError(300, "This folder is not publicably viewable", 404)
+      );
+    }
+
+    if (folder.expiresAt < new Date(Date.now())) {
+      return next(
+        new CustomError(300, "This folder's url is no longer valid.", 404)
+      );
+    }
+    
+    res.json(folder)
+
+  }
+);
+
 export {
   getFolders,
   postFolderCreate,
   getFolderById,
   patchFolderUpdate,
   deleteFolderById,
+  getPublicFolder,
 };

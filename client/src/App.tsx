@@ -5,6 +5,7 @@ import Auth from "./pages/auth/auth";
 import Layout from "./pages/layout";
 import { AuthProvider } from "./context/auth-context";
 import PublicFolder from "./pages/public-folder";
+import SharedFolder from "./pages/shared-folder";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/folders/:folderId/:fileId" element={<p>File</p>} />
         </Route>
         <Route path="/auth" element={<Auth />} />
+        <Route path="/share/:folderId" element={<SharedFolder />}/>
       </Routes>
     </AuthProvider>
   );
