@@ -7,7 +7,7 @@ import FileItem from "@/components/file-item";
 
 function PublicFolder() {
   const { isAuthenticated } = useContext(AuthContext);
-  const foldersResult = useFolders(isAuthenticated);
+  const foldersResult = useFolders();
   const filesResult = useFiles(isAuthenticated);
 
   if (foldersResult.isError) {
