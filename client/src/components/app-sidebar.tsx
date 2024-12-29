@@ -7,7 +7,6 @@ import { Button } from "./ui/button";
 import { Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
 import { AuthContext } from "@/context/auth-context";
-import useFolders from "@/hooks/useFolders";
 import useLogout from "@/hooks/useLogout";
 import {
   Collapsible,
@@ -29,10 +28,11 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import ShareFolderDialog from "./share-folder-dialog";
+import { UseQueryResult } from "@tanstack/react-query";
+import useFolder from "@/hooks/useFolder";
 
-function AppSidebar() {
+function AppSidebar({ query }: { query: UseQueryResult<Folder[]> }) {
   const { isAuthenticated } = useContext(AuthContext);
-  const { data, isPending } = useFolders(isAuthenticated);
   const logOutMutation = useLogout();
 
   return (
@@ -40,10 +40,12 @@ function AppSidebar() {
       <SidebarContent className="bg-sidebar-accent">
         <DialogGroup />
         <SidebarSeparator />
-        {isPending ? (
+        {query.isPending ? (
           <SidebarSkeleton />
         ) : (
-          <SidebarMenu>{data && <FolderMenuItem folders={data} />}</SidebarMenu>
+          <SidebarMenu>
+            {query.data && <FolderMenuItem folders={query.data} />}
+          </SidebarMenu>
         )}
       </SidebarContent>
       {isAuthenticated && (
@@ -61,24 +63,30 @@ function AppSidebar() {
 }
 
 function DialogGroup() {
+  const { user } = useContext(AuthContext);
   const { folderId } = useParams();
+  const { data } = useFolder(folderId);
+
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <FolderDialog actionType={folderId ? "update" : "create"} folderId={folderId || ""}/>
+            <FolderDialog
+              actionType={folderId ? "update" : "create"}
+              folderId={folderId || ""}
+            />
           </SidebarMenuItem>
           <SidebarMenuItem>
             <FileDialog />
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            {folderId && <ShareFolderDialog folderId={folderId} />}
+            {data && <ShareFolderDialog folderId={data.id.toString()} />}
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            {folderId && <DeleteFolderDialog folderId={folderId} />}
+            {data && <DeleteFolderDialog folderId={data.id.toString()} />}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>

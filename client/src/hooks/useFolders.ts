@@ -1,6 +1,8 @@
 import { API_URL } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { Folder } from "@/lib/types";
+import { useContext } from "react";
+import { AuthContext } from "@/context/auth-context";
 
 const fetchFolders = async (): Promise<Folder[]> => {
   const response = await fetch(`${API_URL}/folders`, {
@@ -16,7 +18,8 @@ const fetchFolders = async (): Promise<Folder[]> => {
   return response.json();
 };
 
-const useFolders = (isAuthenticated: boolean) => {
+const useFolders = () => {
+  const { isAuthenticated } = useContext(AuthContext);
   return useQuery({
     queryKey: ["folders", { isAuthenticated }],
     queryFn: fetchFolders,
