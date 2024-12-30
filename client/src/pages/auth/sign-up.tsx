@@ -10,43 +10,25 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { API_URL } from "@/lib/constants";
 import Submit from "@/components/ui/submit";
 import RedAsterisk from "@/components/ui/red-asterisk";
 import { useMutation } from "@tanstack/react-query";
 import ErrorAlert from "@/components/error.alert";
+import { signup, FormData } from "@/api/user-api";
 
 type SignUpCardProps = {
   setTab: (value: string) => void;
 };
 
 function SignUpCard({ setTab }: SignUpCardProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     username: "",
     password: "",
     confirmPassword: "",
   });
 
   const signUpMutation = useMutation({
-    mutationFn: async () => {
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error("Passwords do not match");
-      }
-      const response = await fetch(`${API_URL}/sign-up`, {
-        method: "POST",
-        body: JSON.stringify({ formData }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res.error);
-      }
-
-      return response.json();
-    },
+    mutationFn: () => signup(formData),
     onSuccess: () => {
       setTab("signIn");
     },

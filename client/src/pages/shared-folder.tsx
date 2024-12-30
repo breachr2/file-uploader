@@ -4,31 +4,16 @@ import { Separator } from "@radix-ui/react-separator";
 import AppBreadcrumb from "@/components/app-breadcrumb";
 import { Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Folder } from "@/lib/types";
-import { API_URL } from "@/lib/constants";
 import { useParams } from "react-router-dom";
-
-const fetchSharedFolder = async (
-  folderId: string | undefined
-): Promise<Folder[]> => {
-  const response = await fetch(`${API_URL}/public-folders/${folderId}`);
-
-  if (!response.ok) {
-    const error = await response.json();
-    console.log(error);
-    throw new Error(error);
-  }
-
-  return response.json();
-};
+import { getPublicFolder } from "@/api/public-folder-api";
 
 function SharedFolder() {
   const { folderId } = useParams();
-  console.log(folderId)
   const queryResult = useQuery({
     queryKey: ["public-folder", folderId],
-    queryFn: () => fetchSharedFolder(folderId),
+    queryFn: () => getPublicFolder(folderId),
   });
+
   return (
     <SidebarProvider>
       <AppSidebar query={queryResult} />

@@ -12,12 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { API_URL } from "@/lib/constants";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Submit from "@/components/ui/submit";
 import RedAsterisk from "@/components/ui/red-asterisk";
 import ErrorAlert from "@/components/error.alert";
+import { signin } from "@/api/user-api";
 
 function SignInCard() {
   const [username, setUsername] = useState("");
@@ -27,22 +27,7 @@ function SignInCard() {
   const navigate = useNavigate();
 
   const signInMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${API_URL}/log-in`, {
-        method: "POST",
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res);
-      }
-      return response.json();
-    },
+    mutationFn: () => signin(username, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-status"] });
       queryClient.invalidateQueries({ queryKey: ["folders"] });

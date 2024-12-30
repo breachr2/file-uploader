@@ -1,17 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_URL } from "@/lib/constants";
 import { useNavigate } from "react-router-dom";
-
-const logout = async () => {
-  const response = await fetch(`${API_URL}/log-out`, {
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    throw new Error("Logout Failed");
-  }
-  return response.json();
-};
+import { logout } from "@/api/user-api";
 
 const useLogout = () => {
   const queryClient = useQueryClient();
