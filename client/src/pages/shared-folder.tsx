@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 const fetchSharedFolder = async (
   folderId: string | undefined
 ): Promise<Folder[]> => {
-  const response = await fetch(`${API_URL}/folders/public/${folderId}`);
+  const response = await fetch(`${API_URL}/public-folders/${folderId}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -26,7 +26,7 @@ function SharedFolder() {
   const { folderId } = useParams();
   console.log(folderId)
   const queryResult = useQuery({
-    queryKey: ["shared-folder", folderId],
+    queryKey: ["public-folder", folderId],
     queryFn: () => fetchSharedFolder(folderId),
   });
   return (

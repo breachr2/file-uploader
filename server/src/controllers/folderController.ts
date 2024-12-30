@@ -8,7 +8,6 @@ import CustomError from "../utils/customError";
 import { NextFunction } from "express-serve-static-core";
 import { INVALID_AUTHORIZATION } from "../utils/errorConstants";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
-import { generateRandomName } from "./fileController";
 
 const getFolders = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -93,19 +92,11 @@ const getFolderById = asyncHandler(
 const patchFolderUpdate = asyncHandler(async (req: Request, res: Response) => {
   const folderId = Number(req.params.folderId);
   const userId = (req.user as User)?.id;
-  const { folderName, expiresAt } = req.body;
-
-  const updateData: Record<string, any> = {};
-
-  if (folderName) updateData.name = folderName;
-  if (expiresAt) {
-    updateData.expiresAt = new Date(Date.now() + Number(expiresAt));
-    updateData.folderUrl = `http://localhost:5173/share/${folderId}`;
-  }
+  const { folderName } = req.body;
 
   const updatedFolder = await prisma.folder.update({
     where: { id: folderId, userId: userId },
-    data: updateData,
+    data: { name: folderName },
   });
   res.json(updatedFolder);
 });
@@ -119,8 +110,7 @@ const deleteFolderById = asyncHandler(
     });
 
     if (!folder) {
-      next(new CustomError(300, "Folder not found", 404));
-      return;
+      return next(new CustomError(300, "Folder not found", 404));
     }
 
     const files = await prisma.file.findMany({ where: { folderId: folderId } });
@@ -143,28 +133,25 @@ const deleteFolderById = asyncHandler(
   }
 );
 
-const getPublicFolder = asyncHandler(
+const putFolderUpdatePublic = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderId = Number(req.params.folderId);
-    
-    const folder = await prisma.folder.findUnique({
-      where: { id: folderId },
-      include: { files: true },
+    const userId = (req.user as User)?.id;
+    const { expiresValue } = req.body;
+
+    if (!expiresValue) {
+      return next(new CustomError(305, "Please provide an expires date.", 400));
+    }
+
+    const updatedFolder = await prisma.folder.update({
+      where: { id: folderId, userId: userId },
+      data: {
+        expiresAt: new Date(Date.now() + Number(expiresValue)),
+        folderUrl: `http://localhost:5173/share/${folderId}`,
+      },
     });
 
-    if (!folder?.expiresAt || !folder.folderUrl) {
-      return next(
-        new CustomError(300, "This folder is not publicably viewable", 404)
-      );
-    }
-
-    if (folder.expiresAt < new Date(Date.now())) {
-      return next(
-        new CustomError(300, "This folder's url is no longer valid.", 404)
-      );
-    }
-
-    res.json([folder]);
+    res.json(updatedFolder);
   }
 );
 
@@ -174,5 +161,5 @@ export {
   getFolderById,
   patchFolderUpdate,
   deleteFolderById,
-  getPublicFolder,
+  putFolderUpdatePublic,
 };

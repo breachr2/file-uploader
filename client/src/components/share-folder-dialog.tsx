@@ -20,16 +20,50 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import useFolder from "@/hooks/useFolder";
-import useUpdateFolder from "@/hooks/useUpdateFolder";
 import Submit from "./ui/submit";
+import { API_URL } from "@/lib/constants";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+const makeFolderPublic = async ({
+  folderId,
+  expiresValue,
+}: {
+  folderId: string;
+  expiresValue: string | undefined;
+}) => {
+  if (!expiresValue) {
+    throw new Error("Select a expires duration");
+  }
+
+  const response = await fetch(`${API_URL}/folders/${folderId}/make-public`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ expiresValue }),
+  });
+
+  if (!response.ok) {
+    const res = await response.json();
+    throw new Error(res || "An error has occured creating a folder");
+  }
+
+  return response.json();
+};
 
 function ShareFolderDialog({ folderId }: { folderId: string }) {
-  const [expiresValue, setExpiresValue] = useState<string | undefined>()
+  const queryClient = useQueryClient();
+  const [expiresValue, setExpiresValue] = useState<string | undefined>();
   const { data, isLoading } = useFolder(folderId);
-  const updateFolderMutation = useUpdateFolder();
+
+  const mutation = useMutation({
+    mutationFn: makeFolderPublic,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
+    },
+  });
 
   function handleSubmit() {
-    updateFolderMutation.mutate({ folderId, expiresAt : expiresValue});
+    mutation.mutate({ folderId, expiresValue: expiresValue });
   }
 
   return (
@@ -51,7 +85,13 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
         <div className="flex flex-col gap-2">
           <div>
             <h1>Select Duration</h1>
-            <ToggleGroup type="single" className="justify-start gap-0" onValueChange={(value) => { if (value) setExpiresValue(value)}}>
+            <ToggleGroup
+              type="single"
+              className="justify-start gap-0"
+              onValueChange={(value) => {
+                if (value) setExpiresValue(value);
+              }}
+            >
               <ToggleGroupItem value="3600">1 hour</ToggleGroupItem>
               <ToggleGroupItem value="14400">4 hours</ToggleGroupItem>
               <ToggleGroupItem value="86400">1 day</ToggleGroupItem>
@@ -86,7 +126,14 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
 
-          <Submit onClick={handleSubmit} isLoading={isLoading} className="w-30" disabled={data?.folderUrl ? true : false}>Generate Link</Submit>
+          <Submit
+            onClick={handleSubmit}
+            isLoading={isLoading}
+            className="w-30"
+            disabled={data?.folderUrl ? true : false}
+          >
+            Generate Link
+          </Submit>
         </DialogFooter>
       </DialogContent>
     </Dialog>

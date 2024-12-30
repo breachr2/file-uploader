@@ -4,26 +4,14 @@ import { API_URL } from "@/lib/constants";
 type UpdateFolderType = {
   folderId: string | undefined;
   folderName?: string;
-  expiresAt?: string;
 };
 
-const updateFolder = async ({
-  folderId,
-  folderName,
-  expiresAt,
-}: UpdateFolderType) => {
-  
-  const updateFields: Record<string, any> = {};
-  if (folderName) updateFields.folderName = folderName;
-  if (expiresAt) updateFields.expiresAt = expiresAt;
-
-  console.log(updateFields)
-
+const updateFolder = async ({ folderId, folderName }: UpdateFolderType) => {
   const response = await fetch(`${API_URL}/folders/${folderId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify(updateFields),
+    body: JSON.stringify({ folderName }),
   });
 
   if (!response.ok) {

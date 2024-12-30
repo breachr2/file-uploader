@@ -5,6 +5,7 @@ import sessionConfig from "./config/sessionConfig";
 import authRouter from "./routes/authRoutes";
 import fileRouter from "./routes/fileRoutes";
 import folderRouter from "./routes/folderRoutes";
+import publicFolderRouter from "./routes/publicFolderRoutes"
 import cors from "cors";
 import { MulterError } from "multer";
 import CustomError from "./utils/customError";
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter);
+app.use("public-folders", publicFolderRouter)
 app.use("/folders", folderRouter);
 app.use("/files", fileRouter);
 
