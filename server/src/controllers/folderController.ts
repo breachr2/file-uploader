@@ -59,6 +59,13 @@ const getFolderById = asyncHandler(
       return;
     }
 
+    if (folder.expiresAt && folder.expiresAt < new Date(Date.now())) {
+      await prisma.folder.update({
+        where: { id: folderId },
+        data: { folderUrl: null, expiresAt: null },
+      });
+    }
+
     for (const file of folder.files) {
       const isExpired =
         !file.signedUrl || !file.expiresAt || file.expiresAt < new Date();
