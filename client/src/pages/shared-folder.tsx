@@ -14,6 +14,10 @@ function SharedFolder() {
     queryFn: () => getPublicFolder(folderId),
   });
 
+  if (queryResult.isError) {
+    return <h1>404 Error{queryResult.error.message}</h1>;
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar query={queryResult} />

@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter);
-app.use("public-folders", publicFolderRouter)
+app.use("/public-folders", publicFolderRouter)
 app.use("/folders", folderRouter);
 app.use("/files", fileRouter);
 
@@ -51,6 +51,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   }
 
   if (error instanceof CustomError) {
+    console.log(error.message)
     res.status(error.statusCode).json(error.message);
     return;
   }

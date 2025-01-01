@@ -9,7 +9,7 @@ const getPublicFolder = async (
   if (!response.ok) {
     const error = await response.json();
     console.log(error);
-    throw new Error(error);
+    throw new Error(error || "An error has occured");
   }
 
   return response.json();

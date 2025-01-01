@@ -21,7 +21,7 @@ const getPublicFolder = asyncHandler(
 
     if (folder.expiresAt < new Date(Date.now())) {
       return next(
-        new CustomError(300, "This folder's url is no longer valid.", 404)
+        new CustomError(300, "This folder's url is no longer valid.", 410)
       );
     }
 

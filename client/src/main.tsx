@@ -7,7 +7,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: Infinity } },
+  // defaultOptions: { queries: { staleTime: Infinity } },
 });
 
 createRoot(document.getElementById("root")!).render(
