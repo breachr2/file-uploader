@@ -20,7 +20,7 @@ const getPublicFolder = asyncHandler(
     }
 
     if (folder.expiresAt < new Date(Date.now())) {
-
+    
       // If folder url is expired, set the url and expiry date to null
       await prisma.folder.update({
         where: { id: folderId },

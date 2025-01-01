@@ -6,6 +6,7 @@ import { Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getPublicFolder } from "@/api/public-folder-api";
+import FileItem from "@/components/file-item";
 
 function SharedFolder() {
   const { folderId } = useParams();
@@ -18,6 +19,10 @@ function SharedFolder() {
     return <h1>404 Error{queryResult.error.message}</h1>;
   }
 
+  if (!queryResult.data) {
+    return <div>No DATA</div>
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar query={queryResult} />
@@ -26,9 +31,16 @@ function SharedFolder() {
         <div className="flex space-x-2 items-center">
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-4" />
-          <AppBreadcrumb />
+          {/* <AppBreadcrumb /> */}
         </div>
-        <Outlet />
+        <div className="flex flex-col gap-2">
+          {queryResult.data[0].files.map((file) => (
+            <FileItem key={file.id} file={file} />
+          ))}
+          {queryResult.data[0].files.length === 0 && (
+            <h1 className="text-center">This folder is empty...</h1>
+          )}
+        </div>
       </main>
     </SidebarProvider>
   );

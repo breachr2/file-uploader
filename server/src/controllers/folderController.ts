@@ -58,8 +58,8 @@ const getFolderById = asyncHandler(
       next(new CustomError(300, "Folder not found", 404));
       return;
     }
-
-    if (folder.expiresAt && folder.expiresAt < new Date(Date.now())) {
+    
+    if (folder.expiresAt && folder.expiresAt < new Date()) {
       await prisma.folder.update({
         where: { id: folderId },
         data: { folderUrl: null, expiresAt: null },
@@ -153,7 +153,7 @@ const putFolderUpdatePublic = asyncHandler(
     const updatedFolder = await prisma.folder.update({
       where: { id: folderId, userId: userId },
       data: {
-        expiresAt: new Date(Date.now() + Number(expiresValue)),
+        expiresAt: new Date(Date.now() + Number(expiresValue) * 1000),
         folderUrl: `http://localhost:5173/share/${folderId}`,
       },
     });
