@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import { Strategy as LocalStrategy } from "passport-local";
 import prisma from "../config/prisma";
 import { User } from "@prisma/client";
-import { INVALID_USERNAME, INVALID_PASSWORD } from "../utils/errorConstants";
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
