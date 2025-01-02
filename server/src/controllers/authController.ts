@@ -22,9 +22,9 @@ async function postSignIn(req: Request, res: Response, next: NextFunction) {
       }
 
       if (user) {
-        req.login(user, (loginErr) => {
-          if (loginErr) {
-            return next(loginErr);
+        req.login(user, (err) => {
+          if (err) {
+            return next(err);
           }
           return res.json("Successfully logged in");
         });
@@ -59,8 +59,8 @@ function getLogOut(req: Request, res: Response, next: NextFunction) {
 }
 
 function getAuthStatus(req: Request, res: Response) {
-  const user = req.user as User;
   if (req.isAuthenticated()) {
+    const user = req.user as User;
     res.json({
       isAuthenticated: true,
       user: { id: user.id, username: user.username },

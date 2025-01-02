@@ -1,53 +1,44 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import prisma from "../config/prisma";
-import { User } from "@prisma/client";
-import s3Client from "../config/s3Client";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import asyncHandler from "express-async-handler";
 import CustomError from "../utils/customError";
-import { NextFunction } from "express-serve-static-core";
-import { INVALID_AUTHORIZATION } from "../utils/errorConstants";
-import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { User } from "@prisma/client";
+import { getSignedCloudFrontUrl } from "../services/cloudFrontService";
+import { deleteFileFromS3 } from "../services/s3Service";
 
-const getFolders = asyncHandler(
+const getFolders = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req.user as User).id;
+  const folders = await prisma.folder.findMany({
+    where: { userId: userId },
+    include: { files: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  res.json(folders);
+});
+
+const postFolderCreate = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req.user as User)?.id || null;
+    const { folderName } = req.body;
 
-    if (!userId) {
+    if (!folderName) {
       return next(
-        new CustomError(
-          INVALID_AUTHORIZATION,
-          "You do not have permissions to access this resource.",
-          403
-        )
+        new CustomError(400, "Please provide a name for the folder.")
       );
     }
 
-    const folders = await prisma.folder.findMany({
-      where: { userId: userId },
-      include: { files: true },
-      orderBy: { createdAt: "asc" },
+    const userId = (req.user as User)?.id;
+    const newFolder = await prisma.folder.create({
+      data: { name: folderName, userId: userId },
     });
-
-    res.json(folders);
+    res.json(newFolder);
   }
 );
-
-const postFolderCreate = asyncHandler(async (req: Request, res: Response) => {
-  const { folderName } = req.body;
-  const userId = (req.user as User)?.id || null;
-  const newFolder = await prisma.folder.create({
-    data: { name: folderName, userId: userId },
-  });
-  res.json(newFolder);
-});
 
 const getFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderId = Number(req.params.folderId);
     const userId = (req.user as User).id;
-    const privateKey = process.env.CLOUDFRONT_PRIVATE_KEY || "";
-    const keyPairId = process.env.KEY_PAIR_ID || "";
 
     const folder = await prisma.folder.findUnique({
       where: { id: folderId, userId: userId },
@@ -55,10 +46,12 @@ const getFolderById = asyncHandler(
     });
 
     if (!folder) {
-      next(new CustomError(300, "Folder not found", 404));
-      return;
+      return next(
+        new CustomError(404, `Folder with id ${folderId} could not be found.`)
+      );
     }
-    
+
+    // If folder url is expired update url and expiry date to null
     if (folder.expiresAt && folder.expiresAt < new Date()) {
       await prisma.folder.update({
         where: { id: folderId },
@@ -67,18 +60,14 @@ const getFolderById = asyncHandler(
     }
 
     for (const file of folder.files) {
+      // Check if file signed url is expired
       const isExpired =
         !file.signedUrl || !file.expiresAt || file.expiresAt < new Date();
 
       if (isExpired) {
-        // Url expires in 24 hours
+        // Generate new signed url that expires in 24 hours
         const expiresDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
-        const signedUrl = getSignedUrl({
-          url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
-          dateLessThan: expiresDate.toISOString(),
-          privateKey: privateKey,
-          keyPairId: keyPairId,
-        });
+        const signedUrl = getSignedCloudFrontUrl(file.name, expiresDate);
 
         file.signedUrl = signedUrl;
 
@@ -96,17 +85,26 @@ const getFolderById = asyncHandler(
   }
 );
 
-const patchFolderUpdate = asyncHandler(async (req: Request, res: Response) => {
-  const folderId = Number(req.params.folderId);
-  const userId = (req.user as User)?.id;
-  const { folderName } = req.body;
+const patchFolderUpdate = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const folderId = Number(req.params.folderId);
+    const userId = (req.user as User)?.id;
+    const { folderName } = req.body;
 
-  const updatedFolder = await prisma.folder.update({
-    where: { id: folderId, userId: userId },
-    data: { name: folderName },
-  });
-  res.json(updatedFolder);
-});
+    if (!folderName) {
+      return next(
+        new CustomError(400, "Please provide a name for the folder.")
+      );
+    }
+
+    const updatedFolder = await prisma.folder.update({
+      where: { id: folderId, userId: userId },
+      data: { name: folderName },
+    });
+
+    res.json(updatedFolder);
+  }
+);
 
 const deleteFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -114,28 +112,23 @@ const deleteFolderById = asyncHandler(
     const userId = (req.user as User)?.id;
     const folder = await prisma.folder.findUnique({
       where: { id: folderId, userId: userId },
+      include: { files: true },
     });
 
     if (!folder) {
-      return next(new CustomError(300, "Folder not found", 404));
+      return next(
+        new CustomError(404, `Folder with id ${folderId} could not be found.`)
+      );
     }
 
-    const files = await prisma.file.findMany({ where: { folderId: folderId } });
-
-    for (const file of files) {
-      const deleteParams = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: file.name,
-      };
-      const command = new DeleteObjectCommand(deleteParams);
-      await s3Client.send(command);
+    // Delete files from S3 Bucket
+    for (const file of folder.files) {
+      await deleteFileFromS3(file.name);
     }
 
-    await prisma.$transaction([
-      prisma.file.deleteMany({ where: { folderId } }),
-      prisma.folder.delete({ where: { id: folderId } }),
-    ]);
-
+    // Delete folder from db
+    await prisma.folder.delete({ where: { id: folderId } });
+    
     res.json("Successfully deleted folder");
   }
 );
@@ -147,14 +140,14 @@ const putFolderUpdatePublic = asyncHandler(
     const { expiresValue } = req.body;
 
     if (!expiresValue) {
-      return next(new CustomError(305, "Please provide an expires date.", 400));
+      return next(new CustomError(400, "Please provide an expires date."));
     }
 
     const updatedFolder = await prisma.folder.update({
       where: { id: folderId, userId: userId },
       data: {
         expiresAt: new Date(Date.now() + Number(expiresValue) * 1000),
-        folderUrl: `http://localhost:5173/share/${folderId}`,
+        folderUrl: `${process.env.FRONTEND_URL}/${folderId}`,
       },
     });
 

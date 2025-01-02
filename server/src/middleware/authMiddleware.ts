@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { INVALID_AUTHENTICATION } from "../utils/errorConstants";
 import CustomError from "../utils/customError";
 
 export function isAuthenticated(
@@ -12,9 +11,8 @@ export function isAuthenticated(
   } else {
     next(
       new CustomError(
-        INVALID_AUTHENTICATION,
-        "You have not been authenticated to access this resource.",
-        401
+        401,
+        "You have not been authenticated to access this resource."
       )
     );
   }

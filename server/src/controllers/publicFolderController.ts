@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
-import asyncHandler from "express-async-handler";
+import { Request, Response, NextFunction } from "express";
 import prisma from "../config/prisma";
-import { NextFunction } from "express-serve-static-core";
 import CustomError from "../utils/customError";
+import asyncHandler from "express-async-handler";
 
 const getPublicFolder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -13,14 +12,19 @@ const getPublicFolder = asyncHandler(
       include: { files: true },
     });
 
+    if (!folder) {
+      return next(
+        new CustomError(404, `Folder with id ${folderId} could not be found.`)
+      );
+    }
+
     if (!folder?.expiresAt || !folder.folderUrl) {
       return next(
-        new CustomError(300, "This folder is not publicably viewable", 404)
+        new CustomError(400, "This folder is not publicably viewable")
       );
     }
 
     if (folder.expiresAt < new Date(Date.now())) {
-    
       // If folder url is expired, set the url and expiry date to null
       await prisma.folder.update({
         where: { id: folderId },
@@ -28,7 +32,7 @@ const getPublicFolder = asyncHandler(
       });
 
       return next(
-        new CustomError(300, "This folder's url is no longer valid.", 410)
+        new CustomError(410, "This folder's url is no longer valid.")
       );
     }
 

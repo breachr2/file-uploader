@@ -1,4 +1,0 @@
-export const INVALID_AUTHENTICATION = 300;
-export const INVALID_AUTHORIZATION = 301;
-export const INVALID_USERNAME = 302;
-export const INVALID_PASSWORD = 303;

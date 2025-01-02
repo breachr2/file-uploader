@@ -1,15 +1,15 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import crypto from "crypto";
 import prisma from "../config/prisma";
-import s3Client from "../config/s3Client";
-import cloudFrontClient from "../config/cloudFrontClient";
-import { CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
-import { User } from "@prisma/client";
-import { Prisma } from "@prisma/client";
 import asyncHandler from "express-async-handler";
 import CustomError from "../utils/customError";
+import { User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import {
+  getSignedCloudFrontUrl,
+  invalidateCloudFrontCache,
+} from "../services/cloudFrontService";
+import { updateFileFromS3, deleteFileFromS3 } from "../services/s3Service";
 
 export const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");
@@ -17,8 +17,6 @@ export const generateRandomName = (bytes = 32) => {
 
 const getFiles = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
-  const privateKey = process.env.CLOUDFRONT_PRIVATE_KEY || "";
-  const keyPairId = process.env.KEY_PAIR_ID || "";
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
@@ -31,12 +29,7 @@ const getFiles = asyncHandler(async (req: Request, res: Response) => {
     if (isExpired) {
       // Url expires in 24 hours
       const expiresDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
-      const signedUrl = getSignedUrl({
-        url: `${process.env.CLOUDFRONT_URL}/${file.name}`,
-        dateLessThan: expiresDate.toISOString(),
-        privateKey: privateKey,
-        keyPairId: keyPairId,
-      });
+      const signedUrl = getSignedCloudFrontUrl(file.name, expiresDate);
 
       file.signedUrl = signedUrl;
 
@@ -71,58 +64,47 @@ const postFileCreate = asyncHandler(async (req: Request, res: Response) => {
     fileData.Folder = { connect: { id: Number(req.body.folderId) } };
   }
 
+  // Save the file to db
   const newFile = await prisma.file.create({ data: fileData });
 
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: randomImageName,
-    Body: buffer,
-    ContentType: mimetype,
-  };
+  // Save the file to an S3 bucket
+  await updateFileFromS3(randomImageName, mimetype, buffer);
 
-  const command = new PutObjectCommand(params);
-  await s3Client.send(command);
   res.json(newFile);
 });
 
-const deleteFileById = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req.user as User)?.id;
-  const fileId = Number(req.params.fileId);
-  const file = await prisma.file.findUnique({
-    where: { id: fileId, userId: userId },
-  });
+const deleteFileById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.user as User)?.id;
+    const fileId = Number(req.params.fileId);
+    const file = await prisma.file.findUnique({
+      where: { id: fileId, userId: userId },
+    });
 
-  if (!file) {
-    throw new CustomError(305, "File not found", 404);
+    if (!file) {
+      throw new CustomError(
+        404,
+        `File with id ${fileId} could not been found.`
+      );
+    }
+
+    try {
+      // Delete file from S3
+      deleteFileFromS3(file.name);
+
+      // Invalidating cloudfront cache
+      invalidateCloudFrontCache(file.name);
+
+      // Delete file from db
+      const deletedFile = await prisma.file.delete({
+        where: { id: fileId, userId: userId },
+      });
+
+      res.json(deletedFile);
+    } catch (err) {
+      next(new CustomError(500, "An error occurred while deleting the file."));
+    }
   }
-
-  const deleteParams = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: file.name,
-  };
-
-  const command = new DeleteObjectCommand(deleteParams);
-  await s3Client.send(command);
-
-  // Invalidating cloud front cache for deleted file
-  const invalidationParams = {
-    DistributionId: process.env.DISTRIBUTION_ID,
-    InvalidationBatch: {
-      Paths: {
-        Quantity: 1,
-        Items: ["/" + file.name],
-      },
-      CallerReference: file.name,
-    },
-  };
-
-  const invalidationCommand = new CreateInvalidationCommand(invalidationParams);
-  await cloudFrontClient.send(invalidationCommand);
-
-  const deletedFile = await prisma.file.delete({
-    where: { id: fileId, userId: userId },
-  });
-  res.json(deletedFile);
-});
+);
 
 export { getFiles, postFileCreate, deleteFileById };
