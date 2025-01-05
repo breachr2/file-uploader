@@ -6,12 +6,13 @@ import Layout from "./pages/layout";
 import { AuthProvider } from "./context/auth-context";
 import PublicFolder from "./pages/public-folder";
 import SharedFolder from "./pages/shared-folder";
+import LandingPage from "./pages/landing-page";
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" index element={<p>Welcome</p>} />
+        <Route path="/" index element={<LandingPage />} />
         <Route element={<Layout />}>
           <Route path="/folders" element={<FolderLayout />}>
             <Route index element={<PublicFolder />} />

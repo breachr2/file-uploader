@@ -26,10 +26,6 @@ function FileItem({ file }: { file: File }) {
     navigate("/folders");
   };
 
-  // const openInNewTab = (url: string) => {
-  //   window.open(url, "_blank", "noreferrer");
-  // };
-  
   return (
     <Sheet>
       <SheetTrigger asChild>

@@ -15,7 +15,6 @@ function Layout() {
       </header> */}
       <SidebarProvider>
         <AppSidebar query={queryResult}/>
-
         <main className="flex flex-col w-full bg-secondary p-2 gap-4">
           <div className="flex space-x-2 items-center">
             <SidebarTrigger />

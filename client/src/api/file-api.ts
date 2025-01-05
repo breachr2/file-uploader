@@ -1,6 +1,7 @@
 import { API_URL } from "@/lib/constants";
+import { File as FileType } from "@/lib/types";
 
-const getFiles = async (): Promise<File[]> => {
+const getFiles = async (): Promise<FileType[]> => {
   const response = await fetch(`${API_URL}/files`, {
     credentials: "include",
   });

@@ -102,24 +102,24 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
     <Collapsible key={folder.id} className="group/collapsible">
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <Link to={`folders/${folder.id}`}>
-            <SidebarMenuButton className="hover:bg-hover">
-              {folder.name}
-              {folder.files.length > 0 && (
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              )}
-            </SidebarMenuButton>
-          </Link>
+          <SidebarMenuButton className="hover:bg-hover">
+            {folder.name}
+            {folder.files.length > 0 && (
+              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            )}
+          </SidebarMenuButton>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
           <SidebarMenuSub>
             {folder.files?.map((file) => (
-              <SidebarMenuSubItem key={file.id}>
-                <SidebarMenuButton className="hover:bg-hover overflow-hidden text-ellipsis">
-                  {file.name}
-                </SidebarMenuButton>
-              </SidebarMenuSubItem>
+              <Link to={`folders/${folder.id}`}>
+                <SidebarMenuSubItem key={file.id}>
+                  <SidebarMenuButton className="hover:bg-hover overflow-hidden text-ellipsis">
+                    {file.originalName}
+                  </SidebarMenuButton>
+                </SidebarMenuSubItem>
+              </Link>
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
