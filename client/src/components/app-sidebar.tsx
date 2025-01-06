@@ -113,8 +113,8 @@ function FolderMenuItem({ folders }: { folders: Folder[] }) {
         <CollapsibleContent>
           <SidebarMenuSub>
             {folder.files?.map((file) => (
-              <Link to={`folders/${folder.id}`}>
-                <SidebarMenuSubItem key={file.id}>
+              <Link to={`folders/${folder.id}`} key={file.id}>
+                <SidebarMenuSubItem>
                   <SidebarMenuButton className="hover:bg-hover overflow-hidden text-ellipsis">
                     {file.originalName}
                   </SidebarMenuButton>

@@ -13,15 +13,19 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" index element={<LandingPage />} />
+
+        <Route path="/auth" element={<Auth />} />
+
         <Route element={<Layout />}>
           <Route path="/folders" element={<FolderLayout />}>
             <Route index element={<PublicFolder />} />
             <Route path=":folderId" element={<Folder />} />
           </Route>
-          <Route path="/folders/:folderId/:fileId" element={<p>File</p>} />
         </Route>
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/share/:folderId" element={<SharedFolder />}/>
+        
+        <Route path="/share" element={<SharedFolder />}>
+          <Route path=":folderId" element={<SharedFolder />} />
+        </Route>
       </Routes>
     </AuthProvider>
   );

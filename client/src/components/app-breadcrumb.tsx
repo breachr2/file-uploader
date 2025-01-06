@@ -7,12 +7,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
-import useFolder from "@/hooks/useFolder";
-import { useParams } from "react-router-dom";
 
-function AppBreadcrumb({ ...rest }) {
-  const { folderId } = useParams();
-
+function AppBreadcrumb({ children, ...rest }: { children: React.ReactNode }) {
   return (
     <Breadcrumb {...rest}>
       <BreadcrumbList>
@@ -21,11 +17,11 @@ function AppBreadcrumb({ ...rest }) {
             <Link to="/folders">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {folderId && (
+        {children && (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <FolderBreadCrumbPage folderId={folderId} />
+              <BreadcrumbPage>{children}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}
@@ -33,23 +29,5 @@ function AppBreadcrumb({ ...rest }) {
     </Breadcrumb>
   );
 }
-
-const FolderBreadCrumbPage = ({ folderId }: { folderId: string }) => {
-  const { data, isPending, isError } = useFolder(folderId);
-
-  if (isError) {
-    return <div>Cannot find folder</div>;
-  }
-
-  if (isPending) {
-    return <div>loading...</div>;
-  }
-
-  return (
-    <BreadcrumbPage>
-      <Link to={`/folders/${data.name}`}>Folder {data.name}</Link>
-    </BreadcrumbPage>
-  );
-};
 
 export default AppBreadcrumb;

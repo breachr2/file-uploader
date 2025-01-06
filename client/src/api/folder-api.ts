@@ -67,7 +67,7 @@ const updateFolder = async ({
   return response.json();
 };
 
-const deleteFolder = async (folderId: number) => {
+const deleteFolder = async (folderId: string) => {
   const response = await fetch(`${API_URL}/folders/${folderId}`, {
     method: "DELETE",
     credentials: "include",

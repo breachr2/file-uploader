@@ -14,20 +14,14 @@ import Submit from "./ui/submit";
 import useDeleteFolder from "@/hooks/useDeleteFolder";
 import ErrorAlert from "./error.alert";
 import { Trash2 } from "lucide-react";
-import { AuthContext } from "@/context/auth-context";
-import { useContext } from "react";
 import useFolder from "@/hooks/useFolder";
 
 function DeleteFolderDialog({ folderId }: { folderId: string }) {
   const [open, setOpen] = useState(false);
-  const { isAuthenticated } = useContext(AuthContext);
   const { data } = useFolder(folderId);
-  const deleteFolderMutation = useDeleteFolder(Number(folderId));
+  const deleteFolderMutation = useDeleteFolder(folderId);
 
   const handleSubmit = () => {
-    if (!isAuthenticated) {
-      return;
-    }
     deleteFolderMutation.mutate();
     setOpen(false);
   };

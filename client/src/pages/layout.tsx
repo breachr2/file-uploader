@@ -4,22 +4,31 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useFolders from "@/hooks/useFolders";
 
 function Layout() {
   const queryResult = useFolders();
+  const { folderId } = useParams();
+  const folder = queryResult.data?.find(
+    (folder) => Number(folderId) === folder.id
+  );
+  
   return (
     <>
       {/* <header className="bg-foreground text-background p-2 h-10 flex items-center shadow-md">
         <h1 className="text-2xl">File Uploader</h1>
       </header> */}
       <SidebarProvider>
-        <AppSidebar query={queryResult}/>
+        <AppSidebar query={queryResult} />
         <main className="flex flex-col w-full bg-secondary p-2 gap-4">
           <div className="flex space-x-2 items-center">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />
-            <AppBreadcrumb />
+            <AppBreadcrumb>
+              {folder && <Link to={`/folders/${folderId}`}>{folder.name}</Link>}
+            </AppBreadcrumb>
           </div>
           <Outlet />
         </main>

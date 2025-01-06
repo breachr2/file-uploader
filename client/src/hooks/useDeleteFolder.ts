@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { deleteFolder } from "@/api/folder-api";
 
-const useDeleteFolder = (folderId: number) => {
+const useDeleteFolder = (folderId: string) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
