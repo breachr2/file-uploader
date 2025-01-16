@@ -14,14 +14,24 @@ import { Button } from "./ui/button";
 import useDeleteFile from "@/hooks/useDeleteFile";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
-import { useRef } from "react";
+import { useContext, useRef, useState } from "react";
+import { AuthContext } from "@/context/auth-context";
+import ErrorAlertDialog from "./error-alert-dialog";
 
 function FileItem({ file }: { file: File }) {
+  const [error, setError] = useState<boolean>(false);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const fileLinkRef = useRef<HTMLAnchorElement>(null);
   const deleteFileMutation = useDeleteFile();
   const navigate = useNavigate();
 
   const handleFileDelete = () => {
+    setError(false);
+    if (!isAuthenticated || user?.id !== file.userId) {
+      setError(true);
+      return;
+    }
+
     deleteFileMutation.mutate(file.id);
     navigate("/folders");
   };
@@ -62,7 +72,14 @@ function FileItem({ file }: { file: File }) {
           </div>
         )}
         <SheetFooter>
-          <Button onClick={handleFileDelete}>Delete</Button>
+          {user?.id === file.userId && (
+            <Button onClick={handleFileDelete}>Delete</Button>
+          )}
+          {error && (
+            <ErrorAlertDialog>
+              You do not have permissions to delete this file.
+            </ErrorAlertDialog>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>

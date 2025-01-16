@@ -80,4 +80,30 @@ const deleteFolder = async (folderId: string) => {
   return response.json();
 };
 
-export { getFolder, getFolders, createFolder, updateFolder, deleteFolder };
+const makeFolderPublic = async ({
+  folderId,
+  expiresValue,
+}: {
+  folderId: string;
+  expiresValue: string | undefined;
+}) => {
+  if (!expiresValue) {
+    throw new Error("Select a expires duration");
+  }
+
+  const response = await fetch(`${API_URL}/folders/${folderId}/make-public`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ expiresValue }),
+  });
+
+  if (!response.ok) {
+    const res = await response.json();
+    throw new Error(res || "An error has occured creating a folder");
+  }
+
+  return response.json();
+};
+
+export { getFolder, getFolders, createFolder, updateFolder, deleteFolder, makeFolderPublic };

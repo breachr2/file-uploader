@@ -12,7 +12,7 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" index element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
 
         <Route path="/auth" element={<Auth />} />
 
@@ -22,9 +22,11 @@ function App() {
             <Route path=":folderId" element={<Folder />} />
           </Route>
         </Route>
-        
-        <Route path="/share" element={<SharedFolder />}>
-          <Route path=":folderId" element={<SharedFolder />} />
+
+        <Route element={<SharedFolder />}>
+          <Route path="/share/:folderSlug/" element={<FolderLayout />}>
+            <Route path=":folderId" element={<p>Hello</p>} />
+          </Route>
         </Route>
       </Routes>
     </AuthProvider>

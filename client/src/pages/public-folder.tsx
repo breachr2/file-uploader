@@ -21,12 +21,12 @@ function PublicFolder() {
 
   return (
     <div className="flex flex-col gap-2">
-      {folders.data &&
-        folders.data.map((folder) => (
-          <FolderItem key={folder.id} folder={folder} />
-        ))}
-      {files.data &&
-        files.data.map((file) => <FileItem key={file.id} file={file} />)}
+      {folders.data?.map((folder) => (
+        <FolderItem key={folder.id} folder={folder} />
+      ))}
+      {files.data?.map((file) => (
+        <FileItem key={file.id} file={file} />
+      ))}
     </div>
   );
 }

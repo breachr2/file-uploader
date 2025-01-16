@@ -34,6 +34,7 @@ model Folder {
   files     File[]
   User      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int?
+  slug      String?    @unique
   folderUrl String?   @unique
   expiresAt DateTime?
   updatedAt DateTime  @updatedAt

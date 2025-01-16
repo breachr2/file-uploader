@@ -5,16 +5,16 @@ import asyncHandler from "express-async-handler";
 
 const getPublicFolder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const folderId = Number(req.params.folderId);
+    const folderSlug = req.params.folderSlug;
 
     const folder = await prisma.folder.findUnique({
-      where: { id: folderId },
+      where: { slug: folderSlug },
       include: { files: true },
     });
 
     if (!folder) {
       return next(
-        new CustomError(404, `Folder with id ${folderId} could not be found.`)
+        new CustomError(404, `Folder with id ${folderSlug} could not be found.`)
       );
     }
 
@@ -27,7 +27,7 @@ const getPublicFolder = asyncHandler(
     if (folder.expiresAt < new Date(Date.now())) {
       // If folder url is expired, set the url and expiry date to null
       await prisma.folder.update({
-        where: { id: folderId },
+        where: { slug: folderSlug },
         data: { folderUrl: null, expiresAt: null },
       });
 

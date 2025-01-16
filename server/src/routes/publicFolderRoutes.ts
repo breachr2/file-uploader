@@ -3,6 +3,6 @@ import { getPublicFolder } from "../controllers/publicFolderController";
 
 const router = Router()
 
-router.get("/:folderId", getPublicFolder)
+router.get("/:folderSlug", getPublicFolder)
 
 export default router

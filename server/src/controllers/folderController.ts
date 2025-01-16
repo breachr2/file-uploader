@@ -5,6 +5,7 @@ import CustomError from "../utils/customError";
 import { User } from "@prisma/client";
 import { getSignedCloudFrontUrl } from "../services/cloudFrontService";
 import { deleteFileFromS3 } from "../services/s3Service";
+import { generateRandomName } from "./fileController";
 
 const getFolders = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User).id;
@@ -128,7 +129,7 @@ const deleteFolderById = asyncHandler(
 
     // Delete folder from db
     await prisma.folder.delete({ where: { id: folderId } });
-    
+
     res.json("Successfully deleted folder");
   }
 );
@@ -143,11 +144,14 @@ const putFolderUpdatePublic = asyncHandler(
       return next(new CustomError(400, "Please provide an expires date."));
     }
 
+    const randomFolderSlug = generateRandomName();
+
     const updatedFolder = await prisma.folder.update({
       where: { id: folderId, userId: userId },
       data: {
         expiresAt: new Date(Date.now() + Number(expiresValue) * 1000),
-        folderUrl: `${process.env.FRONTEND_URL}/${folderId}`,
+        folderUrl: `${process.env.FRONTEND_URL}/${randomFolderSlug}`,
+        slug: randomFolderSlug,
       },
     });
 
