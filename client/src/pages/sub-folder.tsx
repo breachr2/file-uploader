@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function Folder() {
+function SubFolder() {
   const { folderId } = useParams();
   const { isAuthenticated } = useContext(AuthContext);
   const { data, isPending, isError, error } = useFolder(
@@ -42,4 +42,4 @@ function Folder() {
   );
 }
 
-export default Folder;
+export default SubFolder;

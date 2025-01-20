@@ -6,23 +6,20 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { useEffect, useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { signin } from "@/api/user-api";
 import Submit from "@/components/ui/submit";
 import RedAsterisk from "@/components/ui/red-asterisk";
 import ErrorAlert from "@/components/error.alert";
-import { signin } from "@/api/user-api";
 
 function SignInCard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { isAuthenticated } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -35,13 +32,6 @@ function SignInCard() {
       navigate("/folders");
     },
   });
-
-  useEffect(() => {
-    // Navigate to previous page
-    if (isAuthenticated) {
-      navigate(-1);
-    }
-  }, [isAuthenticated]);
 
   return (
     <Card>
