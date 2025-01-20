@@ -7,8 +7,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function AppBreadcrumb({ children, ...rest }: { children: React.ReactNode }) {
+  const location = useLocation()
   return (
     <Breadcrumb {...rest}>
       <BreadcrumbList>

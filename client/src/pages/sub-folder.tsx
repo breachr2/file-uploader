@@ -1,23 +1,17 @@
 import FileItem from "@/components/file-item";
-import useFolder from "@/hooks/useFolder";
-import { useParams } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Folder } from "@/lib/types";
 
-function SubFolder() {
-  const { folderId } = useParams();
-  const { isAuthenticated } = useContext(AuthContext);
-  const { data, isPending, isError, error } = useFolder(
-    folderId,
-  );
+type SubFolderProps = {
+  data: Folder | undefined;
+  isPending: boolean;
+  isError: boolean;
+  error: Error | null;
+};
 
+function SubFolder({ data, isPending, isError, error }: SubFolderProps) {
   if (isError) {
-    return <h1 className="text-center">{error.message}</h1>;
-  }
-
-  if (!isAuthenticated) {
-    return <h1 className="text-center">Log in to get started</h1>;
+    return <h1 className="text-center">{(error as Error).message}</h1>;
   }
 
   if (isPending) {
@@ -28,6 +22,10 @@ function SubFolder() {
         ))}
       </div>
     );
+  }
+
+  if (!data) {
+    return <div>This folder is empty</div>;
   }
 
   return (
