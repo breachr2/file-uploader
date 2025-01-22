@@ -1,6 +1,6 @@
 import FileItem from "@/components/file-item";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Folder } from "@/lib/types";
+import FolderSkeleton from "@/components/folder-skeleton";
 
 type SubFolderProps = {
   data: Folder | undefined;
@@ -17,15 +17,13 @@ function SubFolder({ data, isPending, isError, error }: SubFolderProps) {
   if (isPending) {
     return (
       <div className="flex flex-col gap-2">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <Skeleton key={index} className="rounded-sm h-8" />
-        ))}
+        <FolderSkeleton />
       </div>
     );
   }
 
   if (!data) {
-    return <div>This folder is empty</div>;
+    return <div>Faled to fetch folder contents.</div>;
   }
 
   return (
@@ -34,7 +32,7 @@ function SubFolder({ data, isPending, isError, error }: SubFolderProps) {
         <FileItem key={file.id} file={file} />
       ))}
       {data.files.length === 0 && (
-        <h1 className="text-center">This folder is empty...</h1>
+        <h1 className="text-center">This folder is empty.</h1>
       )}
     </div>
   );

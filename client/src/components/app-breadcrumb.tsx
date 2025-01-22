@@ -6,24 +6,37 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Link } from "react-router-dom";
+import { Folder } from "@/lib/types";
+import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-function AppBreadcrumb({ children, ...rest }: { children: React.ReactNode }) {
-  const location = useLocation()
+function AppBreadcrumb({ activeFolder, ...rest }: { activeFolder: Folder | undefined }) {
+  const location = useLocation();
+  const { folderSlug, folderId } = useParams();
+  let baseUrl;
+
+  if (folderSlug) {
+    const pathname = location.pathname.split("/");
+    baseUrl = `/${pathname[1]}/${pathname[2]}`;
+  } else {
+    const pathname = location.pathname.split("/");
+    baseUrl = `/${pathname[1]}`;
+  }
   return (
     <Breadcrumb {...rest}>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to="/folders">Home</Link>
+            <Link to={baseUrl}>Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {children && (
+        {folderId && (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{children}</BreadcrumbPage>
+              <BreadcrumbPage>
+                <Link to={`${location.pathname}`}>{activeFolder?.name}</Link>
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}

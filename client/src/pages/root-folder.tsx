@@ -5,6 +5,7 @@ import FileItem from "@/components/file-item";
 import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
 import { Navigate } from "react-router-dom";
+import FolderSkeleton from "@/components/folder-skeleton";
 
 function RootFolder() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -23,8 +24,8 @@ function RootFolder() {
     return <div className="text-center">{files.error.message}</div>;
   }
 
-  if (folders.isLoading || files.isLoading) {
-    return <p>Loading...</p>;
+  if (folders.isPending || files.isPending) {
+    return <FolderSkeleton />;
   }
 
   return (

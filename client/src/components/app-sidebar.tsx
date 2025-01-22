@@ -28,23 +28,27 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import ShareFolderDialog from "./share-folder-dialog";
-import { UseQueryResult } from "@tanstack/react-query";
 
-function AppSidebar({ query }: { query: UseQueryResult<Folder[]> }) {
+type AppSidebarProps = {
+  data: Folder[];
+  isError: boolean;
+  isPending: boolean;
+  error: Error | null;
+};
+
+function AppSidebar({ data, isError, isPending, error }: AppSidebarProps) {
   const { isAuthenticated } = useContext(AuthContext);
   const logOutMutation = useLogout();
 
   return (
     <Sidebar>
       <SidebarContent className="bg-sidebar-accent">
-        <DialogGroup folders={query.data} />
+        <DialogGroup folders={data} />
         <SidebarSeparator />
-        {query.isPending ? (
+        {isPending ? (
           <SidebarSkeleton />
         ) : (
-          <SidebarMenu>
-            {query.data && <FolderMenuItem folders={query.data} />}
-          </SidebarMenu>
+          <SidebarMenu>{data && <FolderMenuItem folders={data} />}</SidebarMenu>
         )}
       </SidebarContent>
       {isAuthenticated && (
@@ -82,13 +86,13 @@ function DialogGroup({ folders }: { folders: Folder[] | undefined }) {
 
           <SidebarMenuItem>
             {folderData && (
-              <ShareFolderDialog folderId={folderData?.id.toString()} />
+              <ShareFolderDialog folderId={folderData.id.toString()} />
             )}
           </SidebarMenuItem>
 
           <SidebarMenuItem>
             {folderData && (
-              <DeleteFolderDialog folderId={folderData?.id.toString()} />
+              <DeleteFolderDialog folderId={folderData.id.toString()} />
             )}
           </SidebarMenuItem>
         </SidebarMenu>

@@ -1,16 +1,15 @@
 import AppSidebar from "@/components/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@radix-ui/react-separator";
 import AppBreadcrumb from "@/components/app-breadcrumb";
 import { Outlet } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
 import { useParams } from "react-router-dom";
-import useFolders from "@/hooks/useFolders";
+import usePublicFolder from "@/hooks/usePublicFolder";
 
-function Layout() {
-  const { data, isPending, isError, error } = useFolders();
-  const { folderId } = useParams();
-  const folder = data?.find((folder) => Number(folderId) === folder.id);
+function PublicLayout() {
+  const { folderSlug, folderId } = useParams();
+  const { data, isError, isPending, error } = usePublicFolder(folderSlug);
+  const folder = data?.find((folder) => folder.id === Number(folderId));
 
   if (isError) {
     return <h1>404 Error{error.message}</h1>;
@@ -22,16 +21,14 @@ function Layout() {
 
   return (
     <>
-      {/* <header className="bg-foreground text-background p-2 h-10 flex items-center shadow-md">
-        <h1 className="text-2xl">File Uploader</h1>
-      </header> */}
       <SidebarProvider>
         <AppSidebar
           data={data}
-          isPending={isPending}
           isError={isError}
+          isPending={isPending}
           error={error}
         />
+
         <main className="flex flex-col w-full bg-secondary p-2 gap-4">
           <div className="flex space-x-2 items-center">
             <SidebarTrigger />
@@ -45,4 +42,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default PublicLayout;

@@ -4,17 +4,17 @@ import RootFolder from "./pages/root-folder";
 import Auth from "./pages/auth/auth";
 import Layout from "./pages/layout";
 import { AuthProvider } from "./context/auth-context";
-import PublicFolder from "./pages/public-folder";
+import PublicLayout from "./pages/public-layout";
 import LandingPage from "./pages/landing-page";
 import PrivateSubFolder from "./pages/private-sub-folder";
 import PublicSubFolder from "./pages/public-sub-folder";
+import PublicFolder from "./pages/public-folder";
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-
         <Route path="/auth" element={<Auth />} />
 
         <Route element={<Layout />}>
@@ -24,8 +24,9 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<PublicFolder />}>
+        <Route element={<PublicLayout />}>
           <Route path="/share/:folderSlug/" element={<FolderLayout />}>
+            <Route index element={<PublicFolder />} />
             <Route path=":folderId" element={<PublicSubFolder />} />
           </Route>
         </Route>
