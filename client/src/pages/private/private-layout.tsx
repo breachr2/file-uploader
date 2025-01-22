@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { useParams } from "react-router-dom";
 import useFolders from "@/hooks/useFolders";
 
-function Layout() {
+function PrivateLayout() {
   const { data, isPending, isError, error } = useFolders();
   const { folderId } = useParams();
   const folder = data?.find((folder) => Number(folderId) === folder.id);
@@ -45,4 +45,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default PrivateLayout;

@@ -7,7 +7,7 @@ import { AuthContext } from "@/context/auth-context";
 import { Navigate } from "react-router-dom";
 import FolderSkeleton from "@/components/folder-skeleton";
 
-function RootFolder() {
+function PrivateFolder() {
   const { isAuthenticated } = useContext(AuthContext);
   const folders = useFolders();
   const files = useFiles();
@@ -40,4 +40,4 @@ function RootFolder() {
   );
 }
 
-export default RootFolder;
+export default PrivateFolder;

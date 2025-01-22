@@ -2,7 +2,7 @@ import { useParams, Navigate } from "react-router-dom";
 import useFolder from "@/hooks/useFolder";
 import { AuthContext } from "@/context/auth-context";
 import { useContext } from "react";
-import SubFolder from "./sub-folder";
+import SubFolder from "../sub-folder";
 
 function PrivateSubFolder() {
   const { folderId } = useParams();
