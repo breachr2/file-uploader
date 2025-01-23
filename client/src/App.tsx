@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/auth-context";
+import Auth from "./pages/auth/auth";
 import LandingPage from "./pages/landing-page";
 import FolderLayout from "./pages/folder-layout";
-import Auth from "./pages/auth/auth";
 import PrivateLayout from "./pages/private/private-layout";
 import PrivateFolder from "./pages/private/private-folder";
 import PrivateSubFolder from "./pages/private/private-sub-folder";

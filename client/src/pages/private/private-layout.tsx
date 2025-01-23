@@ -4,16 +4,23 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import useFolders from "@/hooks/useFolders";
+import { useContext } from "react";
+import { AuthContext } from "@/context/auth-context";
 
 function PrivateLayout() {
+  const { isAuthenticated } = useContext(AuthContext);
   const { data, isPending, isError, error } = useFolders();
   const { folderId } = useParams();
   const folder = data?.find((folder) => Number(folderId) === folder.id);
 
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" />;
+  }
+
   if (isError) {
-    return <h1>404 Error{error.message}</h1>;
+    return <h1>{error.message}</h1>;
   }
 
   if (!data) {

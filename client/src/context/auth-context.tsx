@@ -31,11 +31,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   if (isPending) {
-    return <p></p>;
+    return;
   }
 
   if (isError) {
-    return <p></p>;
+    return;
   }
 
   return (

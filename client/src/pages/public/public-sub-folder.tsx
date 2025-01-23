@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import SubFolder from "./sub-folder";
+import SubFolder from "../sub-folder";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicFolder } from "@/api/public-folder-api";
 

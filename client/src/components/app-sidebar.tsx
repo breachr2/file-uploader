@@ -65,10 +65,16 @@ function AppSidebar({ data, isError, isPending, error }: AppSidebarProps) {
   );
 }
 
-function DialogGroup({ folders }: { folders: Folder[] | undefined }) {
-  const { user } = useContext(AuthContext);
+function DialogGroup({ folders }: { folders: Folder[] }) {
+  const { isAuthenticated, user } = useContext(AuthContext);
   const { folderId } = useParams();
   const folderData = folders?.find((folder) => folder.id === Number(folderId));
+  const isOwner =
+    isAuthenticated && user?.id === (folders.length > 0 && folders[0].userId);
+
+  if (!isOwner) {
+    return null;
+  }
 
   return (
     <SidebarGroup>

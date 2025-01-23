@@ -13,7 +13,7 @@ function PrivateFolder() {
   const files = useFiles();
 
   if (!isAuthenticated) {
-    return <Navigate to={"/auth"} />;
+    return <Navigate to="/auth" />;
   }
 
   if (folders.isError) {
