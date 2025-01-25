@@ -1,16 +1,10 @@
 import { useParams } from "react-router-dom";
 import SubFolder from "../sub-folder";
-import { useQuery } from "@tanstack/react-query";
-import { getPublicFolder } from "@/api/public-folder-api";
+import usePublicFolder from "@/hooks/usePublicFolder";
 
 function PublicSubFolder() {
-  const { folderSlug, folderId } = useParams();
-  console.log(folderId)
-  console.log(folderSlug)
-  const { data, isPending, isError, error } = useQuery({
-    queryKey: ["public-folder", folderSlug],
-    queryFn: () => getPublicFolder(folderSlug),
-  });
+  const { folderSlug } = useParams();
+  const { data, isPending, isError, error } = usePublicFolder(folderSlug);
 
   return (
     <SubFolder

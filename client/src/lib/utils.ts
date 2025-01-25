@@ -27,6 +27,7 @@ export function formatFileSize(fileSize: number) {
   return formattedFileSize;
 }
 
+// Makes artifical delays
 export function wait(duration: number) {
   return new Promise((resolve) => setTimeout(resolve, duration));
 }

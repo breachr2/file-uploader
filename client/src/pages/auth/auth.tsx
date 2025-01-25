@@ -1,13 +1,13 @@
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import SignInCard from "./sign-in";
 import SignUpCard from "./sign-up";
-import { AuthContext } from "@/context/auth-context";
 import { Navigate } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
 
 function Auth() {
   const [tab, setTab] = useState("signIn");
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
     return <Navigate to="/folders" />;

@@ -11,13 +11,13 @@ import { FolderPlus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { AuthContext } from "@/context/auth-context";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import RedAsterisk from "./ui/red-asterisk";
 import Submit from "./ui/submit";
 import ErrorAlert from "./error.alert";
 import useUpdateFolder from "@/hooks/useUpdateFolder";
 import useCreateFolder from "@/hooks/useCreateFolder";
+import useAuth from "@/hooks/useAuth";
 
 type FolderDialogProps = {
   actionType: "create" | "update";
@@ -25,7 +25,7 @@ type FolderDialogProps = {
 };
 
 function FolderDialog({ actionType, folderId }: FolderDialogProps) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   const [folderName, setFolderName] = useState("");
   const [open, setOpen] = useState(false);
 

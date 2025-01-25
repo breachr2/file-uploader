@@ -12,7 +12,7 @@ function PublicLayout() {
   const folder = data?.find((folder) => folder.id === Number(folderId));
 
   if (isError) {
-    return <h1>404 Error{error.message}</h1>;
+    return <h1>{error.message}</h1>;
   }
 
   if (!data) {

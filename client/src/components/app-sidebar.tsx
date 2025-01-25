@@ -1,12 +1,10 @@
 import FolderDialog from "./folder-dialog";
 import FileDialog from "./file-dialog";
-import { useContext } from "react";
 import { ChevronDown } from "lucide-react";
 import { Folder } from "@/lib/types";
 import { Button } from "./ui/button";
 import { Link, useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";
-import { AuthContext } from "@/context/auth-context";
 import useLogout from "@/hooks/useLogout";
 import {
   Collapsible,
@@ -28,6 +26,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import ShareFolderDialog from "./share-folder-dialog";
+import useAuth from "@/hooks/useAuth";
 
 type AppSidebarProps = {
   data: Folder[];
@@ -36,8 +35,8 @@ type AppSidebarProps = {
   error: Error | null;
 };
 
-function AppSidebar({ data, isError, isPending, error }: AppSidebarProps) {
-  const { isAuthenticated } = useContext(AuthContext);
+function AppSidebar({ data, isPending }: AppSidebarProps) {
+  const { isAuthenticated } = useAuth();
   const logOutMutation = useLogout();
 
   return (
@@ -66,7 +65,7 @@ function AppSidebar({ data, isError, isPending, error }: AppSidebarProps) {
 }
 
 function DialogGroup({ folders }: { folders: Folder[] }) {
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated, user } = useAuth();
   const { folderId } = useParams();
   const folderData = folders?.find((folder) => folder.id === Number(folderId));
   const isOwner =

@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/auth-context";
 import Auth from "./pages/auth/auth";
 import LandingPage from "./pages/landing-page";
 import FolderLayout from "./pages/folder-layout";
@@ -12,26 +11,24 @@ import PublicSubFolder from "./pages/public/public-sub-folder";
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<Auth />} />
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/auth" element={<Auth />} />
 
-        <Route element={<PrivateLayout />}>
-          <Route path="/folders" element={<FolderLayout />}>
-            <Route index element={<PrivateFolder />} />
-            <Route path=":folderId" element={<PrivateSubFolder />} />
-          </Route>
+      <Route element={<PrivateLayout />}>
+        <Route path="/folders" element={<FolderLayout />}>
+          <Route index element={<PrivateFolder />} />
+          <Route path=":folderId" element={<PrivateSubFolder />} />
         </Route>
+      </Route>
 
-        <Route element={<PublicLayout />}>
-          <Route path="/share/:folderSlug/" element={<FolderLayout />}>
-            <Route index element={<PublicFolder />} />
-            <Route path=":folderId" element={<PublicSubFolder />} />
-          </Route>
+      <Route element={<PublicLayout />}>
+        <Route path="/share/:folderSlug/" element={<FolderLayout />}>
+          <Route index element={<PublicFolder />} />
+          <Route path=":folderId" element={<PublicSubFolder />} />
         </Route>
-      </Routes>
-    </AuthProvider>
+      </Route>
+    </Routes>
   );
 }
 

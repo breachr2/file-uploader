@@ -1,4 +1,5 @@
 import { API_URL } from "@/lib/constants";
+import { User } from "@/lib/types";
 
 export type FormData = {
   username: "";
@@ -54,4 +55,14 @@ const logout = async () => {
   return response.json();
 };
 
-export { signin, signup, logout };
+const getAuthStatus = async (): Promise<{
+  isAuthenticated: boolean;
+  user: User | null;
+}> => {
+  const response = await fetch(`${API_URL}/auth/status`, {
+    credentials: "include",
+  });
+  return response.json();
+};
+
+export { signin, signup, logout, getAuthStatus };

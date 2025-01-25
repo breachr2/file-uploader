@@ -6,11 +6,10 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useParams, Navigate } from "react-router-dom";
 import useFolders from "@/hooks/useFolders";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
+import useAuth from "@/hooks/useAuth";
 
 function PrivateLayout() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   const { data, isPending, isError, error } = useFolders();
   const { folderId } = useParams();
   const folder = data?.find((folder) => Number(folderId) === folder.id);

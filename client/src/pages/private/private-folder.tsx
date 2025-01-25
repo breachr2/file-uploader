@@ -2,13 +2,12 @@ import useFiles from "@/hooks/useFiles";
 import useFolders from "@/hooks/useFolders";
 import FolderItem from "@/components/folder-item";
 import FileItem from "@/components/file-item";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
 import { Navigate } from "react-router-dom";
 import FolderSkeleton from "@/components/folder-skeleton";
+import useAuth from "@/hooks/useAuth";
 
 function PrivateFolder() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   const folders = useFolders();
   const files = useFiles();
 

@@ -14,13 +14,13 @@ import { Button } from "./ui/button";
 import useDeleteFile from "@/hooks/useDeleteFile";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
-import { useContext, useRef, useState } from "react";
-import { AuthContext } from "@/context/auth-context";
+import { useRef, useState } from "react";
 import ErrorAlertDialog from "./error-alert-dialog";
+import useAuth from "@/hooks/useAuth";
 
 function FileItem({ file }: { file: File }) {
   const [error, setError] = useState<boolean>(false);
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated, user } = useAuth();
   const fileLinkRef = useRef<HTMLAnchorElement>(null);
   const deleteFileMutation = useDeleteFile();
   const navigate = useNavigate();

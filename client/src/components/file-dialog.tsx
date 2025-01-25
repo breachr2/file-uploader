@@ -10,18 +10,18 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Submit from "./ui/submit";
 import RedAsterisk from "./ui/red-asterisk";
 import { useParams, useNavigate } from "react-router-dom";
-import { AuthContext } from "@/context/auth-context";
+import useAuth from "@/hooks/useAuth";
 import ErrorAlert from "./error.alert";
 import useCreateFile from "@/hooks/useCreateFile";
 import { useQueryClient } from "@tanstack/react-query";
 import { FilePlus } from "lucide-react";
 
 function FileDialog() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
   const { folderId } = useParams();
@@ -69,9 +69,7 @@ function FileDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>New File</DialogTitle>
-          <DialogDescription>
-            Upload a file, click Submit when you're done.
-          </DialogDescription>
+          <DialogDescription>Upload a file up to 50MB.</DialogDescription>
         </DialogHeader>
         <div>
           <form onSubmit={handleFileUpload} className="flex flex-col gap-4">
@@ -87,6 +85,9 @@ function FileDialog() {
                 required
               />
             </div>
+            <p>
+              Accepted file types are png, jpg/jpeg, gif, webpg, doc, docx, pdf.{" "}
+            </p>
             {createFileMutation.isError && (
               <ErrorAlert>{createFileMutation.error.message}</ErrorAlert>
             )}
