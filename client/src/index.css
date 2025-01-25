@@ -16,6 +16,19 @@ body,
   height: 100%;
 }
 
+@media (max-height: 600px) {
+  .pt-height-small {
+    padding-top: 20px;
+  }
+}
+
+
+@media (min-height: 601px) {
+  .pt-height-large {
+    padding-top: 5px;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

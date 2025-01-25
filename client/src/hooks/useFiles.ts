@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFiles } from "@/api/file-api";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
+import useAuth from "./useAuth";
 
 const useFiles = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: ["public-files", { isAuthenticated }],
     queryFn: getFiles,

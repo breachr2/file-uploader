@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
-import { AuthContext } from "@/context/auth-context";
 import { getFolders } from "@/api/folder-api";
+import useAuth from "./useAuth";
 
 const useFolders = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: ["folders", { isAuthenticated }],
     queryFn: getFolders,
