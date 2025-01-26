@@ -5,6 +5,8 @@ import { useSearchParams } from "react-router-dom";
 function FolderLayout() {
   const [searchParams, setSearchParams] = useSearchParams();
   console.log(searchParams)
+  console.log(setSearchParams)
+
   return (
     <div className="h-full flex flex-col gap-2">
       <div className="grid grid-cols-4 text-md ">

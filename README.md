@@ -7,7 +7,7 @@
 
 ## About the Project
 
-This is a website that lets users upload and store files in the Cloud. These files are stored securely in an S3 bucket and distributed globally with CloudFront for low latency.
+This is a website that allows users to upload and store files in the Cloud. These files are stored in an S3 bucket and served securely using CloudFront signed urls. distributed globally with CloudFront for low latency.
 
 ### Built With
 
