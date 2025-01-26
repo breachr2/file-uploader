@@ -78,13 +78,18 @@ const deleteFileById = asyncHandler(
     const userId = (req.user as User)?.id;
     const fileId = Number(req.params.fileId);
     const file = await prisma.file.findUnique({
-      where: { id: fileId, userId: userId },
+      where: { id: fileId },
     });
 
     if (!file) {
-      throw new CustomError(
-        404,
-        `File with id ${fileId} could not been found.`
+      return next(
+        new CustomError(404, `File with id ${fileId} could not been found.`)
+      );
+    }
+
+    if (file.userId !== userId) {
+      return next(
+        new CustomError(403, "You are not authorized to delete this file.")
       );
     }
 

@@ -98,6 +98,18 @@ const patchFolderUpdate = asyncHandler(
       );
     }
 
+    const folder = await prisma.folder.findUnique({ where: { id: folderId } });
+
+    if (!folder) {
+      return next(new CustomError(404, "Folder not found"));
+    }
+
+    if (folder.userId !== userId) {
+      return next(
+        new CustomError(403, "You are not authorized to update this folder.")
+      );
+    }
+
     const updatedFolder = await prisma.folder.update({
       where: { id: folderId, userId: userId },
       data: { name: folderName },
@@ -112,13 +124,19 @@ const deleteFolderById = asyncHandler(
     const folderId = Number(req.params.folderId);
     const userId = (req.user as User)?.id;
     const folder = await prisma.folder.findUnique({
-      where: { id: folderId, userId: userId },
+      where: { id: folderId },
       include: { files: true },
     });
 
     if (!folder) {
       return next(
         new CustomError(404, `Folder with id ${folderId} could not be found.`)
+      );
+    }
+
+    if (folder.userId !== userId) {
+      return next(
+        new CustomError(403, "You are not authorized to delete this folder.")
       );
     }
 
@@ -130,7 +148,7 @@ const deleteFolderById = asyncHandler(
     // Delete folder from db
     await prisma.folder.delete({ where: { id: folderId } });
 
-    res.json("Successfully deleted folder");
+    res.json("Successfully deleted folder.");
   }
 );
 
