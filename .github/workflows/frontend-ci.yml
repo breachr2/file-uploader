@@ -1,0 +1,24 @@
+name: Frontend CI
+
+on:
+  push:
+    paths:
+      - 'client/***'
+
+jobs:
+  build:
+    name: Build React Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name : Set up Node
+        uses : actions/setup-node@v4
+      
+      - name : Install dependecies
+        working-directory: client
+        run : npm install
+      
+      - name : Build the Frontend
+        run : npm run build
