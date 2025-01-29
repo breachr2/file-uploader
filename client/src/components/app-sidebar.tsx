@@ -66,12 +66,12 @@ function AppSidebar({ data, isPending }: AppSidebarProps) {
 
 function DialogGroup({ folders }: { folders: Folder[] }) {
   const { isAuthenticated, user } = useAuth();
-  const { folderId } = useParams();
+  const { folderId, folderSlug } = useParams();
   const folderData = folders?.find((folder) => folder.id === Number(folderId));
   const isOwner =
-    isAuthenticated && user?.id === (folders.length > 0 && folders[0].userId);
+    isAuthenticated && user?.id === (folders.length > 0 && folders[0].userId) ;
 
-  if (!isOwner) {
+  if (!isOwner && folderSlug) {
     return null;
   }
 

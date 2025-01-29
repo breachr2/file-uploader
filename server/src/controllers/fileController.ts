@@ -17,9 +17,20 @@ export const generateRandomName = (bytes = 32) => {
 
 const getFiles = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
+  const { name, size, createdAt } = req.query;
+
+  const orderBy: any = {};
+  if (createdAt === "asc" || createdAt === "desc") {
+    orderBy.createdAt = createdAt;
+  } else if (name === "asc" || name === "desc") {
+    orderBy.name = name;
+  } else if (size === "asc" || size === "desc") {
+    orderBy.size = size;
+  }
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
+    orderBy: orderBy,
   });
 
   for (const file of files) {

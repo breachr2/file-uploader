@@ -1,13 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getFiles } from "@/api/file-api";
 import useAuth from "./useAuth";
 
-const useFiles = () => {
+const useFiles = (queryParams: URLSearchParams) => {
   const { isAuthenticated } = useAuth();
   return useQuery({
-    queryKey: ["public-files", { isAuthenticated }],
-    queryFn: getFiles,
+    queryKey: ["public-files", queryParams.toString(), { isAuthenticated }],
+    queryFn: () => getFiles(queryParams),
     enabled: isAuthenticated,
+    placeholderData: keepPreviousData,
   });
 };
 

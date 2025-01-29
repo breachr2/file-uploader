@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
+import useAuth from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 
 function LandingPage() {
+  const { isAuthenticated } = useAuth();
   return (
     <div className="flex flex-col justify-center items-center h-full bg-secondary relative min-h-96">
       <header className="p-4 w-full shadow-md absolute top-0 left-0 z-10">
@@ -24,7 +26,7 @@ function LandingPage() {
         <p className="text-base text-neutral-700 font-inter text-center max-w-lg sm:text-lg">
           Securely Store, Share, and Access Your Files Anytime, Anywhere.
         </p>
-        <Link to="/auth">
+        <Link to={isAuthenticated ? "/auth" : "/folders"}>
           <Button className="h-10 font-lg font-inter">Get Started</Button>
         </Link>
       </div>

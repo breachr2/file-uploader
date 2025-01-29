@@ -8,7 +8,6 @@ const getFolder = async (folderId: string | undefined): Promise<Folder> => {
 
   if (!response.ok) {
     const error = await response.json();
-    console.log(error);
     throw new Error(error);
   }
 
@@ -22,7 +21,6 @@ const getFolders = async (): Promise<Folder[]> => {
 
   if (!response.ok) {
     const error = await response.json();
-    console.log(error);
     throw new Error(error);
   }
 

@@ -1,6 +1,11 @@
-name: Frontend CI
+# name: Frontend CI
 
-on: [push]
+# Temporarily disabling workflow
+
+# on:
+#   push:
+#     paths:
+#       - 'client/**'
 
 jobs:
   build:

@@ -1,14 +1,14 @@
 import { API_URL } from "@/lib/constants";
 import { File as FileType } from "@/lib/types";
 
-const getFiles = async (): Promise<FileType[]> => {
-  const response = await fetch(`${API_URL}/files`, {
+const getFiles = async (queryParams: URLSearchParams): Promise<FileType[]> => {
+  const response = await fetch(`${API_URL}/files?${queryParams.toString()}`, {
     credentials: "include",
   });
 
   if (!response.ok) {
     const error = await response.json();
-    console.log(error);
+    console.log(error)
     throw new Error(error);
   }
 
