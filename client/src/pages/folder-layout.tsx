@@ -5,6 +5,7 @@ import { ArrowUp, ArrowDown } from "lucide-react";
 
 function FolderLayout() {
   const [searchParams, setSearchParams] = useSearchParams();
+  console.log("")
 
   const toggleSort = (key: string) => {
     const currentValue = searchParams.get(key);
