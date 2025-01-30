@@ -22,6 +22,7 @@ jobs:
         run: npm install
 
       - name: Build React App
+        working-directory: client
         run: npm run build
 
       - name: Deploy to S3
