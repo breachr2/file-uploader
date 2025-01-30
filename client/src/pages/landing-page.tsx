@@ -24,7 +24,7 @@ function LandingPage() {
           Cloud Storage Solution for Secure File Sharing
         </h1>
         <p className="text-base text-neutral-700 font-inter text-center max-w-lg sm:text-lg">
-          Securely Store, Share, and Access Your Files Anytime, Anywhere.
+          Securely Store, Share, and Access Your Files Anytime, Anywhere. Hello World
         </p>
         <Link to={isAuthenticated ? "/auth" : "/folders"}>
           <Button className="h-10 font-lg font-inter">Get Started</Button>
