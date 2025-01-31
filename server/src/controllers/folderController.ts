@@ -40,10 +40,20 @@ const getFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderId = Number(req.params.folderId);
     const userId = (req.user as User).id;
+    const { name, size, createdAt } = req.query;
+
+    const orderBy: any = {};
+    if (createdAt === "asc" || createdAt === "desc") {
+      orderBy.createdAt = createdAt;
+    } else if (name === "asc" || name === "desc") {
+      orderBy.name = name;
+    } else if (size === "asc" || size === "desc") {
+      orderBy.size = size;
+    }
 
     const folder = await prisma.folder.findUnique({
       where: { id: folderId, userId: userId },
-      include: { files: true },
+      include: { files: { orderBy: orderBy } },
     });
 
     if (!folder) {
