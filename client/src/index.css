@@ -5,6 +5,7 @@
 *,
 *::before,
 *::after {
+  font-family: "Inter", serif;
   padding: 0;
   margin: 0;
   box-sizing: border-box;

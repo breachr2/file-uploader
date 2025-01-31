@@ -9,7 +9,7 @@ function FolderItem({ folder }: { folder: Folder }) {
   
   return (
     <Link to={`${location.pathname}/${folder.id}`}>
-      <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md rounded-sm text-sm border">
+      <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-sm rounded-sm text-sm border">
         <p className="flex items-center gap-2 col-span-2 p-2">
           <FolderClosed size={16} /> {folder.name}
         </p>

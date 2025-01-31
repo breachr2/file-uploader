@@ -20,14 +20,14 @@ function LandingPage() {
         </div>
       </header>
       <div className="w-full flex flex-col items-center space-y-4 pt-height-small pt-height-large">
-        <h1 className="text-3xl font-bold text-[#333333] max-w-xl text-center font-inter sm:text-5xl">
+        <h1 className="text-3xl font-bold text-[#333333] max-w-xl text-center sm:text-5xl">
           Cloud Storage Solution for Secure File Sharing
         </h1>
-        <p className="text-base text-neutral-700 font-inter text-center max-w-lg sm:text-lg">
-          Securely Store, Share, and Access Your Files Anytime, Anywhere. Hello World
+        <p className="text-base text-neutral-700 text-center max-w-lg sm:text-lg">
+          Securely Store, Share, and Access Your Files Anytime, Anywhere
         </p>
         <Link to={isAuthenticated ? "/auth" : "/folders"}>
-          <Button className="h-10 font-lg font-inter">Get Started</Button>
+          <Button className="h-10 font-lg">Get Started</Button>
         </Link>
       </div>
     </div>

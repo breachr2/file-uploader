@@ -39,7 +39,7 @@ function FileItem({ file }: { file: File }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-md rounded-sm text-sm border">
+        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-sm rounded-sm text-sm border">
           <p className="flex items-center gap-2 col-span-2 p-2">
             <FileText size={16} /> {file.originalName}
           </p>

@@ -20,11 +20,11 @@ function PublicFolder() {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {data?.map((folder) => (
+    <>
+      {data.map((folder) => (
         <FolderItem key={folder.id} folder={folder} />
       ))}
-    </div>
+    </>
   );
 }
 
