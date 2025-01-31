@@ -39,9 +39,10 @@ function FileItem({ file }: { file: File }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-sm rounded-sm text-sm border">
+        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-sm rounded-sm text-sm border items-center">
           <p className="flex items-center gap-2 col-span-2 p-2">
-            <FileText size={16} /> {file.originalName}
+            <FileText size={16} className="flex-shrink-0" />
+            <span className="truncate">{file.originalName}</span>
           </p>
           <p className="col-span-1 p-2">{formatFileSize(file.size)}</p>
           <p className="col-span-1 p-2">{formatDate(file.createdAt)}</p>

@@ -21,7 +21,7 @@ function NavMain({ folders }: { folders: Folder[] }) {
     <SidebarGroup>
       <SidebarGroupLabel>Folders</SidebarGroupLabel>
       {folders.map((folder) => (
-        <SidebarMenu>
+        <SidebarMenu key={folder.id}>
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>

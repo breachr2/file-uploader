@@ -1,10 +1,16 @@
 import { API_URL } from "@/lib/constants";
 import { Folder } from "@/lib/types";
 
-const getFolder = async (folderId: string | undefined): Promise<Folder> => {
-  const response = await fetch(`${API_URL}/folders/${folderId}`, {
-    credentials: "include",
-  });
+const getFolder = async (
+  folderId: string | undefined,
+  searchParams?: URLSearchParams | undefined
+): Promise<Folder> => {
+  const response = await fetch(
+    `${API_URL}/folders/${folderId}?${searchParams?.toString()}`,
+    {
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();
@@ -104,4 +110,11 @@ const makeFolderPublic = async ({
   return response.json();
 };
 
-export { getFolder, getFolders, createFolder, updateFolder, deleteFolder, makeFolderPublic };
+export {
+  getFolder,
+  getFolders,
+  createFolder,
+  updateFolder,
+  deleteFolder,
+  makeFolderPublic,
+};
