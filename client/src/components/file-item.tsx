@@ -39,13 +39,15 @@ function FileItem({ file }: { file: File }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="grid grid-cols-4 cursor-pointer hover:bg-hover shadow-sm rounded-sm text-sm border items-center">
-          <p className="flex items-center gap-2 col-span-2 p-2">
-            <FileText size={16} className="flex-shrink-0" />
-            <span className="truncate">{file.originalName}</span>
-          </p>
-          <p className="col-span-1 p-2">{formatFileSize(file.size)}</p>
-          <p className="col-span-1 p-2">{formatDate(file.createdAt)}</p>
+        <div className="flex items-center p-2 rounded-md hover:bg-gray-100 gap-2 cursor-pointer">
+          <FileText size={20} className="flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {file.name}
+            </p>
+            <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+          </div>
+          <p className="text-xs text-gray-500">{formatDate(file.createdAt)}</p>
         </div>
       </SheetTrigger>
       <SheetContent>
