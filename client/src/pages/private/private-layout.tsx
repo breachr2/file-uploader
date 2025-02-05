@@ -38,7 +38,7 @@ function PrivateLayout() {
           isError={isError}
           error={error}
         />
-        <main className="flex flex-col w-full bg-secondary p-2 gap-4">
+        <main className="flex flex-col w-full bg-secondary bg-gray-100 p-2 gap-4">
           <div className="flex space-x-2 items-center">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />

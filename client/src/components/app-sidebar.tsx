@@ -4,6 +4,7 @@ import useLogout from "@/hooks/useLogout";
 import useAuth from "@/hooks/useAuth";
 import NavMain from "./nav-main";
 import NavActions from "./nav-actions";
+import { LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarMenu,
@@ -35,9 +36,12 @@ function AppSidebar({ data, isPending }: AppSidebarProps) {
       {isAuthenticated && (
         <SidebarFooter className="border">
           <Button
+            variant="ghost"
+            className="w-full text-red-500 hover:text-red-600 hover:bg-red-50"
             onClick={() => logOutMutation.mutate()}
             disabled={logOutMutation.isPending}
           >
+            <LogOut className="mr-2 h-4 w-4" />
             {logOutMutation.isPending ? "Logging out..." : "Log Out"}
           </Button>
         </SidebarFooter>
