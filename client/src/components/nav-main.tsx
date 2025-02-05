@@ -12,26 +12,30 @@ import { useLocation } from "react-router-dom";
 
 function NavMain({ folders }: { folders: Folder[] }) {
   const { pathname } = useLocation();
+  console.log(pathname);
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Folders</SidebarGroupLabel>
-      {folders.map((folder) => (
-        <SidebarMenu key={folder.id}>
-          <SidebarMenuItem>
-            <Link to={`/folders/${folder.id}`}>
-              <SidebarMenuButton
-                className={`hover:bg-hover flex items-center ${
-                  pathname === `/folders/${folder.id}` && "bg-hover"
-                }
+      {folders.map((folder) => {
+        const isActive = pathname.endsWith(`/${folder.id}`);
+        return (
+          <SidebarMenu key={folder.id}>
+            <SidebarMenuItem>
+              <Link to={`${pathname}/${folder.id}`}>
+                <SidebarMenuButton
+                  className={`hover:bg-hover flex items-center ${
+                    isActive && "bg-hover"
+                  }
                 `}
-              >
-                <FolderIcon className="text-blue-500" />
-                <span>{folder.name}</span>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      ))}
+                >
+                  <FolderIcon className="text-blue-500" />
+                  <span>{folder.name}</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        );
+      })}
     </SidebarGroup>
   );
 }

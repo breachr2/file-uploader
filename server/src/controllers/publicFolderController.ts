@@ -6,10 +6,20 @@ import asyncHandler from "express-async-handler";
 const getPublicFolder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderSlug = req.params.folderSlug;
+    const { name, size, createdAt } = req.query;
+
+    const orderBy: any = {};
+    if (createdAt === "asc" || createdAt === "desc") {
+      orderBy.createdAt = createdAt;
+    } else if (name === "asc" || name === "desc") {
+      orderBy.name = name;
+    } else if (size === "asc" || size === "desc") {
+      orderBy.size = size;
+    }
 
     const folder = await prisma.folder.findUnique({
       where: { slug: folderSlug },
-      include: { files: true },
+      include: { files: { orderBy: orderBy } },
     });
 
     if (!folder) {

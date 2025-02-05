@@ -2,11 +2,10 @@ import { useParams, Navigate } from "react-router-dom";
 import useFolder from "@/hooks/useFolder";
 import SubFolder from "../sub-folder";
 import useAuth from "@/hooks/useAuth";
-import { useOutletContext } from "react-router-dom";
-import { OutletContext } from "@/lib/types";
+import { useSearchParams } from "react-router-dom";
 
 function PrivateSubFolder() {
-  const { searchParams } = useOutletContext<OutletContext>();
+  const [searchParams] = useSearchParams();
   const { folderId } = useParams();
   const { data, isPending, isError, error } = useFolder(folderId, searchParams);
   const { isAuthenticated } = useAuth();
@@ -17,7 +16,7 @@ function PrivateSubFolder() {
 
   return (
     <SubFolder
-      data={data}
+      folder={data}
       isPending={isPending}
       isError={isError}
       error={error}
