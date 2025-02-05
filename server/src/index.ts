@@ -5,7 +5,7 @@ import sessionConfig from "./config/sessionConfig";
 import authRouter from "./routes/authRoutes";
 import fileRouter from "./routes/fileRoutes";
 import folderRouter from "./routes/folderRoutes";
-import publicFolderRouter from "./routes/publicFolderRoutes"
+import publicFolderRouter from "./routes/publicFolderRoutes";
 import cors from "cors";
 import { MulterError } from "multer";
 import CustomError from "./utils/customError";
@@ -18,16 +18,20 @@ const PORT = process.env.PORT || 8000;
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "../src/views"));
-
-app.use(helmet())
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(helmet());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(sessionConfig);
 app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(authRouter);
-app.use("/public-folders", publicFolderRouter)
+app.use("/public-folders", publicFolderRouter);
 app.use("/folders", folderRouter);
 app.use("/files", fileRouter);
 

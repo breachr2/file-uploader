@@ -1,7 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import SubFolder from "../sub-folder";
 import usePublicFolder from "@/hooks/usePublicFolder";
-import { useSearchParams } from "react-router-dom";
 
 function PublicSubFolder() {
   const { folderSlug } = useParams();

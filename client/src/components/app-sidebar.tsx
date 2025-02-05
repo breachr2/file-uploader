@@ -17,9 +17,7 @@ import {
 
 type AppSidebarProps = {
   data: Folder[];
-  isError: boolean;
   isPending: boolean;
-  error: Error | null;
 };
 
 function AppSidebar({ data, isPending }: AppSidebarProps) {
