@@ -31,3 +31,16 @@ export function formatFileSize(fileSize: number) {
 export function wait(duration: number) {
   return new Promise((resolve) => setTimeout(resolve, duration));
 }
+
+export function getBasePath(pathname: string) {
+  const isFoldersPath = pathname.startsWith("/folders");
+  const isSharePath = pathname.startsWith("/share");
+  let basePath = "";
+  if (isFoldersPath) {
+    basePath = "/folders";
+  } else if (isSharePath) {
+    const folderSlug = pathname.split("/")[2];
+    basePath = `/share/${folderSlug}`;
+  }
+  return basePath;
+}

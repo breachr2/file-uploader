@@ -10,9 +10,9 @@ function FolderItem({ folder }: { folder: Folder }) {
     <Link
       key={folder.id}
       to={`${location.pathname}/${folder.id}`}
-      className="block p-4 rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow"
+      className="block p-4 rounded-lg shadow-md bg-white hover:shadow-lg transition-all duration-200 ease-in-out transform hover:scale-[1.02]"
     >
-      <div className="flex items-center mb-2 gap-2">
+      <div className="flex items-center mb-2 gap-2 ">
         <FolderIcon className="text-red-500" size={24} />
         <h2>{folder.name}</h2>
       </div>

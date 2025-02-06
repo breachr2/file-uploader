@@ -9,26 +9,29 @@ import { Link } from "react-router-dom";
 import { Folder } from "@/lib/types";
 import { Folder as FolderIcon } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { getBasePath } from "@/lib/utils";
 
 function NavMain({ folders }: { folders: Folder[] }) {
   const { pathname } = useLocation();
-  console.log(pathname);
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Folders</SidebarGroupLabel>
       {folders.map((folder) => {
-        const isActive = pathname.endsWith(`/${folder.id}`);
+        const isActive = pathname.endsWith(`${folder.id}`);
+        const basePath = getBasePath(pathname);
+        const newPath = isActive ? pathname : `${basePath}/${folder.id}`;
+
         return (
           <SidebarMenu key={folder.id}>
             <SidebarMenuItem>
-              <Link to={`${pathname}/${folder.id}`}>
+              <Link to={newPath}>
                 <SidebarMenuButton
                   className={`hover:bg-hover flex items-center ${
                     isActive && "bg-hover"
                   }
                 `}
                 >
-                  <FolderIcon className="text-blue-500" />
+                  <FolderIcon />
                   <span>{folder.name}</span>
                 </SidebarMenuButton>
               </Link>
