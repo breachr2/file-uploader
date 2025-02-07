@@ -1,5 +1,5 @@
 import FolderDialog from "./folder-dialog";
-import FileDialog from "./file-dialog";
+import FileDialog from "./create-file-dialog";
 import { Folder } from "@/lib/types";
 import { useParams } from "react-router-dom";
 import DeleteFolderDialog from "./delete-folder-dialog";

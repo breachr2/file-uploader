@@ -9,12 +9,12 @@ import {
   DialogClose,
 } from "./ui/dialog";
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import Submit from "./ui/submit";
-import useDeleteFolder from "@/hooks/useDeleteFolder";
 import ErrorAlert from "./error.alert";
-import { Trash2 } from "lucide-react";
 import useFolder from "@/hooks/useFolder";
+import useDeleteFolder from "@/hooks/useDeleteFolder";
 
 function DeleteFolderDialog({ folderId }: { folderId: string }) {
   const [open, setOpen] = useState(false);

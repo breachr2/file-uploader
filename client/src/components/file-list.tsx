@@ -1,10 +1,10 @@
 import { ArrowUpDown } from "lucide-react";
-import { FileText } from "lucide-react";
-import { formatDate, formatFileSize } from "@/lib/utils";
-import { File } from "@/lib/types";
-import FileItem from "./file-item";
-import { useSearchParams } from "react-router-dom";
 import { Button } from "./ui/button";
+import { formatDate, formatFileSize } from "@/lib/utils";
+import { FileText } from "lucide-react";
+import { File } from "@/lib/types";
+import { useSearchParams } from "react-router-dom";
+import FileItem from "./file-item";
 
 function FileList({ files }: { files: File[] }) {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -1,29 +1,34 @@
 import { Folder } from "@/lib/types";
 import FolderSkeleton from "@/components/folder-skeleton";
 import FileList from "@/components/file-list";
+import { useState, useEffect } from "react";
 
 type SubFolderProps = {
-  folder: Folder | undefined;
+  folder: Folder;
   isPending: boolean;
   isError: boolean;
   error: Error | null;
 };
 
 function SubFolder({ folder, isPending, isError, error }: SubFolderProps) {
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (isPending) {
+      timeout = setTimeout(() => setShowSkeleton(true), 300);
+    } else {
+      setShowSkeleton(false);
+    }
+    return () => clearTimeout(timeout);
+  }, [isPending]);
+
   if (isError) {
     return <h1 className="text-center">{(error as Error).message}</h1>;
   }
 
-  if (isPending) {
-    return (
-      <div className="flex flex-col gap-2">
-        <FolderSkeleton />
-      </div>
-    );
-  }
-
-  if (!folder) {
-    return <div>Faled to fetch folder contents.</div>;
+  if (showSkeleton) {
+    return <FolderSkeleton />;
   }
 
   return (

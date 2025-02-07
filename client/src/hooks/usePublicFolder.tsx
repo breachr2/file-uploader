@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getPublicFolder } from "@/api/public-folder-api";
 
 const usePublicFolder = (
@@ -8,6 +8,7 @@ const usePublicFolder = (
   return useQuery({
     queryKey: ["public-folder", searchParams?.toString(), folderSlug],
     queryFn: () => getPublicFolder(folderSlug, searchParams),
+    placeholderData: keepPreviousData,
   });
 };
 

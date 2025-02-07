@@ -1,8 +1,8 @@
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useSearchParams } from "react-router-dom";
 import useFolder from "@/hooks/useFolder";
 import SubFolder from "../sub-folder";
 import useAuth from "@/hooks/useAuth";
-import { useSearchParams } from "react-router-dom";
+import ErrorPage from "../error-page";
 
 function PrivateSubFolder() {
   const [searchParams] = useSearchParams();
@@ -12,6 +12,10 @@ function PrivateSubFolder() {
 
   if (!isAuthenticated) {
     return <Navigate to="/auth" />;
+  }
+
+  if (!data) {
+    return <ErrorPage>There was an error fetching this folder.</ErrorPage>;
   }
 
   return (

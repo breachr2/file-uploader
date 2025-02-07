@@ -28,6 +28,7 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
   const { isAuthenticated } = useAuth();
   const [folderName, setFolderName] = useState("");
   const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const createFolderMutation = useCreateFolder();
   const updateFolderMutation = useUpdateFolder();
@@ -37,7 +38,9 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
     actionType: "create" | "update"
   ) {
     event.preventDefault();
+    setErrorMessage(null);
     if (!isAuthenticated) {
+      setErrorMessage("You must be logged in to perform this action.");
       return;
     }
     if (actionType === "create") {
@@ -86,6 +89,7 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
                 required
               />
             </div>
+            {errorMessage && <ErrorAlert>{errorMessage}</ErrorAlert>}
             {createFolderMutation.isError && (
               <ErrorAlert>{createFolderMutation.error.message}</ErrorAlert>
             )}

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getFolder } from "@/api/folder-api";
 import useAuth from "./useAuth";
 
@@ -17,6 +17,7 @@ const useFolder = (
     ],
     queryFn: () => getFolder(folderId, searchParams),
     enabled: isAuthenticated && !!folderId,
+    placeholderData: keepPreviousData,
   });
 };
 

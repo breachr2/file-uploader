@@ -15,7 +15,7 @@ type LayoutProps = {
 function Layout({ data, isPending, activeFolder }: LayoutProps) {
   return (
     <>
-      {/* <header className="bg-foreground text-background p-2 h-10 flex items-center shadow-md">
+      {/* <header className="  p-2 h-10 flex items-center shadow-md">
         <h1 className="text-2xl">File Uploader</h1>
       </header> */}
       <SidebarProvider>

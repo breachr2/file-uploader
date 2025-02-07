@@ -8,8 +8,8 @@ import { useSearchParams } from "react-router-dom";
 import FolderItem from "@/components/folder-item";
 
 function PrivateFolder() {
-  const { isAuthenticated } = useAuth();
   const [searchParams] = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const folders = useFolders();
   const files = useFiles(searchParams);
 

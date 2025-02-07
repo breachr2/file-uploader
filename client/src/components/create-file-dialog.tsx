@@ -11,40 +11,43 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
-import Submit from "./ui/submit";
-import RedAsterisk from "./ui/red-asterisk";
-import { useParams, useNavigate } from "react-router-dom";
-import useAuth from "@/hooks/useAuth";
-import ErrorAlert from "./error.alert";
-import useCreateFile from "@/hooks/useCreateFile";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { FilePlus } from "lucide-react";
+import { getBasePath } from "@/lib/utils";
+import Submit from "./ui/submit";
+import ErrorAlert from "./error.alert";
+import RedAsterisk from "./ui/red-asterisk";
+import useCreateFile from "@/hooks/useCreateFile";
 
 function FileDialog() {
-  const { isAuthenticated } = useAuth();
-  const [file, setFile] = useState<File | null>(null);
-  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
   const { folderId } = useParams();
   const navigate = useNavigate();
-  const createFileMutation = useCreateFile();
   const queryClient = useQueryClient();
+
+  const [file, setFile] = useState<File | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const createFileMutation = useCreateFile();
 
   const handleFileUpload = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!file || !isAuthenticated) {
+    
+    if (!file) {
       return;
     }
+
     createFileMutation.mutate(
       { file, folderId },
       {
         onSuccess: () => {
           setOpen(false);
+          queryClient.invalidateQueries({ queryKey: ["folders"] });
           if (folderId) {
             queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
-            queryClient.invalidateQueries({ queryKey: ["folders"] });
-            navigate(`/folders/${folderId}`);
+            navigate(`${getBasePath(pathname)}/${folderId}`);
           } else {
-            queryClient.invalidateQueries({ queryKey: ["folders"] });
             queryClient.invalidateQueries({ queryKey: ["public-files"] });
           }
         },
@@ -85,9 +88,6 @@ function FileDialog() {
                 required
               />
             </div>
-            <p>
-              Accepted file types are png, jpg/jpeg, gif, webpg, doc, docx, pdf.{" "}
-            </p>
             {createFileMutation.isError && (
               <ErrorAlert>{createFileMutation.error.message}</ErrorAlert>
             )}
