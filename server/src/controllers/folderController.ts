@@ -6,6 +6,7 @@ import { User } from "@prisma/client";
 import { getSignedCloudFrontUrl } from "../services/cloudFrontService";
 import { deleteFileFromS3 } from "../services/s3Service";
 import { generateRandomName } from "./fileController";
+import { getOrderBy, FileQueryParams, isExpired } from "../utils/utils";
 
 const getFolders = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User).id;
@@ -40,16 +41,9 @@ const getFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderId = Number(req.params.folderId);
     const userId = (req.user as User).id;
-    const { name, size, createdAt } = req.query;
+    const { name, size, createdAt } = req.query as FileQueryParams;
 
-    const orderBy: any = {};
-    if (createdAt === "asc" || createdAt === "desc") {
-      orderBy.createdAt = createdAt;
-    } else if (name === "asc" || name === "desc") {
-      orderBy.name = name;
-    } else if (size === "asc" || size === "desc") {
-      orderBy.size = size;
-    }
+    const orderBy = getOrderBy({ name, size, createdAt });
 
     const folder = await prisma.folder.findUnique({
       where: { id: folderId, userId: userId },
@@ -63,7 +57,7 @@ const getFolderById = asyncHandler(
     }
 
     // If folder url is expired update url and expiry date to null
-    if (folder.expiresAt && folder.expiresAt < new Date()) {
+    if (folder.expiresAt && isExpired(folder.expiresAt)) {
       await prisma.folder.update({
         where: { id: folderId },
         data: { folderUrl: null, expiresAt: null },
@@ -72,10 +66,10 @@ const getFolderById = asyncHandler(
 
     for (const file of folder.files) {
       // Check if file signed url is expired
-      const isExpired =
-        !file.signedUrl || !file.expiresAt || file.expiresAt < new Date();
+      const isFileExpired =
+        !file.signedUrl || !file.expiresAt || isExpired(file.expiresAt);
 
-      if (isExpired) {
+      if (isFileExpired) {
         // Generate new signed url that expires in 24 hours
         const expiresDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
         const signedUrl = getSignedCloudFrontUrl(file.name, expiresDate);

@@ -10,6 +10,7 @@ import {
   invalidateCloudFrontCache,
 } from "../services/cloudFrontService";
 import { updateFileFromS3, deleteFileFromS3 } from "../services/s3Service";
+import { getOrderBy, FileQueryParams } from "../utils/utils";
 
 export const generateRandomName = (bytes = 32) => {
   return crypto.randomBytes(bytes).toString("hex");
@@ -17,16 +18,9 @@ export const generateRandomName = (bytes = 32) => {
 
 const getFiles = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User)?.id;
-  const { name, size, createdAt } = req.query;
+  const { name, size, createdAt } = req.query as FileQueryParams;
 
-  const orderBy: any = {};
-  if (createdAt === "asc" || createdAt === "desc") {
-    orderBy.createdAt = createdAt;
-  } else if (name === "asc" || name === "desc") {
-    orderBy.name = name;
-  } else if (size === "asc" || size === "desc") {
-    orderBy.size = size;
-  }
+  const orderBy = getOrderBy({ name, size, createdAt });
 
   const files = await prisma.file.findMany({
     where: { userId: userId, folderId: null },
@@ -57,32 +51,40 @@ const getFiles = asyncHandler(async (req: Request, res: Response) => {
   res.json(files);
 });
 
-const postFileCreate = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req.user as User)?.id;
-  const { originalname, size, mimetype, buffer } =
-    req.file as Express.Multer.File;
-  const randomImageName = generateRandomName();
+const postFileCreate = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.user as User)?.id;
 
-  const fileData: Prisma.FileCreateInput = {
-    originalName: originalname,
-    name: randomImageName,
-    size: size,
-    User: { connect: { id: userId } },
-    mimetype: mimetype,
-  };
+    if (!req.file) {
+      return next(new CustomError(400, "Please provide a file."));
+    }
 
-  if (req.body.folderId) {
-    fileData.Folder = { connect: { id: Number(req.body.folderId) } };
+    const { originalname, size, mimetype, buffer } =
+      req.file as Express.Multer.File;
+
+    const randomImageName = generateRandomName();
+
+    const fileData: Prisma.FileCreateInput = {
+      originalName: originalname,
+      name: randomImageName,
+      size: size,
+      User: { connect: { id: userId } },
+      mimetype: mimetype,
+    };
+
+    if (req.body.folderId) {
+      fileData.Folder = { connect: { id: Number(req.body.folderId) } };
+    }
+
+    // Save the file to db
+    const newFile = await prisma.file.create({ data: fileData });
+
+    // Save the file to an S3 bucket
+    await updateFileFromS3(randomImageName, mimetype, buffer);
+
+    res.json(newFile);
   }
-
-  // Save the file to db
-  const newFile = await prisma.file.create({ data: fileData });
-
-  // Save the file to an S3 bucket
-  await updateFileFromS3(randomImageName, mimetype, buffer);
-
-  res.json(newFile);
-});
+);
 
 const deleteFileById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -104,22 +106,18 @@ const deleteFileById = asyncHandler(
       );
     }
 
-    try {
-      // Delete file from S3
-      deleteFileFromS3(file.name);
+    // Delete file from S3
+    deleteFileFromS3(file.name);
 
-      // Invalidating cloudfront cache
-      invalidateCloudFrontCache(file.name);
+    // Invalidating cloudfront cache
+    invalidateCloudFrontCache(file.name);
 
-      // Delete file from db
-      const deletedFile = await prisma.file.delete({
-        where: { id: fileId, userId: userId },
-      });
+    // Delete file from db
+    const deletedFile = await prisma.file.delete({
+      where: { id: fileId, userId: userId },
+    });
 
-      res.json(deletedFile);
-    } catch (err) {
-      next(new CustomError(500, "An error occurred while deleting the file."));
-    }
+    res.json(deletedFile);
   }
 );
 
