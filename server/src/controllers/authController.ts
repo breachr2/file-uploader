@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from "express";
+import { userSignUpSchema } from "../schemas/userSchemas";
+import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import prisma from "../config/prisma";
-import { User } from "@prisma/client";
 import asyncHandler from "express-async-handler";
 import passport from "passport";
+import CustomError from "../utils/customError";
 
 async function postSignIn(req: Request, res: Response, next: NextFunction) {
   passport.authenticate(
@@ -35,7 +37,21 @@ async function postSignIn(req: Request, res: Response, next: NextFunction) {
 
 const postSignUp = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password } = req.body.formData;
+    const { username, password, confirmPassword } = req.body.formData;
+
+    const result = userSignUpSchema.safeParse({
+      username,
+      password,
+      confirmPassword,
+    });
+
+    if (!result.success) {
+      const errorMessage = result.error.issues
+        .map((issue) => issue.message)
+        .join("\n");
+      return next(new CustomError(400, errorMessage));
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.create({
