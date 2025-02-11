@@ -7,7 +7,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: Infinity } },
+  defaultOptions: { queries: { staleTime: 60 * 5 * 1000 } },
 });
 
 createRoot(document.getElementById("root")!).render(
@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />
-        <ReactQueryDevtools />
+        {process.env.NODE_ENV === "DEV" && <ReactQueryDevtools />}
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>

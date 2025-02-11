@@ -23,7 +23,9 @@ function FileList({ files }: { files: File[] }) {
             <th className="px-2 sm:px-6 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
               <Button
                 variant="ghost"
-                className="flex items-center hover:bg-gray-200 "
+                className={`flex items-center hover:bg-gray-200 ${
+                  searchParams.get("name") && "bg-gray-200"
+                }`}
                 size="sm"
                 onClick={() => toggleSort("name")}
               >
@@ -33,7 +35,9 @@ function FileList({ files }: { files: File[] }) {
             <th className=" sm:px-6 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
               <Button
                 variant="ghost"
-                className="flex items-center hover:bg-gray-200"
+                className={`flex items-center hover:bg-gray-200 ${
+                  searchParams.get("size") && "bg-gray-200"
+                }`}
                 size="sm"
                 onClick={() => toggleSort("size")}
               >
@@ -43,7 +47,9 @@ function FileList({ files }: { files: File[] }) {
             <th className=" sm:px-6 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
               <Button
                 variant="ghost"
-                className="flex items-center hover:bg-gray-200 "
+                className={`flex items-center hover:bg-gray-200 ${
+                  searchParams.get("createdAt") && "bg-gray-200"
+                }`}
                 size="sm"
                 onClick={() => toggleSort("createdAt")}
               >

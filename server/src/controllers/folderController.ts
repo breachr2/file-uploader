@@ -5,8 +5,13 @@ import CustomError from "../utils/customError";
 import { User } from "@prisma/client";
 import { getSignedCloudFrontUrl } from "../services/cloudFrontService";
 import { deleteFileFromS3 } from "../services/s3Service";
-import { generateRandomName } from "./fileController";
-import { getOrderBy, FileQueryParams, isExpired } from "../utils/utils";
+import {
+  getOrderBy,
+  FileQueryParams,
+  isExpired,
+  generateExpiresDate,
+  generateRandomName,
+} from "../utils/utils";
 
 const getFolders = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.user as User).id;
@@ -56,7 +61,7 @@ const getFolderById = asyncHandler(
       );
     }
 
-    // If folder url is expired update url and expiry date to null
+    // If folder url is expired update url and expires date to null
     if (folder.expiresAt && isExpired(folder.expiresAt)) {
       await prisma.folder.update({
         where: { id: folderId },
@@ -71,7 +76,7 @@ const getFolderById = asyncHandler(
 
       if (isFileExpired) {
         // Generate new signed url that expires in 24 hours
-        const expiresDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
+        const expiresDate = generateExpiresDate(1000 * 60 * 60 * 24);
         const signedUrl = getSignedCloudFrontUrl(file.name, expiresDate);
 
         file.signedUrl = signedUrl;
@@ -162,17 +167,26 @@ const putFolderUpdatePublic = asyncHandler(
     const userId = (req.user as User)?.id;
     const { expiresValue } = req.body;
 
-    if (!expiresValue) {
-      return next(new CustomError(400, "Please provide an expires date."));
+    if (!expiresValue || isNaN(Number(expiresValue))) {
+      return next(new CustomError(400, "Please provide a valid expires date."));
+    }
+
+    const folder = await prisma.folder.findUnique({ where: { id: folderId } });
+
+    if (!folder) {
+      return next(
+        new CustomError(404, `Folder with id ${folderId} could not be found.`)
+      );
     }
 
     const randomFolderSlug = generateRandomName();
+    const expiresDate = generateExpiresDate(Number(expiresValue * 1000)); // Convert seconds to milliseconds
 
     const updatedFolder = await prisma.folder.update({
       where: { id: folderId, userId: userId },
       data: {
-        expiresAt: new Date(Date.now() + Number(expiresValue) * 1000),
-        folderUrl: `${process.env.FRONTEND_URL}/${randomFolderSlug}`,
+        expiresAt: expiresDate,
+        folderUrl: `${process.env.FRONTEND_URL}/share/${randomFolderSlug}`,
         slug: randomFolderSlug,
       },
     });

@@ -2,20 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import prisma from "../config/prisma";
 import CustomError from "../utils/customError";
 import asyncHandler from "express-async-handler";
+import { FileQueryParams, getOrderBy, isExpired } from "../utils/utils";
 
 const getPublicFolder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderSlug = req.params.folderSlug;
-    const { name, size, createdAt } = req.query;
+    const { name, size, createdAt } = req.query as FileQueryParams;
 
-    const orderBy: any = {};
-    if (createdAt === "asc" || createdAt === "desc") {
-      orderBy.createdAt = createdAt;
-    } else if (name === "asc" || name === "desc") {
-      orderBy.name = name;
-    } else if (size === "asc" || size === "desc") {
-      orderBy.size = size;
-    }
+    const orderBy = getOrderBy({ name, size, createdAt });
 
     const folder = await prisma.folder.findUnique({
       where: { slug: folderSlug },
@@ -34,8 +28,8 @@ const getPublicFolder = asyncHandler(
       );
     }
 
-    if (folder.expiresAt < new Date(Date.now())) {
-      // If folder url is expired, set the url and expiry date to null
+    if (isExpired(folder.expiresAt)) {
+      // If folder url is expired, set the url and expires date to null
       await prisma.folder.update({
         where: { slug: folderSlug },
         data: { folderUrl: null, expiresAt: null },

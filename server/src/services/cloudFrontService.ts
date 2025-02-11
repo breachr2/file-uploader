@@ -3,14 +3,11 @@ import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import cloudFrontClient from "../config/cloudFrontClient";
 
 const getSignedCloudFrontUrl = (filename: string, expiresDate: Date) => {
-  const privateKey = process.env.CLOUDFRONT_PRIVATE_KEY || "";
-  const keyPairId = process.env.KEY_PAIR_ID || "";
-
   const signedUrl = getSignedUrl({
     url: `${process.env.CLOUDFRONT_URL}/${filename}`,
     dateLessThan: expiresDate.toISOString(),
-    privateKey: privateKey,
-    keyPairId: keyPairId,
+    privateKey: process.env.CLOUDFRONT_PRIVATE_KEY || "",
+    keyPairId: process.env.KEY_PAIR_ID || "",
   });
 
   return signedUrl;

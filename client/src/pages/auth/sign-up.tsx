@@ -14,14 +14,14 @@ import Submit from "@/components/ui/submit";
 import RedAsterisk from "@/components/ui/red-asterisk";
 import { useMutation } from "@tanstack/react-query";
 import ErrorAlert from "@/components/error.alert";
-import { signup, FormData } from "@/api/user-api";
+import { signup, SignUpFormData } from "@/api/user-api";
 
 type SignUpCardProps = {
   setTab: (value: string) => void;
 };
 
 function SignUpCard({ setTab }: SignUpCardProps) {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<SignUpFormData>({
     username: "",
     password: "",
     confirmPassword: "",

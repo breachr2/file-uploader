@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 export type FileQueryParams = {
   name?: "asc" | "desc";
   size?: "asc" | "desc";
@@ -29,3 +31,11 @@ export function isExpired(expiresDate: Date) {
 
   return false;
 }
+
+export function generateExpiresDate(expiresValue: number) {
+  return new Date(Date.now() + expiresValue);
+}
+
+export const generateRandomName = (bytes = 32) => {
+  return crypto.randomBytes(bytes).toString("hex");
+};

@@ -46,6 +46,7 @@ const postSignUp = asyncHandler(
     });
 
     if (!result.success) {
+      console.log(result.error.issues)
       const errorMessage = result.error.issues
         .map((issue) => issue.message)
         .join("\n");

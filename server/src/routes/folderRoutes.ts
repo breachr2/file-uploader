@@ -18,6 +18,3 @@ folderRouter.delete("/:folderId", isAuthenticated, deleteFolderById);
 folderRouter.put("/:folderId/make-public", isAuthenticated, putFolderUpdatePublic)
 
 export default folderRouter;
-
-// curl localhost:5000/folders/2
-// curl -X POST localhost:5000/folders -d "folderName=TestFolder"
