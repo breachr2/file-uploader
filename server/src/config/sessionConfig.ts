@@ -7,7 +7,9 @@ const secret = process.env.SECRET || "";
 
 const sessionConfig = expressSession({
   cookie: {
+    secure: process.env.NODE_ENV === "PROD",
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
   },
   secret: secret,
   saveUninitialized: false,
@@ -19,4 +21,4 @@ const sessionConfig = expressSession({
   }),
 });
 
-export default sessionConfig
+export default sessionConfig;

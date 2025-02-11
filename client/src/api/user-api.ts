@@ -1,7 +1,7 @@
 import { API_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
 
-export type FormData = {
+export type SignUpFormData = {
   username: "";
   password: "";
   confirmPassword: "";
@@ -18,16 +18,13 @@ const signin = async (username: string, password: string) => {
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res);
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "An unknown erorr has occured.");
   }
   return response.json();
 };
 
-const signup = async (formData: FormData) => {
-  if (formData.password !== formData.confirmPassword) {
-    throw new Error("Passwords do not match");
-  }
+const signup = async (formData: SignUpFormData) => {
   const response = await fetch(`${API_URL}/sign-up`, {
     method: "POST",
     body: JSON.stringify({ formData }),
@@ -37,8 +34,8 @@ const signup = async (formData: FormData) => {
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res.error);
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "An unknown erorr has occured.");
   }
 
   return response.json();
@@ -50,7 +47,8 @@ const logout = async () => {
   });
 
   if (!response.ok) {
-    throw new Error("Logout Failed");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "Logout Failed");
   }
   return response.json();
 };

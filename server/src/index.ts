@@ -37,6 +37,7 @@ app.use("/files", fileRouter);
 
 // Catch all error route
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(error);
   if (error instanceof MulterError) {
     if (error.code === "LIMIT_FILE_SIZE") {
       res.status(400).json({ error: "File size exceeds the 50 MB limit" });

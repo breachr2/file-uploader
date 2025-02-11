@@ -13,8 +13,8 @@ const getFolder = async (
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error);
+    const errorResponse = await response.json();
+    throw new Error(errorResponse);
   }
 
   return response.json();
@@ -26,8 +26,8 @@ const getFolders = async (): Promise<Folder[]> => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error);
+    const errorResponse = await response.json();
+    throw new Error(errorResponse);
   }
 
   return response.json();
@@ -42,8 +42,8 @@ const createFolder = async (folderName: string) => {
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res || "An error has occured creating a folder");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "An error has occured creating a folder");
   }
 
   return response.json();
@@ -64,8 +64,8 @@ const updateFolder = async ({
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res || "An error has occured creating a folder");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "An error has occured creating a folder");
   }
 
   return response.json();
@@ -78,8 +78,8 @@ const deleteFolder = async (folderId: string) => {
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res || "Error occured deleting folder");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "Error occured deleting folder");
   }
   return response.json();
 };
@@ -103,8 +103,8 @@ const makeFolderPublic = async ({
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res || "An error has occured creating a folder");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse || "An error has occured creating a folder");
   }
 
   return response.json();
