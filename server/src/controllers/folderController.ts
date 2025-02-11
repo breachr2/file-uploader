@@ -132,6 +132,7 @@ const deleteFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const folderId = Number(req.params.folderId);
     const userId = (req.user as User)?.id;
+
     const folder = await prisma.folder.findUnique({
       where: { id: folderId },
       include: { files: true },

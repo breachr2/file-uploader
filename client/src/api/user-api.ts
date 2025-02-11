@@ -19,7 +19,9 @@ const signin = async (username: string, password: string) => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse || "An unknown erorr has occured.");
+    throw new Error(
+      errorResponse?.error || "An error has occurred while signing in."
+    );
   }
   return response.json();
 };
@@ -35,7 +37,9 @@ const signup = async (formData: SignUpFormData) => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse || "An unknown erorr has occured.");
+    throw new Error(
+      errorResponse?.error || "An error has occurred while signing up."
+    );
   }
 
   return response.json();
@@ -48,7 +52,9 @@ const logout = async () => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse || "Logout Failed");
+    throw new Error(
+      errorResponse?.error || "An error has occurred while logging in."
+    );
   }
   return response.json();
 };

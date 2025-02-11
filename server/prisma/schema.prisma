@@ -30,11 +30,11 @@ model Session {
 
 model Folder {
   id        Int       @id @default(autoincrement())
-  name      String    @unique
+  name      String
   files     File[]
   User      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int?
-  slug      String?    @unique
+  slug      String?   @unique
   folderUrl String?   @unique
   expiresAt DateTime?
   updatedAt DateTime  @updatedAt

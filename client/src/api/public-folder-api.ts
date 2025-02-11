@@ -10,9 +10,8 @@ const getPublicFolder = async (
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    console.log(error);
-    throw new Error(error || "An error has occured");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse?.error || "An error has occured.");
   }
 
   return response.json();

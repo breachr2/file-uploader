@@ -15,15 +15,24 @@ import Submit from "./ui/submit";
 import ErrorAlert from "./error.alert";
 import useFolder from "@/hooks/useFolder";
 import useDeleteFolder from "@/hooks/useDeleteFolder";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 function DeleteFolderDialog({ folderId }: { folderId: string }) {
   const [open, setOpen] = useState(false);
   const { data } = useFolder(folderId);
-  const deleteFolderMutation = useDeleteFolder(folderId);
+  const queryClient = useQueryClient();
+  const deleteFolderMutation = useDeleteFolder();
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
-    deleteFolderMutation.mutate();
-    setOpen(false);
+    deleteFolderMutation.mutate(folderId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["folders"] });
+        setOpen(false);
+        navigate("/folders");
+      },
+    });
   };
 
   return (

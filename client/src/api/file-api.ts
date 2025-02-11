@@ -1,15 +1,16 @@
 import { API_URL } from "@/lib/constants";
 import { File as FileType } from "@/lib/types";
 
-const getFiles = async (searchParams?: URLSearchParams): Promise<FileType[]> => {
+const getFiles = async (
+  searchParams?: URLSearchParams
+): Promise<FileType[]> => {
   const response = await fetch(`${API_URL}/files?${searchParams?.toString()}`, {
     credentials: "include",
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    console.log(error)
-    throw new Error(error);
+    const errorResponse = await response.json();
+    throw new Error(errorResponse?.error || "An error has occured.");
   }
 
   return response.json();
@@ -35,8 +36,8 @@ const createFile = async ({
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res || "Error creating file");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse?.error || "Error creating file");
   }
 
   return response.json();
@@ -49,8 +50,8 @@ const deleteFile = async (fileId: number) => {
   });
 
   if (!response.ok) {
-    const res = await response.json();
-    throw new Error(res || "Error occured deleting folder");
+    const errorResponse = await response.json();
+    throw new Error(errorResponse?.error || "Error occured deleting folder");
   }
   return response.json();
 };

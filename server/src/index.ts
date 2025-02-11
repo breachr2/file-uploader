@@ -58,7 +58,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   }
 
   if (error instanceof CustomError) {
-    res.status(error.statusCode).json(error.message);
+    res.status(error.statusCode).json({ error: error.message });
     return;
   }
 

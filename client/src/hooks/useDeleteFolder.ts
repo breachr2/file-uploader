@@ -1,16 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { deleteFolder } from "@/api/folder-api";
 
-const useDeleteFolder = (folderId: string) => {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+const useDeleteFolder = () => {
   return useMutation({
-    mutationFn: () => deleteFolder(folderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["folders"] });
-      navigate("/folders");
-    },
+    mutationFn: deleteFolder,
   });
 };
 

@@ -14,7 +14,9 @@ const getFolder = async (
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse);
+    throw new Error(
+      errorResponse?.error || "An error has occurred while getting this folder."
+    );
   }
 
   return response.json();
@@ -27,7 +29,7 @@ const getFolders = async (): Promise<Folder[]> => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse);
+    throw new Error(errorResponse?.error);
   }
 
   return response.json();
@@ -43,7 +45,9 @@ const createFolder = async (folderName: string) => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse || "An error has occured creating a folder");
+    throw new Error(
+      errorResponse?.error || "An error has occurred while creating the folder."
+    );
   }
 
   return response.json();
@@ -65,7 +69,9 @@ const updateFolder = async ({
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse || "An error has occured creating a folder");
+    throw new Error(
+      errorResponse?.error || "An error has occurred while updating the folder."
+    );
   }
 
   return response.json();
@@ -79,7 +85,9 @@ const deleteFolder = async (folderId: string) => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse || "Error occured deleting folder");
+    throw new Error(
+      errorResponse?.error || "An error has occurred while deleting the folder."
+    );
   }
   return response.json();
 };
@@ -91,10 +99,6 @@ const makeFolderPublic = async ({
   folderId: string;
   expiresValue: string | undefined;
 }) => {
-  if (!expiresValue) {
-    throw new Error("Select a expires duration");
-  }
-
   const response = await fetch(`${API_URL}/folders/${folderId}/make-public`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

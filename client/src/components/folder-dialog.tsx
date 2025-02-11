@@ -48,8 +48,11 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
     } else {
       updateFolderMutation.mutate({ folderId, folderName });
     }
-    setFolderName("");
-    setOpen(false);
+
+    if (createFolderMutation.isSuccess) {
+      setFolderName("");
+      setOpen(false);
+    }
   }
 
   return (
