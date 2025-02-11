@@ -12,11 +12,11 @@ import {
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { getBasePath } from "@/lib/utils";
 import { useLocation, useParams } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
-import ErrorAlertDialog from "./error-alert-dialog";
+import ErrorAlert from "./error.alert";
 import useDeleteFile from "@/hooks/useDeleteFile";
 
 type FileItemProps = {
@@ -25,21 +25,26 @@ type FileItemProps = {
 };
 
 function FileItem({ file, children }: FileItemProps) {
+  const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const { folderId } = useParams();
   const { user } = useAuth();
-  const deleteFileMutation = useDeleteFile();
+  const deleteFileMutation = useDeleteFile(file.id, folderId);
   const navigate = useNavigate();
 
   const fileLinkRef = useRef<HTMLAnchorElement>(null);
 
   const handleFileDelete = () => {
-    deleteFileMutation.mutate(file.id);
-    navigate(`${getBasePath(pathname)}/${folderId || ""}`);
+    deleteFileMutation.mutate();
+
+    if (deleteFileMutation.isSuccess) {
+      setOpen(false);
+      navigate(`${getBasePath(pathname)}/${folderId || ""}`);
+    }
   };
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent>
         <SheetHeader>
@@ -65,14 +70,12 @@ function FileItem({ file, children }: FileItemProps) {
             </a>
           </div>
         )}
+        {deleteFileMutation.isError && (
+          <ErrorAlert>{deleteFileMutation.error.message}</ErrorAlert>
+        )}
         <SheetFooter>
           {user?.id === file.userId && (
             <Button onClick={handleFileDelete}>Delete</Button>
-          )}
-          {deleteFileMutation.isError && (
-            <ErrorAlertDialog>
-              {deleteFileMutation.error.message}
-            </ErrorAlertDialog>
           )}
         </SheetFooter>
       </SheetContent>
