@@ -5,6 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Outlet } from "react-router-dom";
 import { Folder } from "@/lib/types";
+import { Toaster } from "@/components/ui/toaster";
 
 type LayoutProps = {
   data: Folder[];
@@ -24,6 +25,7 @@ function Layout({ data, isPending, activeFolder }: LayoutProps) {
             <AppBreadcrumb activeFolder={activeFolder} />
           </div>
           <Outlet />
+          <Toaster />
         </main>
       </SidebarProvider>
     </>

@@ -11,7 +11,7 @@ import {
 } from "./ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import { Button } from "./ui/button";
-import { Share2, Copy } from "lucide-react";
+import { Share2, Copy, Check } from "lucide-react";
 import { Input } from "./ui/input";
 import {
   TooltipProvider,
@@ -23,11 +23,14 @@ import useFolder from "@/hooks/useFolder";
 import Submit from "./ui/submit";
 import { makeFolderPublic } from "@/api/folder-api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 function ShareFolderDialog({ folderId }: { folderId: string }) {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [expiresValue, setExpiresValue] = useState<string | undefined>();
   const { data, isLoading } = useFolder(folderId);
+  const [isCopied, setIsCopied] = useState(false);
 
   const mutation = useMutation({
     mutationFn: makeFolderPublic,
@@ -35,6 +38,19 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
       queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
     },
   });
+
+  async function copyToClipboard(folderUrl: string) {
+    try {
+      await navigator.clipboard.writeText(folderUrl);
+      setIsCopied(true);
+      toast({
+        title: "Copied to Clipboard ✔️",
+      });
+      setTimeout(() => setIsCopied(false), 4000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   function handleSubmit() {
     mutation.mutate({ folderId, expiresValue: expiresValue });
@@ -53,7 +69,7 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
           <DialogTitle>Share Folder</DialogTitle>
           <DialogDescription>
             Generate a shareable link to share the current folder and all of its
-            content.
+            content. Links will expire after the specified duration.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
@@ -72,9 +88,6 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
               <ToggleGroupItem value="259200">3 days</ToggleGroupItem>
               <ToggleGroupItem value="604800">1 week</ToggleGroupItem>
             </ToggleGroup>
-            <p className="text-muted-foreground text-sm">
-              Links will expire after the specified duration.
-            </p>
           </div>
 
           {data?.folderUrl && (
@@ -83,8 +96,10 @@ function ShareFolderDialog({ folderId }: { folderId: string }) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button>
-                      <Copy />
+                    <Button
+                      onClick={() => copyToClipboard(data.folderUrl || "")}
+                    >
+                      {isCopied ? <Check /> : <Copy />}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
