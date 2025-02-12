@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createFolder } from "@/api/folder-api";
 
 const useCreateFolder = () => {
