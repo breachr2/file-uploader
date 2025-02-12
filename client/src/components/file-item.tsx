@@ -59,14 +59,17 @@ function FileItem({ file, children }: FileItemProps) {
         </SheetDescription>
         {file.signedUrl && (
           <div className="flex items-center gap-1">
-            <span>File URL: </span>
+            <span className="text-nowrap">File URL: </span>
             <a
               href={file.signedUrl}
               target="_blank"
               ref={fileLinkRef}
-              className="flex cursor-pointer text-blue-500 underline items-center gap-1"
+              className="flex cursor-pointer text-blue-500 underline items-center gap-1 overflow-hidden text-nowrap text-ellipsis"
             >
-              {file.originalName} <ExternalLink size={16} />
+              <span className="overflow-hidden text-nowrap ">
+                {file.originalName}
+              </span>
+              <ExternalLink className="flex-shrink-0" size={16} />
             </a>
           </div>
         )}
