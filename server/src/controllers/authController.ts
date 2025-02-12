@@ -16,11 +16,11 @@ async function postSignIn(req: Request, res: Response, next: NextFunction) {
       }
 
       if (info) {
-        return res.status(401).json(info.message || "Authentication failed");
+        return next(new CustomError(401, info.message));
       }
 
       if (!user) {
-        return res.status(401).json("No user");
+        return next(new CustomError(401, "User could not be found."));
       }
 
       if (user) {
