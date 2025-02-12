@@ -34,8 +34,8 @@ function FileItem({ file, children }: FileItemProps) {
 
   const fileLinkRef = useRef<HTMLAnchorElement>(null);
 
-  const handleFileDelete = () => {
-    deleteFileMutation.mutate();
+  const handleFileDelete = async () => {
+    await deleteFileMutation.mutateAsync();
 
     if (deleteFileMutation.isSuccess) {
       setOpen(false);
