@@ -11,6 +11,7 @@ import { MulterError } from "multer";
 import CustomError from "./utils/customError";
 import helmet from "helmet";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import morgan from "morgan";
 import "./middleware/passport";
 
 const app = express();
@@ -22,14 +23,15 @@ app.use(helmet());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
+app.use(morgan("combined"));
 app.use(sessionConfig);
 app.use(passport.session());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(authRouter);
 app.use("/public-folders", publicFolderRouter);
