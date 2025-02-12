@@ -24,7 +24,7 @@ jobs:
       - name: Build React App
         working-directory: client
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }},
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_NODE_ENV: ${{ secrets.VITE_NODE_ENV }}
         run: npm run build
 
