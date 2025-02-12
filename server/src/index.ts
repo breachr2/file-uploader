@@ -21,7 +21,7 @@ app.set("views", path.resolve(__dirname, "../src/views"));
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
