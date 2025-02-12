@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from "express";
-import path from "node:path";
 import passport from "passport";
 import sessionConfig from "./config/sessionConfig";
 import authRouter from "./routes/authRoutes";
@@ -17,13 +16,11 @@ import "./middleware/passport";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-app.set("view engine", "ejs");
-app.set("views", path.resolve(__dirname, "../src/views"));
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
