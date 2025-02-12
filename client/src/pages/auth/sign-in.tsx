@@ -75,7 +75,10 @@ function SignInCard() {
         <Submit
           isLoading={signInMutation.isPending}
           className="w-full"
-          onClick={() => signInMutation.mutate()}
+          onClick={(e) => {
+            e.preventDefault();
+            signInMutation.mutate();
+          }}
         >
           Sign In
         </Submit>
