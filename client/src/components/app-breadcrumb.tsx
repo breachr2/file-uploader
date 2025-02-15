@@ -29,7 +29,9 @@ function AppBreadcrumb({
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to={basePath}>Home</Link>
+            <Link to={basePath} className="text-base">
+              Home
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {folderId && (
@@ -37,7 +39,9 @@ function AppBreadcrumb({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>
-                <Link to={currentPath}>{activeFolder?.name}</Link>
+                <Link to={currentPath} className="text-base">
+                  {activeFolder?.name}
+                </Link>
               </BreadcrumbPage>
             </BreadcrumbItem>
           </>

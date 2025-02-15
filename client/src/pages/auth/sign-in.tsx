@@ -37,31 +37,33 @@ function SignInCard() {
     <Card>
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-lg">
           Welcome Back! Please sign in to continue.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div>
-          <Label htmlFor="username">
+          <Label htmlFor="username" className="text-lg">
             Username <RedAsterisk />
           </Label>
           <Input
             name="username"
             id="username"
+            className="py-6 md:text-lg"
             onChange={(e) => setUsername(e.target.value)}
             value={username}
             required
           />
         </div>
         <div>
-          <Label htmlFor="password">
+          <Label className="text-lg" htmlFor="password">
             Password <RedAsterisk />
           </Label>
           <Input
             type="password"
             name="password"
             id="password"
+            className="py-6 md:text-lg"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             required
@@ -74,7 +76,7 @@ function SignInCard() {
         )}
         <Submit
           isLoading={signInMutation.isPending}
-          className="w-full"
+          className="w-full py-6 text-lg"
           onClick={(e) => {
             e.preventDefault();
             signInMutation.mutate();
@@ -82,8 +84,11 @@ function SignInCard() {
         >
           Sign In
         </Submit>
-        <Button className="w-full" variant="outline">
+        {/* <Button className="w-full py-6 text-lg" variant="outline">
           Sign Up With Google
+        </Button> */}
+        <Button className="w-full py-6 text-lg" variant="outline">
+          Log in with Demo User
         </Button>
       </CardFooter>
     </Card>

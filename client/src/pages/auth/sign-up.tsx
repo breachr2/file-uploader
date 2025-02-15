@@ -46,45 +46,48 @@ function SignUpCard({ setTab }: SignUpCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-lg">
           Register for an account to get started!
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form>
           <div>
-            <Label htmlFor="username">
+            <Label className="text-lg" htmlFor="username">
               Username <RedAsterisk />
             </Label>
             <Input
               name="username"
               id="username"
+              className="py-6 md:text-lg"
               value={formData.username}
               onChange={handleInputChange}
               required
             />
           </div>
           <div>
-            <Label htmlFor="password">
+            <Label className="text-lg" htmlFor="password">
               Password <RedAsterisk />
             </Label>
             <Input
               type="password"
               name="password"
               id="password"
+              className="py-6 md:text-lg"
               value={formData.password}
               onChange={handleInputChange}
               required
             />
           </div>
           <div>
-            <Label htmlFor="confirmPassword">
+            <Label className="text-lg" htmlFor="confirmPassword">
               Confirm Password <RedAsterisk />
             </Label>
             <Input
               type="password"
               name="confirmPassword"
               id="confirmPassword"
+              className="py-6 md:text-lg"
               value={formData.confirmPassword}
               onChange={handleInputChange}
               required
@@ -98,14 +101,14 @@ function SignUpCard({ setTab }: SignUpCardProps) {
         )}
         <Submit
           isLoading={signUpMutation.isPending}
-          className="w-full"
+          className="w-full py-6 text-lg"
           onClick={() => signUpMutation.mutate()}
         >
           Sign up
         </Submit>
-        <Button className="w-full" variant="outline">
+        {/* <Button className="w-full py-6 text-lg" variant="outline">
           Sign Up With Google
-        </Button>
+        </Button> */}
       </CardFooter>
     </Card>
   );

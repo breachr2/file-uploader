@@ -73,7 +73,7 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full border justify-start">
-          <FolderPlus />
+          <FolderPlus size={24} />
           {actionType === "create" ? "New Folder" : "Update Folder"}
         </Button>
       </DialogTrigger>

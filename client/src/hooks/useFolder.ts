@@ -9,14 +9,9 @@ const useFolder = (
   const { isAuthenticated } = useAuth();
 
   return useQuery({
-    queryKey: [
-      "folder",
-      folderId,
-      searchParams?.toString(),
-      { isAuthenticated },
-    ],
+    queryKey: ["folder", folderId, searchParams?.toString()],
     queryFn: () => getFolder(folderId, searchParams),
-    enabled: isAuthenticated && !!folderId,
+    enabled: !!isAuthenticated,
     placeholderData: keepPreviousData,
   });
 };

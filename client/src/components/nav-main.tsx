@@ -15,7 +15,7 @@ function NavMain({ folders }: { folders: Folder[] }) {
   const { pathname } = useLocation();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Folders</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-base">Folders</SidebarGroupLabel>
       {folders.map((folder) => {
         const isActive = pathname.endsWith(`${folder.id}`);
         const basePath = getBasePath(pathname);
@@ -26,13 +26,15 @@ function NavMain({ folders }: { folders: Folder[] }) {
             <SidebarMenuItem>
               <Link to={newPath}>
                 <SidebarMenuButton
-                  className={`hover:bg-hover flex items-center ${
+                  className={`hover:bg-hover flex items-center py-5 ${
                     isActive && "bg-hover"
                   }
                 `}
                 >
-                  <FolderIcon />
-                  <span>{folder.name}</span>
+                  <span>
+                    <FolderIcon size={20} />
+                  </span>
+                  <span className="text-base">{folder.name}</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

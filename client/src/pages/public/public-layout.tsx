@@ -8,12 +8,12 @@ function PublicLayout() {
   const { data, isError, isPending, error } = usePublicFolder(folderSlug);
   const activeFolder = data?.find((folder) => folder.id === Number(folderId));
 
-  if (isError) {
-    return <ErrorPage>{error.message}</ErrorPage>;
+  if (isPending) {
+    return <p>Loading...</p>;
   }
 
-  if (!data) {
-    return <ErrorPage>An error has occured while fetching data.</ErrorPage>;
+  if (isError) {
+    return <ErrorPage>{error.message}</ErrorPage>;
   }
 
   return (

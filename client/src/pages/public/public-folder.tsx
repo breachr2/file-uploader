@@ -7,16 +7,16 @@ function PublicFolder() {
   const { folderSlug } = useParams();
   const { data, isPending, isError, error } = usePublicFolder(folderSlug);
 
-  if (isError) {
-    return <div className="text-center">{error.message}</div>;
-  }
-
   if (isPending) {
     return (
       <div className="flex flex-col gap-2">
         <FolderSkeleton />
       </div>
     );
+  }
+
+  if (isError) {
+    return <div className="text-center">{error.message}</div>;
   }
 
   return (

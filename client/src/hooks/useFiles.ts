@@ -5,9 +5,9 @@ import useAuth from "./useAuth";
 const useFiles = (searchParams?: URLSearchParams) => {
   const { isAuthenticated } = useAuth();
   return useQuery({
-    queryKey: ["public-files", searchParams?.toString(), { isAuthenticated }],
+    queryKey: ["public-files", searchParams?.toString()],
     queryFn: () => getFiles(searchParams),
-    enabled: isAuthenticated,
+    enabled: !!isAuthenticated,
     placeholderData: keepPreviousData,
   });
 };

@@ -5,9 +5,9 @@ import useAuth from "./useAuth";
 const useFolders = () => {
   const { isAuthenticated } = useAuth();
   return useQuery({
-    queryKey: ["folders", { isAuthenticated }],
+    queryKey: ["folders"],
     queryFn: getFolders,
-    enabled: isAuthenticated,
+    enabled: !!isAuthenticated,
   });
 };
 

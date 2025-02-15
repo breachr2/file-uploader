@@ -23,11 +23,15 @@ function Auth() {
         value={tab}
         onValueChange={onTabChange}
         defaultValue="signIn"
-        className="w-[400px]"
+        className="w-[475px] text-xl"
       >
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="signIn">Sign In</TabsTrigger>
-          <TabsTrigger value="signUp">Sign Up</TabsTrigger>
+          <TabsTrigger className="text-lg" value="signIn">
+            Sign In
+          </TabsTrigger>
+          <TabsTrigger className="text-lg" value="signUp">
+            Sign Up
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="signIn">
           <SignInCard />

@@ -18,7 +18,7 @@ function Layout({ data, isPending, activeFolder }: LayoutProps) {
     <>
       <SidebarProvider>
         <AppSidebar data={data} isPending={isPending} />
-        <main className="flex flex-col w-full bg-gray-100 p-2 sm:p-6 gap-4 ">
+        <main className="flex flex-col w-full bg-gray-100 py-4 px-2 sm:p-8 gap-4 ">
           <div className="flex space-x-2 items-center">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-4" />

@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import SubFolder from "../sub-folder";
 import usePublicFolder from "@/hooks/usePublicFolder";
-import ErrorPage from "../error-page";
+import FolderSkeleton from "@/components/folder-skeleton";
 
 function PublicSubFolder() {
   const { folderSlug } = useParams();
@@ -11,18 +11,15 @@ function PublicSubFolder() {
     searchParams
   );
 
-  if (!data) {
-    return <ErrorPage>There was an error fetching this folder.</ErrorPage>;
+  if (isPending) {
+    return <FolderSkeleton />;
   }
 
-  return (
-    <SubFolder
-      folder={data && data[0]}
-      isPending={isPending}
-      isError={isError}
-      error={error}
-    />
-  );
+  if (isError) {
+    return <h1 className="text-center">{(error as Error).message}</h1>;
+  }
+
+  return <SubFolder folder={data && data[0]} />;
 }
 
 export default PublicSubFolder;

@@ -33,7 +33,7 @@ function FileDialog() {
 
   const handleFileUpload = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     if (!file) {
       return;
     }

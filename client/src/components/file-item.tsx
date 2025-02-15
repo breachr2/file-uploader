@@ -66,7 +66,7 @@ function FileItem({ file, children }: FileItemProps) {
               ref={fileLinkRef}
               className="flex cursor-pointer text-blue-500 underline items-center gap-1 overflow-hidden text-nowrap text-ellipsis"
             >
-              <span className="overflow-hidden text-nowrap ">
+              <span className="overflow-hidden text-nowrap">
                 {file.originalName}
               </span>
               <ExternalLink className="flex-shrink-0" size={16} />

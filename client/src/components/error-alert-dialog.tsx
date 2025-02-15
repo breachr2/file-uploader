@@ -14,10 +14,10 @@ function ErrorAlertDialog({ children }: { children: React.ReactNode }) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Unauthenticated User</AlertDialogTitle>
-          <AlertDialogDescription>{children}</AlertDialogDescription>
+          <AlertDialogDescription className="text-lg">{children}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Close</AlertDialogCancel>
+          <AlertDialogCancel className="text-lg">Close</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -7,7 +7,9 @@ import App from "./App.tsx";
 import "./index.css";
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 60 * 5 * 1000 } },
+  defaultOptions: {
+    queries: { staleTime: 300000, refetchInterval: 300000 }, // 5 minutes
+  },
 });
 
 createRoot(document.getElementById("root")!).render(

@@ -2,7 +2,7 @@ import { useParams, Navigate, useSearchParams } from "react-router-dom";
 import useFolder from "@/hooks/useFolder";
 import SubFolder from "../sub-folder";
 import useAuth from "@/hooks/useAuth";
-import ErrorPage from "../error-page";
+import FolderSkeleton from "@/components/folder-skeleton";
 
 function PrivateSubFolder() {
   const [searchParams] = useSearchParams();
@@ -14,18 +14,15 @@ function PrivateSubFolder() {
     return <Navigate to="/auth" />;
   }
 
-  if (!data) {
-    return <ErrorPage>There was an error fetching this folder.</ErrorPage>;
+  if (isPending) {
+    return <FolderSkeleton />;
   }
 
-  return (
-    <SubFolder
-      folder={data}
-      isPending={isPending}
-      isError={isError}
-      error={error}
-    />
-  );
+  if (isError) {
+    return <h1 className="text-center">{(error as Error).message}</h1>;
+  }
+
+  return <SubFolder folder={data} />;
 }
 
 export default PrivateSubFolder;

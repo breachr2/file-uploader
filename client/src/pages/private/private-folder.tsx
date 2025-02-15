@@ -32,7 +32,7 @@ function PrivateFolder() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-semibold">Folders</h2>
+        <h2 className="text-2xl font-semibold">Folders</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {folders.data.map((folder) => (
@@ -41,7 +41,7 @@ function PrivateFolder() {
       </div>
       {files.data.length > 0 && (
         <>
-          <h3 className="text-lg font-semibold">Public Files</h3>
+          <h3 className="text-2xl font-semibold">Public Files</h3>
           <FileList files={files.data} />
         </>
       )}

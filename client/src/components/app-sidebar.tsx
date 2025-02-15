@@ -35,11 +35,13 @@ function AppSidebar({ data, isPending }: AppSidebarProps) {
         <SidebarFooter className="border">
           <Button
             variant="ghost"
-            className="w-full text-red-500 hover:text-red-600 hover:bg-red-50"
+            className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 text-lg"
             onClick={() => logOutMutation.mutate()}
             disabled={logOutMutation.isPending}
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <span>
+              <LogOut className="mr-2 h-4" size={16} />
+            </span>
             {logOutMutation.isPending ? "Logging out..." : "Log Out"}
           </Button>
         </SidebarFooter>

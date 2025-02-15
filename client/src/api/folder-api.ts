@@ -29,7 +29,9 @@ const getFolders = async (): Promise<Folder[]> => {
 
   if (!response.ok) {
     const errorResponse = await response.json();
-    throw new Error(errorResponse?.error);
+    throw new Error(
+      errorResponse?.error || "An error has occurred while getting folders."
+    );
   }
 
   return response.json();

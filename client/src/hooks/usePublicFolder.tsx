@@ -6,7 +6,7 @@ const usePublicFolder = (
   searchParams?: URLSearchParams
 ) => {
   return useQuery({
-    queryKey: ["public-folder", searchParams?.toString(), folderSlug],
+    queryKey: ["public-folder", folderSlug, searchParams?.toString()],
     queryFn: () => getPublicFolder(folderSlug, searchParams),
     placeholderData: keepPreviousData,
   });
