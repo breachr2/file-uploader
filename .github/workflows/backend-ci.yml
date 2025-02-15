@@ -1,0 +1,25 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "server/**"
+
+jobs:
+  build:
+    name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+
+      - name: Install dependecies
+        working-directory: server
+        run: npm install
+
+      - name: Build the backend
+        working-directory: server
+        run: npm run build

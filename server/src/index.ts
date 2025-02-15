@@ -16,7 +16,7 @@ import "./middleware/passport";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// app.set("trust proxy", 1);
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(
   cors({
@@ -24,7 +24,7 @@ app.use(
     credentials: true,
   })
 );
-// app.use(morgan("combined"));
+app.use(morgan("combined"));
 app.use(sessionConfig);
 app.use(passport.session());
 app.use(express.json());

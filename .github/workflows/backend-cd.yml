@@ -1,0 +1,22 @@
+name: Deploy to EC2
+
+on:
+  workflow_run: 
+    workflows: ["Backend CI"]
+    types: 
+      - completed
+  
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing remote SSH commands on EC2 server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            whoami
+            echo "Hello world"
