@@ -8,7 +8,7 @@ const sessionConfig = expressSession({
     secure: process.env.NODE_ENV === "PROD",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "PROD" ? "none" : "lax",
   },
   secret: process.env.SECRET || "",
   saveUninitialized: false,
