@@ -37,37 +37,39 @@ function SignInCard() {
     <Card>
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
-        <CardDescription className="text-lg">
+        <CardDescription className="text-base">
           Welcome Back! Please sign in to continue.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div>
-          <Label htmlFor="username" className="text-lg">
-            Username <RedAsterisk />
-          </Label>
-          <Input
-            name="username"
-            id="username"
-            className="py-6 md:text-lg"
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
-            required
-          />
-        </div>
-        <div>
-          <Label className="text-lg" htmlFor="password">
-            Password <RedAsterisk />
-          </Label>
-          <Input
-            type="password"
-            name="password"
-            id="password"
-            className="py-6 md:text-lg"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            required
-          />
+        <div className="flex flex-col gap-2">
+          <div>
+            <Label htmlFor="username" className="text-base">
+              Username <RedAsterisk />
+            </Label>
+            <Input
+              name="username"
+              id="username"
+              className="md:text-base"
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+              required
+            />
+          </div>
+          <div>
+            <Label className="text-base" htmlFor="password">
+              Password <RedAsterisk />
+            </Label>
+            <Input
+              type="password"
+              name="password"
+              id="password"
+              className=" md:text-base"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              required
+            />
+          </div>
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
@@ -76,7 +78,7 @@ function SignInCard() {
         )}
         <Submit
           isLoading={signInMutation.isPending}
-          className="w-full py-6 text-lg"
+          className="w-full text-base"
           onClick={(e) => {
             e.preventDefault();
             signInMutation.mutate();
@@ -87,7 +89,7 @@ function SignInCard() {
         {/* <Button className="w-full py-6 text-lg" variant="outline">
           Sign Up With Google
         </Button> */}
-        <Button className="w-full py-6 text-lg" variant="outline">
+        <Button className="w-full  text-base" variant="outline">
           Log in with Demo User
         </Button>
       </CardFooter>

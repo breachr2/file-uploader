@@ -12,7 +12,6 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import { FilePlus } from "lucide-react";
 import { getBasePath } from "@/lib/utils";
 import Submit from "./ui/submit";
@@ -24,7 +23,6 @@ function FileDialog() {
   const { pathname } = useLocation();
   const { folderId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
@@ -43,12 +41,8 @@ function FileDialog() {
       {
         onSuccess: () => {
           setOpen(false);
-          queryClient.invalidateQueries({ queryKey: ["folders"] });
           if (folderId) {
-            queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
             navigate(`${getBasePath(pathname)}/${folderId}`);
-          } else {
-            queryClient.invalidateQueries({ queryKey: ["public-files"] });
           }
         },
       }

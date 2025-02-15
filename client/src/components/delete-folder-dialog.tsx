@@ -16,21 +16,24 @@ import ErrorAlert from "./error.alert";
 import useFolder from "@/hooks/useFolder";
 import useDeleteFolder from "@/hooks/useDeleteFolder";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 function DeleteFolderDialog({ folderId }: { folderId: string }) {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const { data } = useFolder(folderId);
-  const queryClient = useQueryClient();
   const deleteFolderMutation = useDeleteFolder();
   const navigate = useNavigate();
 
   const handleSubmit = () => {
     deleteFolderMutation.mutate(folderId, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folders"] });
         setOpen(false);
         navigate("/folders");
+        toast({
+          title: "Folder Deleted ☑️",
+          description: `You have successfully deleted the folder "${data?.name}". All contents have been removed.`,
+        });
       },
     });
   };

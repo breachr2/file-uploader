@@ -18,6 +18,7 @@ import { useLocation, useParams } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import ErrorAlert from "./error.alert";
 import useDeleteFile from "@/hooks/useDeleteFile";
+import { useToast } from "@/hooks/use-toast";
 
 type FileItemProps = {
   file: File;
@@ -25,22 +26,27 @@ type FileItemProps = {
 };
 
 function FileItem({ file, children }: FileItemProps) {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const { folderId } = useParams();
   const { user } = useAuth();
-  const deleteFileMutation = useDeleteFile(file.id, folderId);
+  const deleteFileMutation = useDeleteFile(folderId);
   const navigate = useNavigate();
 
   const fileLinkRef = useRef<HTMLAnchorElement>(null);
 
-  const handleFileDelete = async () => {
-    await deleteFileMutation.mutateAsync();
-
-    if (deleteFileMutation.isSuccess) {
-      setOpen(false);
-      navigate(`${getBasePath(pathname)}/${folderId || ""}`);
-    }
+  const handleFileDelete = () => {
+    deleteFileMutation.mutate(file.id, {
+      onSuccess: () => {
+        setOpen(false);
+        navigate(`${getBasePath(pathname)}/${folderId || ""}`);
+        toast({
+          title: "File Deleted ☑️",
+          description: `You have successfully deleted file ${file.originalName}.`,
+        });
+      },
+    });
   };
 
   return (

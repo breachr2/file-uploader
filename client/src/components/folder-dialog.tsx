@@ -18,7 +18,6 @@ import ErrorAlert from "./error.alert";
 import useUpdateFolder from "@/hooks/useUpdateFolder";
 import useCreateFolder from "@/hooks/useCreateFolder";
 import useAuth from "@/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
 
 type FolderDialogProps = {
   actionType: "create" | "update";
@@ -30,7 +29,6 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
   const [folderName, setFolderName] = useState("");
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const queryClient = useQueryClient();
 
   const createFolderMutation = useCreateFolder();
   const updateFolderMutation = useUpdateFolder();
@@ -49,7 +47,6 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
     if (actionType === "create") {
       createFolderMutation.mutate(folderName, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["folders"] });
           setOpen(false);
           setFolderName("");
         },
@@ -59,8 +56,6 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
         { folderId, folderName },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["folders"] });
-            queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
             setOpen(false);
             setFolderName("");
           },

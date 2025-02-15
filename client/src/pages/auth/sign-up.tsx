@@ -14,12 +14,14 @@ import RedAsterisk from "@/components/ui/red-asterisk";
 import { useMutation } from "@tanstack/react-query";
 import ErrorAlert from "@/components/error.alert";
 import { signup, SignUpFormData } from "@/api/user-api";
+import { useToast } from "@/hooks/use-toast";
 
 type SignUpCardProps = {
   setTab: (value: string) => void;
 };
 
 function SignUpCard({ setTab }: SignUpCardProps) {
+  const { toast } = useToast();
   const [formData, setFormData] = useState<SignUpFormData>({
     username: "",
     password: "",
@@ -30,6 +32,12 @@ function SignUpCard({ setTab }: SignUpCardProps) {
     mutationFn: () => signup(formData),
     onSuccess: () => {
       setTab("signIn");
+      toast({
+        title: "Account created! ✅",
+        description:
+          "Your account has been successfully created. Please log in to continue.",
+        duration: 10000,
+      });
     },
   });
 
@@ -45,48 +53,50 @@ function SignUpCard({ setTab }: SignUpCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
-        <CardDescription className="text-lg">
+        <CardDescription className="text-base">
           Register for an account to get started!
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form className="flex flex-col gap-2">
           <div>
-            <Label className="text-lg" htmlFor="username">
-              Username <RedAsterisk />
-            </Label>
-            <Input
-              name="username"
-              id="username"
-              className="py-6 md:text-lg"
-              value={formData.username}
-              onChange={handleInputChange}
-              required
-            />
+            <div>
+              <Label className="text-base" htmlFor="username">
+                Username <RedAsterisk />
+              </Label>
+              <Input
+                name="username"
+                id="username"
+                className="md:text-base"
+                value={formData.username}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
           </div>
           <div>
-            <Label className="text-lg" htmlFor="password">
+            <Label className="text-base" htmlFor="password">
               Password <RedAsterisk />
             </Label>
             <Input
               type="password"
               name="password"
               id="password"
-              className="py-6 md:text-lg"
+              className="md:text-base"
               value={formData.password}
               onChange={handleInputChange}
               required
             />
           </div>
           <div>
-            <Label className="text-lg" htmlFor="confirmPassword">
+            <Label className="text-base" htmlFor="confirmPassword">
               Confirm Password <RedAsterisk />
             </Label>
             <Input
               type="password"
               name="confirmPassword"
               id="confirmPassword"
-              className="py-6 md:text-lg"
+              className="md:text-base"
               value={formData.confirmPassword}
               onChange={handleInputChange}
               required
@@ -100,7 +110,7 @@ function SignUpCard({ setTab }: SignUpCardProps) {
         )}
         <Submit
           isLoading={signUpMutation.isPending}
-          className="w-full py-6 text-lg"
+          className="w-full text-base"
           onClick={() => signUpMutation.mutate()}
         >
           Sign up

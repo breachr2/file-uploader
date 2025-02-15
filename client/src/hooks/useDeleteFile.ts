@@ -1,16 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteFile } from "@/api/file-api";
 
-const useDeleteFile = (fileId: number, folderId: string | undefined) => {
+const useDeleteFile = (folderId: string | undefined) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => deleteFile(fileId),
+    mutationFn: deleteFile,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["public-files"] });
-      queryClient.invalidateQueries({ queryKey: ["folders"] });
       if (folderId) {
-        queryClient.invalidateQueries({ queryKey: ["folder", folderId] });
+        queryClient.invalidateQueries({
+          queryKey: ["folder", folderId],
+        });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["public-files"] });
       }
     },
   });

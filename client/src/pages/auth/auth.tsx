@@ -4,6 +4,7 @@ import SignInCard from "./sign-in";
 import SignUpCard from "./sign-up";
 import { Navigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+import { Toaster } from "@/components/ui/toaster";
 
 function Auth() {
   const [tab, setTab] = useState("signIn");
@@ -40,6 +41,7 @@ function Auth() {
           <SignUpCard setTab={onTabChange} />
         </TabsContent>
       </Tabs>
+      <Toaster />
     </div>
   );
 }
