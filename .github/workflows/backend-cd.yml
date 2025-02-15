@@ -1,13 +1,13 @@
 name: Deploy to EC2
 
 on:
-  workflow_run: 
+  workflow_run:
     workflows: ["Backend CI"]
-    types: 
+    types:
       - completed
-  
-jobs: 
-  deploy: 
+
+jobs:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Executing remote SSH commands on EC2 server
@@ -18,5 +18,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            whoami
-            echo "Hello world"
+            echo "Starting deployment"
+            cd file-uploader/server || { echo "Failed to navigate to server directory"; exit 1; }
+            echo "Stopping myapp service..."
+            sudo systemctl stop myapp.service || { echo "Failed to stop service"; exit 1; }
+            echo "Pulling latest changes from Git..."
+            git pull || { echo "Git pull failed"; exit 1; }
+            echo "Starting myapp service..."
+            sudo systemctl start myapp.service || { echo "Failed to start service"; exit 1; }
+            echo "Deployment completed successfully!"
