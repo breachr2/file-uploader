@@ -101,12 +101,20 @@ function FolderDialog({ actionType, folderId }: FolderDialogProps) {
                 required
               />
             </div>
-            {errorMessage && <ErrorAlert>{errorMessage}</ErrorAlert>}
+            {errorMessage && (
+              <ErrorAlert title="Error" description={errorMessage} />
+            )}
             {createFolderMutation.isError && (
-              <ErrorAlert>{createFolderMutation.error.message}</ErrorAlert>
+              <ErrorAlert
+                title="Error Creating Folder"
+                description={createFolderMutation.error.message}
+              />
             )}
             {updateFolderMutation.isError && (
-              <ErrorAlert>{updateFolderMutation.error.message}</ErrorAlert>
+              <ErrorAlert
+                title="Error Updating Folder"
+                description={updateFolderMutation.error.message}
+              />
             )}
 
             <DialogFooter>

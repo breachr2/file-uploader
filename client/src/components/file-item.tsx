@@ -80,7 +80,10 @@ function FileItem({ file, children }: FileItemProps) {
           </div>
         )}
         {deleteFileMutation.isError && (
-          <ErrorAlert>{deleteFileMutation.error.message}</ErrorAlert>
+          <ErrorAlert
+            title="Error Deleting File"
+            description={deleteFileMutation.error.message}
+          />
         )}
         <SheetFooter>
           {user?.id === file.userId && (

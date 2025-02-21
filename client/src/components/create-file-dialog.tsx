@@ -2,58 +2,17 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogTitle,
   DialogHeader,
   DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FilePlus } from "lucide-react";
-import { getBasePath } from "@/lib/utils";
-import Submit from "./ui/submit";
-import ErrorAlert from "./error.alert";
-import RedAsterisk from "./ui/red-asterisk";
-import useCreateFile from "@/hooks/useCreateFile";
+import FileInputForm from "./file-input-form";
 
 function FileDialog() {
-  const { pathname } = useLocation();
-  const { folderId } = useParams();
-  const navigate = useNavigate();
-
-  const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
-
-  const createFileMutation = useCreateFile();
-
-  const handleFileUpload = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!file) {
-      return;
-    }
-
-    createFileMutation.mutate(
-      { file, folderId },
-      {
-        onSuccess: () => {
-          setOpen(false);
-          if (folderId) {
-            navigate(`${getBasePath(pathname)}/${folderId}`);
-          }
-        },
-      }
-    );
-  };
-
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -69,26 +28,7 @@ function FileDialog() {
           <DialogDescription>Upload a file up to 50MB.</DialogDescription>
         </DialogHeader>
         <div>
-          <form onSubmit={handleFileUpload} className="flex flex-col gap-4">
-            <div>
-              <Label htmlFor="file">
-                File <RedAsterisk />
-              </Label>
-              <Input
-                type="file"
-                name="name"
-                id="file"
-                onChange={(e) => handleFileChange(e)}
-                required
-              />
-            </div>
-            {createFileMutation.isError && (
-              <ErrorAlert>{createFileMutation.error.message}</ErrorAlert>
-            )}
-            <DialogFooter>
-              <Submit isLoading={createFileMutation.isPending}>Submit</Submit>
-            </DialogFooter>
-          </form>
+          <FileInputForm setOpen={setOpen} />
         </div>
       </DialogContent>
     </Dialog>

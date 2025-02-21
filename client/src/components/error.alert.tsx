@@ -1,13 +1,23 @@
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircle } from "lucide-react";
 
-function ErrorAlert({ children }: { children: React.ReactNode }) {
+type ErrorAlertProps = {
+  title: string;
+  description: string;
+  variant?: "default" | "destructive" | null | undefined;
+};
+
+function ErrorAlert({
+  title,
+  description,
+  variant = "destructive",
+}: ErrorAlertProps) {
   return (
-    <Alert variant="destructive" className="text-lg">
+    <Alert variant={variant}>
       <AlertCircle className="size-4" />
-      <AlertTitle >Error</AlertTitle>
+      <AlertTitle className="text-base">{title}</AlertTitle>
       <AlertDescription>
-        <span className="whitespace-pre-wrap text-lg">{children}</span>
+        <span className="whitespace-pre-wrap text-base">{description}</span>
       </AlertDescription>
     </Alert>
   );

@@ -74,7 +74,10 @@ function SignInCard() {
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
         {signInMutation.isError && (
-          <ErrorAlert>{signInMutation.error.message}</ErrorAlert>
+          <ErrorAlert
+            title="Error Signing In"
+            description={signInMutation.error.message}
+          />
         )}
         <Submit
           isLoading={signInMutation.isPending}

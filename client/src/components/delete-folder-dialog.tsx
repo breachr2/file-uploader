@@ -53,7 +53,10 @@ function DeleteFolderDialog({ folderId }: { folderId: string }) {
             contents?
           </DialogDescription>
           {deleteFolderMutation.isError && (
-            <ErrorAlert>{deleteFolderMutation.error.message}</ErrorAlert>
+            <ErrorAlert
+              title="Error Deleting Folder"
+              description={deleteFolderMutation.error.message}
+            />
           )}
         </DialogHeader>
 

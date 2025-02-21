@@ -106,7 +106,10 @@ function SignUpCard({ setTab }: SignUpCardProps) {
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
         {signUpMutation.isError && (
-          <ErrorAlert>{signUpMutation.error.message}</ErrorAlert>
+          <ErrorAlert
+            title="Error Signing Up"
+            description={signUpMutation.error.message}
+          />
         )}
         <Submit
           isLoading={signUpMutation.isPending}

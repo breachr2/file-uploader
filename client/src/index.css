@@ -10,7 +10,7 @@
   margin: 0;
   box-sizing: border-box;
   font-size: 1.125rem;
-  line-height: 1.75rem;
+  /* line-height: 1.75rem; */
 }
 
 html,
