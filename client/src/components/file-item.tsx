@@ -40,7 +40,7 @@ function FileItem({ file, children }: FileItemProps) {
     deleteFileMutation.mutate(file.id, {
       onSuccess: () => {
         setOpen(false);
-        navigate(`${getBasePath(pathname)}/${folderId || ""}`);
+        navigate(`${getBasePath(pathname)}${folderId ? `/${folderId}` : ""}`);
         toast({
           title: "File Deleted ☑️",
           description: `You have successfully deleted file ${file.originalName}.`,
